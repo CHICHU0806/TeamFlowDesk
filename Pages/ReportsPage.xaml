@@ -1,0 +1,48 @@
+﻿<Page
+    x:Class="TeamFlowDesk.Pages.ReportsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ScrollViewer>
+        <StackPanel Margin="32" Spacing="20">
+
+            <StackPanel Spacing="8">
+                <TextBlock
+                    Text="周报与复盘"
+                    FontSize="32"
+                    FontWeight="SemiBold" />
+
+                <TextBlock
+                    Text="用于沉淀每周项目进展、问题记录、下周计划、负责人评价和 AI 协作过程。"
+                    FontSize="16"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+
+            <StackPanel Spacing="12">
+                <TextBlock
+                    Text="周报结构"
+                    FontSize="22"
+                    FontWeight="SemiBold" />
+
+                <TextBlock Text="本周完成：记录已经完成的项目任务和阶段成果。" FontSize="16" />
+                <TextBlock Text="存在问题：记录任务延期、资源不足、技术阻塞等问题。" FontSize="16" />
+                <TextBlock Text="下周计划：明确下一阶段任务目标和负责人。" FontSize="16" />
+                <TextBlock Text="AI 协作：记录 AI 参与分析、总结和修正的过程。" FontSize="16" />
+                <TextBlock Text="负责人复盘：对团队运行状态进行总结和调整。" FontSize="16" />
+            </StackPanel>
+
+            <StackPanel Spacing="8">
+                <TextBlock
+                    Text="示例周报"
+                    FontSize="22"
+                    FontWeight="SemiBold" />
+
+                <TextBlock Text="周期：2026 年 6 月 27 日 - 2026 年 7 月 3 日" FontSize="16" />
+                <TextBlock Text="本周完成：确定系统主题框架，完成 WinUI 项目搭建。" FontSize="16" />
+                <TextBlock Text="存在问题：开发周期较短，需要控制功能范围。" FontSize="16" />
+                <TextBlock Text="下周计划：完成核心页面和基础数据结构设计。" FontSize="16" />
+            </StackPanel>
+
+        </StackPanel>
+    </ScrollViewer>
+</Page>

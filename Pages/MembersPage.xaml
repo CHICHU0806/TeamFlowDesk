@@ -1,0 +1,47 @@
+﻿<Page
+    x:Class="TeamFlowDesk.Pages.MembersPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ScrollViewer>
+        <StackPanel Margin="32" Spacing="20">
+
+            <StackPanel Spacing="8">
+                <TextBlock
+                    Text="人员管理"
+                    FontSize="32"
+                    FontWeight="SemiBold" />
+
+                <TextBlock
+                    Text="用于记录团队成员信息、方向归属、能力标签、任务负载和培养状态，辅助负责人进行人员调度。"
+                    FontSize="16"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+
+            <StackPanel Spacing="12">
+                <TextBlock
+                    Text="成员画像"
+                    FontSize="22"
+                    FontWeight="SemiBold" />
+
+                <TextBlock Text="基础信息：姓名、年级、方向、联系方式。" FontSize="16" />
+                <TextBlock Text="能力标签：C#、C++、STM32、机械设计、视觉算法、文档写作等。" FontSize="16" />
+                <TextBlock Text="能力等级：入门、熟悉、可独立完成、可带人。" FontSize="16" />
+                <TextBlock Text="任务负载：当前负责的任务数量与风险任务数量。" FontSize="16" />
+            </StackPanel>
+
+            <StackPanel Spacing="8">
+                <TextBlock
+                    Text="示例成员"
+                    FontSize="22"
+                    FontWeight="SemiBold" />
+
+                <TextBlock Text="姓名：杨扬文琦" FontSize="16" />
+                <TextBlock Text="方向：项目管理 / AI 应用 / 桌面开发" FontSize="16" />
+                <TextBlock Text="当前任务：系统框架搭建、项目文档整理" FontSize="16" />
+                <TextBlock Text="负载状态：正常" FontSize="16" />
+            </StackPanel>
+
+        </StackPanel>
+    </ScrollViewer>
+</Page>

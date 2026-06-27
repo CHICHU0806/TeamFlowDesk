@@ -1,0 +1,58 @@
+<Page
+    x:Class="TeamFlowDesk.Pages.HomePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ScrollViewer>
+        <StackPanel Margin="32" Spacing="20">
+
+            <StackPanel Spacing="8">
+                <TextBlock
+                    Text="管理驾驶舱"
+                    FontSize="32"
+                    FontWeight="SemiBold" />
+
+                <TextBlock
+                    Text="面向团队负责人的内部私有化工作流管理平台，用于汇总项目进度、任务风险、人员负载、器材状态和 AI 协作过程。"
+                    FontSize="16"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+
+            <StackPanel Spacing="12">
+                <TextBlock
+                    Text="当前概览"
+                    FontSize="22"
+                    FontWeight="SemiBold" />
+
+                <TextBlock Text="进行中项目：3 个" FontSize="16" />
+                <TextBlock Text="待处理任务：12 项" FontSize="16" />
+                <TextBlock Text="延期或高风险任务：2 项" FontSize="16" />
+                <TextBlock Text="器材异常记录：1 条" FontSize="16" />
+                <TextBlock Text="本周 AI 协作记录：5 条" FontSize="16" />
+            </StackPanel>
+
+            <StackPanel Spacing="12">
+                <TextBlock
+                    Text="管理提醒"
+                    FontSize="22"
+                    FontWeight="SemiBold" />
+
+                <TextBlock
+                    Text="1. 电控方向任务数量较多，建议检查成员负载是否过高。"
+                    FontSize="16"
+                    TextWrapping="Wrap" />
+
+                <TextBlock
+                    Text="2. 器材台账中存在未归还设备，建议在下一次调试前确认状态。"
+                    FontSize="16"
+                    TextWrapping="Wrap" />
+
+                <TextBlock
+                    Text="3. 本周周报需要补充 AI 协作过程和人工修正记录。"
+                    FontSize="16"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+
+        </StackPanel>
+    </ScrollViewer>
+</Page>

@@ -1,0 +1,47 @@
+﻿<Page
+    x:Class="TeamFlowDesk.Pages.ProjectsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ScrollViewer>
+        <StackPanel Margin="32" Spacing="20">
+
+            <StackPanel Spacing="8">
+                <TextBlock
+                    Text="项目管理"
+                    FontSize="32"
+                    FontWeight="SemiBold" />
+
+                <TextBlock
+                    Text="用于维护团队内部项目的基本信息、阶段计划、当前进度和风险状态。"
+                    FontSize="16"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+
+            <StackPanel Spacing="12">
+                <TextBlock
+                    Text="核心功能"
+                    FontSize="22"
+                    FontWeight="SemiBold" />
+
+                <TextBlock Text="1. 创建和维护项目基本信息。" FontSize="16" />
+                <TextBlock Text="2. 记录项目目标、周期、负责人和当前阶段。" FontSize="16" />
+                <TextBlock Text="3. 将项目与任务、成员、器材和文档记录关联。" FontSize="16" />
+                <TextBlock Text="4. 汇总项目风险和阶段性成果。" FontSize="16" />
+            </StackPanel>
+
+            <StackPanel Spacing="8">
+                <TextBlock
+                    Text="示例项目"
+                    FontSize="22"
+                    FontWeight="SemiBold" />
+
+                <TextBlock Text="项目名称：RoboMaster 队伍运行管理系统" FontSize="16" />
+                <TextBlock Text="项目状态：进行中" FontSize="16" />
+                <TextBlock Text="项目负责人：杨扬文琦" FontSize="16" />
+                <TextBlock Text="当前阶段：核心功能开发" FontSize="16" />
+            </StackPanel>
+
+        </StackPanel>
+    </ScrollViewer>
+</Page>

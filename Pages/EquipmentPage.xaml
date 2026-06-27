@@ -1,0 +1,47 @@
+﻿<Page
+    x:Class="TeamFlowDesk.Pages.EquipmentPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ScrollViewer>
+        <StackPanel Margin="32" Spacing="20">
+
+            <StackPanel Spacing="8">
+                <TextBlock
+                    Text="器材管理"
+                    FontSize="32"
+                    FontWeight="SemiBold" />
+
+                <TextBlock
+                    Text="用于记录团队器材的库存、借用、归还、损坏、维护和任务关联情况。"
+                    FontSize="16"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+
+            <StackPanel Spacing="12">
+                <TextBlock
+                    Text="器材信息"
+                    FontSize="22"
+                    FontWeight="SemiBold" />
+
+                <TextBlock Text="器材名称：用于标识具体设备或物资。" FontSize="16" />
+                <TextBlock Text="器材编号：用于区分同类设备。" FontSize="16" />
+                <TextBlock Text="当前状态：可用、借出、损坏、维修中、报废。" FontSize="16" />
+                <TextBlock Text="关联任务：记录器材当前服务于哪个项目或任务。" FontSize="16" />
+            </StackPanel>
+
+            <StackPanel Spacing="8">
+                <TextBlock
+                    Text="示例器材"
+                    FontSize="22"
+                    FontWeight="SemiBold" />
+
+                <TextBlock Text="器材名称：F407 主控板" FontSize="16" />
+                <TextBlock Text="状态：可用" FontSize="16" />
+                <TextBlock Text="负责人：电控方向" FontSize="16" />
+                <TextBlock Text="关联任务：底盘控制系统调试" FontSize="16" />
+            </StackPanel>
+
+        </StackPanel>
+    </ScrollViewer>
+</Page>

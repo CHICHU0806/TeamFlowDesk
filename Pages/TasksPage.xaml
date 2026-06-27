@@ -1,0 +1,48 @@
+﻿<Page
+    x:Class="TeamFlowDesk.Pages.TasksPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ScrollViewer>
+        <StackPanel Margin="32" Spacing="20">
+
+            <StackPanel Spacing="8">
+                <TextBlock
+                    Text="任务管理"
+                    FontSize="32"
+                    FontWeight="SemiBold" />
+
+                <TextBlock
+                    Text="用于对团队任务进行拆解、分配、跟踪和风险标记，是系统的核心工作流模块。"
+                    FontSize="16"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+
+            <StackPanel Spacing="12">
+                <TextBlock
+                    Text="任务状态"
+                    FontSize="22"
+                    FontWeight="SemiBold" />
+
+                <TextBlock Text="待处理：尚未开始的任务。" FontSize="16" />
+                <TextBlock Text="进行中：已经分配并正在推进的任务。" FontSize="16" />
+                <TextBlock Text="待验收：任务已完成，等待负责人确认。" FontSize="16" />
+                <TextBlock Text="已完成：任务验收通过并归档。" FontSize="16" />
+                <TextBlock Text="高风险：存在延期、资源不足或技术阻塞的问题。" FontSize="16" />
+            </StackPanel>
+
+            <StackPanel Spacing="8">
+                <TextBlock
+                    Text="示例任务"
+                    FontSize="22"
+                    FontWeight="SemiBold" />
+
+                <TextBlock Text="任务名称：完成管理驾驶舱页面原型" FontSize="16" />
+                <TextBlock Text="负责人：杨扬文琦" FontSize="16" />
+                <TextBlock Text="截止时间：2026 年 7 月 5 日" FontSize="16" />
+                <TextBlock Text="当前状态：进行中" FontSize="16" />
+            </StackPanel>
+
+        </StackPanel>
+    </ScrollViewer>
+</Page>

@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "TeamFlowDesk (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "TeamFlowDesk (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

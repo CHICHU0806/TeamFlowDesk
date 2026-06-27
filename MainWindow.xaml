@@ -1,0 +1,29 @@
+<Window
+    x:Class="TeamFlowDesk.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="TeamFlowDesk">
+
+    <Grid>
+        <NavigationView
+            x:Name="RootNavigationView"
+            PaneTitle="TeamFlowDesk"
+            IsBackButtonVisible="Collapsed"
+            IsSettingsVisible="True"
+            SelectionChanged="RootNavigationView_SelectionChanged">
+
+            <NavigationView.MenuItems>
+                <NavigationViewItem Content="管理驾驶舱" Tag="HomePage" />
+                <NavigationViewItem Content="项目管理" Tag="ProjectsPage" />
+                <NavigationViewItem Content="任务管理" Tag="TasksPage" />
+                <NavigationViewItem Content="人员管理" Tag="MembersPage" />
+                <NavigationViewItem Content="器材管理" Tag="EquipmentPage" />
+                <NavigationViewItem Content="AI协作记录" Tag="AiRecordsPage" />
+                <NavigationViewItem Content="周报与复盘" Tag="ReportsPage" />
+                <NavigationViewItem Content="关于系统" Tag="AboutPage" />
+            </NavigationView.MenuItems>
+
+            <Frame x:Name="ContentFrame" />
+        </NavigationView>
+    </Grid>
+</Window>

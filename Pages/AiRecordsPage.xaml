@@ -1,0 +1,57 @@
+﻿<Page
+    x:Class="TeamFlowDesk.Pages.AiRecordsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ScrollViewer>
+        <StackPanel Margin="32" Spacing="20">
+
+            <StackPanel Spacing="8">
+                <TextBlock
+                    Text="AI协作记录"
+                    FontSize="32"
+                    FontWeight="SemiBold" />
+
+                <TextBlock
+                    Text="用于记录 AI 在项目管理、任务拆解、风险分析、文档整理和周报生成过程中的辅助内容，并保留人工判断与修正结果。"
+                    FontSize="16"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+
+            <StackPanel Spacing="12">
+                <TextBlock
+                    Text="记录内容"
+                    FontSize="22"
+                    FontWeight="SemiBold" />
+
+                <TextBlock Text="问题描述：负责人向 AI 提出的管理或技术问题。" FontSize="16" />
+                <TextBlock Text="AI 建议：AI 给出的初步分析、方案或总结。" FontSize="16" />
+                <TextBlock Text="人工判断：负责人对 AI 内容的判断、筛选和质疑。" FontSize="16" />
+                <TextBlock Text="修正结果：最终采用、部分采用或不采用的原因。" FontSize="16" />
+            </StackPanel>
+
+            <StackPanel Spacing="8">
+                <TextBlock
+                    Text="示例记录"
+                    FontSize="22"
+                    FontWeight="SemiBold" />
+
+                <TextBlock
+                    Text="问题：两周开发周期内如何压缩系统功能范围？"
+                    FontSize="16"
+                    TextWrapping="Wrap" />
+
+                <TextBlock
+                    Text="AI 建议：优先完成管理驾驶舱、任务管理、人员管理、器材管理和 AI 协作记录。"
+                    FontSize="16"
+                    TextWrapping="Wrap" />
+
+                <TextBlock
+                    Text="人工修正：暂缓复杂多人协作与云同步功能，先完成单机 MVP。"
+                    FontSize="16"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+
+        </StackPanel>
+    </ScrollViewer>
+</Page>

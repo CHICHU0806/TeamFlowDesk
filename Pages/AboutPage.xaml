@@ -1,0 +1,40 @@
+﻿<Page
+    x:Class="TeamFlowDesk.Pages.AboutPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ScrollViewer>
+        <StackPanel Margin="32" Spacing="20">
+
+            <StackPanel Spacing="8">
+                <TextBlock
+                    Text="关于 TeamFlowDesk"
+                    FontSize="32"
+                    FontWeight="SemiBold" />
+
+                <TextBlock
+                    Text="TeamFlowDesk 是一款面向团队负责人的内部私有化工作流管理系统，主要用于项目管理、任务调度、人员能力管理、器材资源管理、数据沉淀和 AI 协作记录。"
+                    FontSize="16"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+
+            <StackPanel Spacing="12">
+                <TextBlock
+                    Text="系统定位"
+                    FontSize="22"
+                    FontWeight="SemiBold" />
+
+                <TextBlock
+                    Text="本系统不是普通成员的打卡工具，而是面向队长、项目经理和方向负责人的宏观管理软件。"
+                    FontSize="16"
+                    TextWrapping="Wrap" />
+
+                <TextBlock
+                    Text="系统目标是帮助负责人掌握团队运行状态，发现任务风险，追踪资源使用，沉淀过程数据，并记录 AI 协作与人工修正过程。"
+                    FontSize="16"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+
+        </StackPanel>
+    </ScrollViewer>
+</Page>
