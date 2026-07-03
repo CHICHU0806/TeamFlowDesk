@@ -26,54 +26,159 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <Border
-                    Grid.Column="0"
-                    Padding="20"
-                    BorderBrush="Gray"
-                    BorderThickness="1"
-                    CornerRadius="8">
+                <Border Grid.Column="0" Padding="20" BorderBrush="Gray" BorderThickness="1" CornerRadius="8">
                     <StackPanel Spacing="8">
                         <TextBlock Text="成员总数" FontSize="14" />
                         <TextBlock x:Name="MemberCountText" FontSize="30" FontWeight="SemiBold" />
                     </StackPanel>
                 </Border>
 
-                <Border
-                    Grid.Column="1"
-                    Padding="20"
-                    BorderBrush="Gray"
-                    BorderThickness="1"
-                    CornerRadius="8">
+                <Border Grid.Column="1" Padding="20" BorderBrush="Gray" BorderThickness="1" CornerRadius="8">
                     <StackPanel Spacing="8">
                         <TextBlock Text="正常负载" FontSize="14" />
                         <TextBlock x:Name="NormalWorkloadCountText" FontSize="30" FontWeight="SemiBold" />
                     </StackPanel>
                 </Border>
 
-                <Border
-                    Grid.Column="2"
-                    Padding="20"
-                    BorderBrush="Gray"
-                    BorderThickness="1"
-                    CornerRadius="8">
+                <Border Grid.Column="2" Padding="20" BorderBrush="Gray" BorderThickness="1" CornerRadius="8">
                     <StackPanel Spacing="8">
                         <TextBlock Text="可独立完成" FontSize="14" />
                         <TextBlock x:Name="IndependentCountText" FontSize="30" FontWeight="SemiBold" />
                     </StackPanel>
                 </Border>
 
-                <Border
-                    Grid.Column="3"
-                    Padding="20"
-                    BorderBrush="Gray"
-                    BorderThickness="1"
-                    CornerRadius="8">
+                <Border Grid.Column="3" Padding="20" BorderBrush="Gray" BorderThickness="1" CornerRadius="8">
                     <StackPanel Spacing="8">
                         <TextBlock Text="任务负载总数" FontSize="14" />
                         <TextBlock x:Name="TotalTaskLoadText" FontSize="30" FontWeight="SemiBold" />
                     </StackPanel>
                 </Border>
             </Grid>
+
+            <Border Padding="20" BorderBrush="Gray" BorderThickness="1" CornerRadius="8">
+                <StackPanel Spacing="16">
+
+                    <TextBlock
+                        Text="新增成员"
+                        FontSize="22"
+                        FontWeight="SemiBold" />
+
+                    <Grid ColumnSpacing="16" RowSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <TextBox
+                            x:Name="MemberNameTextBox"
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Header="成员姓名"
+                            PlaceholderText="例如：杨扬文琦" />
+
+                        <TextBox
+                            x:Name="MemberGradeTextBox"
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Header="年级 / 班级"
+                            PlaceholderText="例如：人工智能 01 班" />
+
+                        <TextBox
+                            x:Name="MemberDirectionTextBox"
+                            Grid.Row="0"
+                            Grid.Column="2"
+                            Header="方向归属"
+                            PlaceholderText="例如：电控方向 / 机械方向 / 视觉方向" />
+
+                        <TextBox
+                            x:Name="MemberRoleTextBox"
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Header="成员角色"
+                            PlaceholderText="例如：项目负责人 / 组长 / 普通成员" />
+
+                        <ComboBox
+                            x:Name="MemberAbilityComboBox"
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Header="能力等级"
+                            SelectedIndex="0">
+                            <ComboBoxItem Content="入门" />
+                            <ComboBoxItem Content="熟悉" />
+                            <ComboBoxItem Content="可独立完成" />
+                            <ComboBoxItem Content="可带人" />
+                        </ComboBox>
+
+                        <ComboBox
+                            x:Name="MemberWorkloadComboBox"
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            Header="负载状态"
+                            SelectedIndex="0">
+                            <ComboBoxItem Content="正常" />
+                            <ComboBoxItem Content="关注" />
+                            <ComboBoxItem Content="过载" />
+                            <ComboBoxItem Content="空闲" />
+                        </ComboBox>
+
+                        <TextBox
+                            x:Name="MemberTaskCountTextBox"
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Header="当前任务数量"
+                            PlaceholderText="例如：2" />
+
+                        <TextBox
+                            x:Name="MemberSkillTagsTextBox"
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Grid.ColumnSpan="2"
+                            Header="能力标签"
+                            PlaceholderText="例如：C#、WinUI、STM32、CAN、PID、文档写作"
+                            TextWrapping="Wrap" />
+
+                        <TextBox
+                            x:Name="MemberGrowthPlanTextBox"
+                            Grid.Row="3"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="2"
+                            Header="培养计划 / 成长记录"
+                            PlaceholderText="例如：后续可承担底盘控制相关任务"
+                            TextWrapping="Wrap"
+                            AcceptsReturn="True"
+                            MinHeight="80" />
+
+                        <StackPanel
+                            Grid.Row="3"
+                            Grid.Column="2"
+                            Orientation="Horizontal"
+                            Spacing="12"
+                            VerticalAlignment="Bottom">
+
+                            <Button
+                                Content="新增成员"
+                                Click="AddMemberButton_Click" />
+
+                            <Button
+                                Content="清空输入"
+                                Click="ClearMemberFormButton_Click" />
+                        </StackPanel>
+                    </Grid>
+
+                    <TextBlock
+                        x:Name="MemberFormMessageText"
+                        FontSize="14"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
 
             <StackPanel Spacing="12">
                 <TextBlock
@@ -93,7 +198,7 @@
                                 BorderThickness="1"
                                 CornerRadius="8">
 
-                                <StackPanel Spacing="6">
+                                <StackPanel Spacing="8">
                                     <TextBlock
                                         Text="{Binding Name}"
                                         FontSize="18"
@@ -110,27 +215,14 @@
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
 
-                                        <TextBlock
-                                            Grid.Column="0"
-                                            Text="{Binding Grade}"
-                                            FontSize="14" />
-
-                                        <TextBlock
-                                            Grid.Column="1"
-                                            Text="{Binding Role}"
-                                            FontSize="14" />
-
-                                        <TextBlock
-                                            Grid.Column="2"
-                                            Text="{Binding AbilityLevel}"
-                                            FontSize="14" />
-
-                                        <TextBlock
-                                            Grid.Column="3"
-                                            Text="{Binding WorkloadStatus}"
-                                            FontSize="14" />
+                                        <TextBlock Grid.Column="0" Text="{Binding Grade}" FontSize="14" />
+                                        <TextBlock Grid.Column="1" Text="{Binding Role}" FontSize="14" />
+                                        <TextBlock Grid.Column="2" Text="{Binding AbilityLevel}" FontSize="14" />
+                                        <TextBlock Grid.Column="3" Text="{Binding WorkloadStatus}" FontSize="14" />
+                                        <TextBlock Grid.Column="4" Text="{Binding CurrentTaskCount}" FontSize="14" />
                                     </Grid>
 
                                     <TextBlock
@@ -142,6 +234,33 @@
                                         Text="{Binding GrowthPlan}"
                                         FontSize="14"
                                         TextWrapping="Wrap" />
+
+                                    <StackPanel Orientation="Horizontal" Spacing="12">
+                                        <Button
+                                            Content="任务 +1"
+                                            Tag="{Binding Id}"
+                                            Click="IncreaseTaskCountButton_Click" />
+
+                                        <Button
+                                            Content="任务 -1"
+                                            Tag="{Binding Id}"
+                                            Click="DecreaseTaskCountButton_Click" />
+
+                                        <Button
+                                            Content="标记正常"
+                                            Tag="{Binding Id}"
+                                            Click="SetNormalWorkloadButton_Click" />
+
+                                        <Button
+                                            Content="标记关注"
+                                            Tag="{Binding Id}"
+                                            Click="SetAttentionWorkloadButton_Click" />
+
+                                        <Button
+                                            Content="删除成员"
+                                            Tag="{Binding Id}"
+                                            Click="DeleteMemberButton_Click" />
+                                    </StackPanel>
                                 </StackPanel>
                             </Border>
                         </DataTemplate>
