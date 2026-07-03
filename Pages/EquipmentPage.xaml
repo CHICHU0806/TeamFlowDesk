@@ -13,7 +13,7 @@
                     FontWeight="SemiBold" />
 
                 <TextBlock
-                    Text="用于记录团队器材的库存、借用、归还、损坏、维护和任务关联情况。"
+                    Text="用于记录团队器材的库存、借用、归还、损坏、维护和任务关联情况，帮助负责人掌握资源保障状态。"
                     FontSize="16"
                     TextWrapping="Wrap" />
             </StackPanel>
@@ -26,54 +26,150 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <Border
-                    Grid.Column="0"
-                    Padding="20"
-                    BorderBrush="Gray"
-                    BorderThickness="1"
-                    CornerRadius="8">
+                <Border Grid.Column="0" Padding="20" BorderBrush="Gray" BorderThickness="1" CornerRadius="8">
                     <StackPanel Spacing="8">
                         <TextBlock Text="器材总数" FontSize="14" />
                         <TextBlock x:Name="EquipmentCountText" FontSize="30" FontWeight="SemiBold" />
                     </StackPanel>
                 </Border>
 
-                <Border
-                    Grid.Column="1"
-                    Padding="20"
-                    BorderBrush="Gray"
-                    BorderThickness="1"
-                    CornerRadius="8">
+                <Border Grid.Column="1" Padding="20" BorderBrush="Gray" BorderThickness="1" CornerRadius="8">
                     <StackPanel Spacing="8">
                         <TextBlock Text="可用器材" FontSize="14" />
                         <TextBlock x:Name="AvailableEquipmentCountText" FontSize="30" FontWeight="SemiBold" />
                     </StackPanel>
                 </Border>
 
-                <Border
-                    Grid.Column="2"
-                    Padding="20"
-                    BorderBrush="Gray"
-                    BorderThickness="1"
-                    CornerRadius="8">
+                <Border Grid.Column="2" Padding="20" BorderBrush="Gray" BorderThickness="1" CornerRadius="8">
                     <StackPanel Spacing="8">
                         <TextBlock Text="使用中" FontSize="14" />
                         <TextBlock x:Name="UsingEquipmentCountText" FontSize="30" FontWeight="SemiBold" />
                     </StackPanel>
                 </Border>
 
-                <Border
-                    Grid.Column="3"
-                    Padding="20"
-                    BorderBrush="Gray"
-                    BorderThickness="1"
-                    CornerRadius="8">
+                <Border Grid.Column="3" Padding="20" BorderBrush="Gray" BorderThickness="1" CornerRadius="8">
                     <StackPanel Spacing="8">
                         <TextBlock Text="异常器材" FontSize="14" />
                         <TextBlock x:Name="AbnormalEquipmentCountText" FontSize="30" FontWeight="SemiBold" />
                     </StackPanel>
                 </Border>
             </Grid>
+
+            <Border Padding="20" BorderBrush="Gray" BorderThickness="1" CornerRadius="8">
+                <StackPanel Spacing="16">
+
+                    <TextBlock
+                        Text="新增器材"
+                        FontSize="22"
+                        FontWeight="SemiBold" />
+
+                    <Grid ColumnSpacing="16" RowSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <TextBox
+                            x:Name="EquipmentNameTextBox"
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Header="器材名称"
+                            PlaceholderText="例如：F407 主控板" />
+
+                        <TextBox
+                            x:Name="EquipmentCodeTextBox"
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Header="器材编号"
+                            PlaceholderText="例如：CTRL-F407-001" />
+
+                        <TextBox
+                            x:Name="EquipmentCategoryTextBox"
+                            Grid.Row="0"
+                            Grid.Column="2"
+                            Header="器材分类"
+                            PlaceholderText="例如：电控器材 / 开发设备" />
+
+                        <ComboBox
+                            x:Name="EquipmentStatusComboBox"
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Header="当前状态"
+                            SelectedIndex="0">
+                            <ComboBoxItem Content="可用" />
+                            <ComboBoxItem Content="使用中" />
+                            <ComboBoxItem Content="借出" />
+                            <ComboBoxItem Content="待检查" />
+                            <ComboBoxItem Content="损坏" />
+                            <ComboBoxItem Content="维修中" />
+                            <ComboBoxItem Content="报废" />
+                        </ComboBox>
+
+                        <TextBox
+                            x:Name="EquipmentLocationTextBox"
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Header="存放位置"
+                            PlaceholderText="例如：实验室器材箱" />
+
+                        <TextBox
+                            x:Name="EquipmentHolderTextBox"
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            Header="当前持有人 / 负责方向"
+                            PlaceholderText="例如：电控方向 / 底盘组" />
+
+                        <TextBox
+                            x:Name="EquipmentRelatedTaskTextBox"
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="3"
+                            Header="关联任务"
+                            PlaceholderText="例如：底盘控制系统调试"
+                            TextWrapping="Wrap" />
+
+                        <TextBox
+                            x:Name="EquipmentMaintenanceTextBox"
+                            Grid.Row="3"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="2"
+                            Header="维护记录"
+                            PlaceholderText="例如：暂无异常 / 需要检查线材连接状态"
+                            TextWrapping="Wrap"
+                            AcceptsReturn="True"
+                            MinHeight="80" />
+
+                        <StackPanel
+                            Grid.Row="3"
+                            Grid.Column="2"
+                            Orientation="Horizontal"
+                            Spacing="12"
+                            VerticalAlignment="Bottom">
+
+                            <Button
+                                Content="新增器材"
+                                Click="AddEquipmentButton_Click" />
+
+                            <Button
+                                Content="清空输入"
+                                Click="ClearEquipmentFormButton_Click" />
+                        </StackPanel>
+                    </Grid>
+
+                    <TextBlock
+                        x:Name="EquipmentFormMessageText"
+                        FontSize="14"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
 
             <StackPanel Spacing="12">
                 <TextBlock
@@ -93,7 +189,7 @@
                                 BorderThickness="1"
                                 CornerRadius="8">
 
-                                <StackPanel Spacing="6">
+                                <StackPanel Spacing="8">
                                     <TextBlock
                                         Text="{Binding Name}"
                                         FontSize="18"
@@ -108,25 +204,10 @@
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
 
-                                        <TextBlock
-                                            Grid.Column="0"
-                                            Text="{Binding Code}"
-                                            FontSize="14" />
-
-                                        <TextBlock
-                                            Grid.Column="1"
-                                            Text="{Binding Category}"
-                                            FontSize="14" />
-
-                                        <TextBlock
-                                            Grid.Column="2"
-                                            Text="{Binding Status}"
-                                            FontSize="14" />
-
-                                        <TextBlock
-                                            Grid.Column="3"
-                                            Text="{Binding Location}"
-                                            FontSize="14" />
+                                        <TextBlock Grid.Column="0" Text="{Binding Code}" FontSize="14" />
+                                        <TextBlock Grid.Column="1" Text="{Binding Category}" FontSize="14" />
+                                        <TextBlock Grid.Column="2" Text="{Binding Status}" FontSize="14" />
+                                        <TextBlock Grid.Column="3" Text="{Binding Location}" FontSize="14" />
                                     </Grid>
 
                                     <TextBlock
@@ -143,6 +224,28 @@
                                         Text="{Binding MaintenanceRecord}"
                                         FontSize="14"
                                         TextWrapping="Wrap" />
+
+                                    <StackPanel Orientation="Horizontal" Spacing="12">
+                                        <Button
+                                            Content="标记可用"
+                                            Tag="{Binding Id}"
+                                            Click="SetAvailableButton_Click" />
+
+                                        <Button
+                                            Content="标记待检查"
+                                            Tag="{Binding Id}"
+                                            Click="SetNeedCheckButton_Click" />
+
+                                        <Button
+                                            Content="标记使用中"
+                                            Tag="{Binding Id}"
+                                            Click="SetUsingButton_Click" />
+
+                                        <Button
+                                            Content="删除器材"
+                                            Tag="{Binding Id}"
+                                            Click="DeleteEquipmentButton_Click" />
+                                    </StackPanel>
                                 </StackPanel>
                             </Border>
                         </DataTemplate>
