@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ScrollViewer>
-        <StackPanel Margin="32" Spacing="20">
+        <StackPanel Margin="32" Spacing="24">
 
             <StackPanel Spacing="8">
                 <TextBlock
@@ -18,29 +18,153 @@
                     TextWrapping="Wrap" />
             </StackPanel>
 
+            <Grid ColumnSpacing="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Border
+                    Grid.Column="0"
+                    Padding="20"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="周报总数" FontSize="14" />
+                        <TextBlock x:Name="ReportCountText" FontSize="30" FontWeight="SemiBold" />
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Grid.Column="1"
+                    Padding="20"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="正常进度" FontSize="14" />
+                        <TextBlock x:Name="NormalProgressCountText" FontSize="30" FontWeight="SemiBold" />
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Grid.Column="2"
+                    Padding="20"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="AI 协作周报" FontSize="14" />
+                        <TextBlock x:Name="AiReportCountText" FontSize="30" FontWeight="SemiBold" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
             <StackPanel Spacing="12">
                 <TextBlock
-                    Text="周报结构"
+                    Text="周报列表"
                     FontSize="22"
                     FontWeight="SemiBold" />
 
-                <TextBlock Text="本周完成：记录已经完成的项目任务和阶段成果。" FontSize="16" />
-                <TextBlock Text="存在问题：记录任务延期、资源不足、技术阻塞等问题。" FontSize="16" />
-                <TextBlock Text="下周计划：明确下一阶段任务目标和负责人。" FontSize="16" />
-                <TextBlock Text="AI 协作：记录 AI 参与分析、总结和修正的过程。" FontSize="16" />
-                <TextBlock Text="负责人复盘：对团队运行状态进行总结和调整。" FontSize="16" />
-            </StackPanel>
+                <ListView
+                    x:Name="ReportsListView"
+                    SelectionMode="Single">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Border
+                                Padding="12"
+                                Margin="0,0,0,8"
+                                BorderBrush="Gray"
+                                BorderThickness="1"
+                                CornerRadius="8">
 
-            <StackPanel Spacing="8">
-                <TextBlock
-                    Text="示例周报"
-                    FontSize="22"
-                    FontWeight="SemiBold" />
+                                <StackPanel Spacing="8">
 
-                <TextBlock Text="周期：2026 年 6 月 27 日 - 2026 年 7 月 3 日" FontSize="16" />
-                <TextBlock Text="本周完成：确定系统主题框架，完成 WinUI 项目搭建。" FontSize="16" />
-                <TextBlock Text="存在问题：开发周期较短，需要控制功能范围。" FontSize="16" />
-                <TextBlock Text="下周计划：完成核心页面和基础数据结构设计。" FontSize="16" />
+                                    <TextBlock
+                                        Text="{Binding Title}"
+                                        FontSize="18"
+                                        FontWeight="SemiBold"
+                                        TextWrapping="Wrap" />
+
+                                    <Grid ColumnSpacing="16">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock
+                                            Grid.Column="0"
+                                            Text="{Binding StartDate}"
+                                            FontSize="14" />
+
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            Text="{Binding EndDate}"
+                                            FontSize="14" />
+
+                                        <TextBlock
+                                            Grid.Column="2"
+                                            Text="{Binding ProgressStatus}"
+                                            FontSize="14" />
+                                    </Grid>
+
+                                    <TextBlock
+                                        Text="本周完成"
+                                        FontSize="14"
+                                        FontWeight="SemiBold" />
+
+                                    <TextBlock
+                                        Text="{Binding CompletedWork}"
+                                        FontSize="14"
+                                        TextWrapping="Wrap" />
+
+                                    <TextBlock
+                                        Text="存在问题"
+                                        FontSize="14"
+                                        FontWeight="SemiBold" />
+
+                                    <TextBlock
+                                        Text="{Binding Problems}"
+                                        FontSize="14"
+                                        TextWrapping="Wrap" />
+
+                                    <TextBlock
+                                        Text="下周计划"
+                                        FontSize="14"
+                                        FontWeight="SemiBold" />
+
+                                    <TextBlock
+                                        Text="{Binding NextPlan}"
+                                        FontSize="14"
+                                        TextWrapping="Wrap" />
+
+                                    <TextBlock
+                                        Text="AI 协作总结"
+                                        FontSize="14"
+                                        FontWeight="SemiBold" />
+
+                                    <TextBlock
+                                        Text="{Binding AiCollaborationSummary}"
+                                        FontSize="14"
+                                        TextWrapping="Wrap" />
+
+                                    <TextBlock
+                                        Text="负责人复盘"
+                                        FontSize="14"
+                                        FontWeight="SemiBold" />
+
+                                    <TextBlock
+                                        Text="{Binding ManagerReview}"
+                                        FontSize="14"
+                                        TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </StackPanel>
 
         </StackPanel>

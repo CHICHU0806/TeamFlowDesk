@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ScrollViewer>
-        <StackPanel Margin="32" Spacing="20">
+        <StackPanel Margin="32" Spacing="24">
 
             <StackPanel Spacing="8">
                 <TextBlock
@@ -18,28 +18,116 @@
                     TextWrapping="Wrap" />
             </StackPanel>
 
+            <Grid ColumnSpacing="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Border
+                    Grid.Column="0"
+                    Padding="20"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="项目总数" FontSize="14" />
+                        <TextBlock x:Name="ProjectCountText" FontSize="30" FontWeight="SemiBold" />
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Grid.Column="1"
+                    Padding="20"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="进行中项目" FontSize="14" />
+                        <TextBlock x:Name="ActiveProjectCountText" FontSize="30" FontWeight="SemiBold" />
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Grid.Column="2"
+                    Padding="20"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="风险项目" FontSize="14" />
+                        <TextBlock x:Name="RiskProjectCountText" FontSize="30" FontWeight="SemiBold" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
             <StackPanel Spacing="12">
                 <TextBlock
-                    Text="核心功能"
+                    Text="项目列表"
                     FontSize="22"
                     FontWeight="SemiBold" />
 
-                <TextBlock Text="1. 创建和维护项目基本信息。" FontSize="16" />
-                <TextBlock Text="2. 记录项目目标、周期、负责人和当前阶段。" FontSize="16" />
-                <TextBlock Text="3. 将项目与任务、成员、器材和文档记录关联。" FontSize="16" />
-                <TextBlock Text="4. 汇总项目风险和阶段性成果。" FontSize="16" />
-            </StackPanel>
+                <ListView
+                    x:Name="ProjectsListView"
+                    SelectionMode="Single">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Border
+                                Padding="12"
+                                Margin="0,0,0,8"
+                                BorderBrush="Gray"
+                                BorderThickness="1"
+                                CornerRadius="8">
 
-            <StackPanel Spacing="8">
-                <TextBlock
-                    Text="示例项目"
-                    FontSize="22"
-                    FontWeight="SemiBold" />
+                                <StackPanel Spacing="6">
+                                    <TextBlock
+                                        Text="{Binding Name}"
+                                        FontSize="18"
+                                        FontWeight="SemiBold"
+                                        TextWrapping="Wrap" />
 
-                <TextBlock Text="项目名称：RoboMaster 队伍运行管理系统" FontSize="16" />
-                <TextBlock Text="项目状态：进行中" FontSize="16" />
-                <TextBlock Text="项目负责人：杨扬文琦" FontSize="16" />
-                <TextBlock Text="当前阶段：核心功能开发" FontSize="16" />
+                                    <TextBlock
+                                        Text="{Binding Description}"
+                                        FontSize="14"
+                                        TextWrapping="Wrap" />
+
+                                    <Grid ColumnSpacing="16">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock
+                                            Grid.Column="0"
+                                            Text="{Binding OwnerName}"
+                                            FontSize="14" />
+
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            Text="{Binding CurrentStage}"
+                                            FontSize="14" />
+
+                                        <TextBlock
+                                            Grid.Column="2"
+                                            Text="{Binding RiskLevel}"
+                                            FontSize="14" />
+                                    </Grid>
+
+                                    <ProgressBar
+                                        Minimum="0"
+                                        Maximum="100"
+                                        Value="{Binding ProgressPercent}" />
+
+                                    <TextBlock
+                                        Text="{Binding ProgressPercent}"
+                                        FontSize="14" />
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </StackPanel>
 
         </StackPanel>

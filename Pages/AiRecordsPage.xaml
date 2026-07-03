@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ScrollViewer>
-        <StackPanel Margin="32" Spacing="20">
+        <StackPanel Margin="32" Spacing="24">
 
             <StackPanel Spacing="8">
                 <TextBlock
@@ -18,38 +18,152 @@
                     TextWrapping="Wrap" />
             </StackPanel>
 
+            <Grid ColumnSpacing="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Border
+                    Grid.Column="0"
+                    Padding="20"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="记录总数" FontSize="14" />
+                        <TextBlock x:Name="RecordCountText" FontSize="30" FontWeight="SemiBold" />
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Grid.Column="1"
+                    Padding="20"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="采纳记录" FontSize="14" />
+                        <TextBlock x:Name="AcceptedCountText" FontSize="30" FontWeight="SemiBold" />
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Grid.Column="2"
+                    Padding="20"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="部分采纳" FontSize="14" />
+                        <TextBlock x:Name="PartAcceptedCountText" FontSize="30" FontWeight="SemiBold" />
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Grid.Column="3"
+                    Padding="20"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="涉及模块" FontSize="14" />
+                        <TextBlock x:Name="ModuleCountText" FontSize="30" FontWeight="SemiBold" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
             <StackPanel Spacing="12">
                 <TextBlock
-                    Text="记录内容"
+                    Text="AI 协作过程"
                     FontSize="22"
                     FontWeight="SemiBold" />
 
-                <TextBlock Text="问题描述：负责人向 AI 提出的管理或技术问题。" FontSize="16" />
-                <TextBlock Text="AI 建议：AI 给出的初步分析、方案或总结。" FontSize="16" />
-                <TextBlock Text="人工判断：负责人对 AI 内容的判断、筛选和质疑。" FontSize="16" />
-                <TextBlock Text="修正结果：最终采用、部分采用或不采用的原因。" FontSize="16" />
-            </StackPanel>
+                <ListView
+                    x:Name="AiRecordsListView"
+                    SelectionMode="Single">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Border
+                                Padding="12"
+                                Margin="0,0,0,8"
+                                BorderBrush="Gray"
+                                BorderThickness="1"
+                                CornerRadius="8">
 
-            <StackPanel Spacing="8">
-                <TextBlock
-                    Text="示例记录"
-                    FontSize="22"
-                    FontWeight="SemiBold" />
+                                <StackPanel Spacing="8">
 
-                <TextBlock
-                    Text="问题：两周开发周期内如何压缩系统功能范围？"
-                    FontSize="16"
-                    TextWrapping="Wrap" />
+                                    <Grid ColumnSpacing="16">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
 
-                <TextBlock
-                    Text="AI 建议：优先完成管理驾驶舱、任务管理、人员管理、器材管理和 AI 协作记录。"
-                    FontSize="16"
-                    TextWrapping="Wrap" />
+                                        <TextBlock
+                                            Grid.Column="0"
+                                            Text="{Binding RelatedModule}"
+                                            FontSize="18"
+                                            FontWeight="SemiBold"
+                                            TextWrapping="Wrap" />
 
-                <TextBlock
-                    Text="人工修正：暂缓复杂多人协作与云同步功能，先完成单机 MVP。"
-                    FontSize="16"
-                    TextWrapping="Wrap" />
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            Text="{Binding AdoptionStatus}"
+                                            FontSize="14" />
+
+                                        <TextBlock
+                                            Grid.Column="2"
+                                            Text="{Binding CreatedAt}"
+                                            FontSize="14" />
+                                    </Grid>
+
+                                    <TextBlock
+                                        Text="问题描述"
+                                        FontSize="14"
+                                        FontWeight="SemiBold" />
+
+                                    <TextBlock
+                                        Text="{Binding Question}"
+                                        FontSize="14"
+                                        TextWrapping="Wrap" />
+
+                                    <TextBlock
+                                        Text="AI 建议"
+                                        FontSize="14"
+                                        FontWeight="SemiBold" />
+
+                                    <TextBlock
+                                        Text="{Binding AiSuggestion}"
+                                        FontSize="14"
+                                        TextWrapping="Wrap" />
+
+                                    <TextBlock
+                                        Text="人工判断"
+                                        FontSize="14"
+                                        FontWeight="SemiBold" />
+
+                                    <TextBlock
+                                        Text="{Binding HumanJudgement}"
+                                        FontSize="14"
+                                        TextWrapping="Wrap" />
+
+                                    <TextBlock
+                                        Text="最终决策"
+                                        FontSize="14"
+                                        FontWeight="SemiBold" />
+
+                                    <TextBlock
+                                        Text="{Binding FinalDecision}"
+                                        FontSize="14"
+                                        TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </StackPanel>
 
         </StackPanel>

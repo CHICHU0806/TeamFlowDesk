@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ScrollViewer>
-        <StackPanel Margin="32" Spacing="20">
+        <StackPanel Margin="32" Spacing="24">
 
             <StackPanel Spacing="8">
                 <TextBlock
@@ -13,44 +13,242 @@
                     FontWeight="SemiBold" />
 
                 <TextBlock
-                    Text="面向团队负责人的内部私有化工作流管理平台，用于汇总项目进度、任务风险、人员负载、器材状态和 AI 协作过程。"
+                    Text="面向团队负责人的内部私有化工作流管理平台，用于汇总项目进度、任务风险、成员负载、器材状态和 AI 协作过程。"
                     FontSize="16"
                     TextWrapping="Wrap" />
             </StackPanel>
 
+            <Grid ColumnSpacing="16" RowSpacing="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Border
+                    Grid.Column="0"
+                    Padding="20"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="项目总数" FontSize="14" />
+                        <TextBlock x:Name="ProjectCountText" FontSize="30" FontWeight="SemiBold" />
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Grid.Column="1"
+                    Padding="20"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="任务总数" FontSize="14" />
+                        <TextBlock x:Name="TaskCountText" FontSize="30" FontWeight="SemiBold" />
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Grid.Column="2"
+                    Padding="20"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="高风险任务" FontSize="14" />
+                        <TextBlock x:Name="RiskTaskCountText" FontSize="30" FontWeight="SemiBold" />
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Grid.Column="3"
+                    Padding="20"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="AI 协作记录" FontSize="14" />
+                        <TextBlock x:Name="AiRecordCountText" FontSize="30" FontWeight="SemiBold" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <Grid ColumnSpacing="20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Spacing="12">
+                    <TextBlock
+                        Text="项目概览"
+                        FontSize="22"
+                        FontWeight="SemiBold" />
+
+                    <ListView
+                        x:Name="ProjectsListView"
+                        SelectionMode="None"
+                        MaxHeight="300">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Padding="8" Spacing="4">
+                                    <TextBlock
+                                        Text="{Binding Name}"
+                                        FontSize="16"
+                                        FontWeight="SemiBold"
+                                        TextWrapping="Wrap" />
+
+                                    <TextBlock
+                                        Text="{Binding CurrentStage}"
+                                        FontSize="14"
+                                        TextWrapping="Wrap" />
+
+                                    <TextBlock
+                                        Text="{Binding RiskLevel}"
+                                        FontSize="14" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Spacing="12">
+                    <TextBlock
+                        Text="近期任务"
+                        FontSize="22"
+                        FontWeight="SemiBold" />
+
+                    <ListView
+                        x:Name="TasksListView"
+                        SelectionMode="None"
+                        MaxHeight="300">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Padding="8" Spacing="4">
+                                    <TextBlock
+                                        Text="{Binding Title}"
+                                        FontSize="16"
+                                        FontWeight="SemiBold"
+                                        TextWrapping="Wrap" />
+
+                                    <TextBlock
+                                        Text="{Binding OwnerName}"
+                                        FontSize="14" />
+
+                                    <TextBlock
+                                        Text="{Binding Status}"
+                                        FontSize="14" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </StackPanel>
+            </Grid>
+
+            <Grid ColumnSpacing="20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Spacing="12">
+                    <TextBlock
+                        Text="成员负载"
+                        FontSize="22"
+                        FontWeight="SemiBold" />
+
+                    <ListView
+                        x:Name="MembersListView"
+                        SelectionMode="None"
+                        MaxHeight="260">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Padding="8" Spacing="4">
+                                    <TextBlock
+                                        Text="{Binding Name}"
+                                        FontSize="16"
+                                        FontWeight="SemiBold" />
+
+                                    <TextBlock
+                                        Text="{Binding Direction}"
+                                        FontSize="14"
+                                        TextWrapping="Wrap" />
+
+                                    <TextBlock
+                                        Text="{Binding WorkloadStatus}"
+                                        FontSize="14" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Spacing="12">
+                    <TextBlock
+                        Text="器材状态"
+                        FontSize="22"
+                        FontWeight="SemiBold" />
+
+                    <ListView
+                        x:Name="EquipmentListView"
+                        SelectionMode="None"
+                        MaxHeight="260">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Padding="8" Spacing="4">
+                                    <TextBlock
+                                        Text="{Binding Name}"
+                                        FontSize="16"
+                                        FontWeight="SemiBold" />
+
+                                    <TextBlock
+                                        Text="{Binding Status}"
+                                        FontSize="14" />
+
+                                    <TextBlock
+                                        Text="{Binding RelatedTask}"
+                                        FontSize="14"
+                                        TextWrapping="Wrap" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </StackPanel>
+            </Grid>
+
             <StackPanel Spacing="12">
                 <TextBlock
-                    Text="当前概览"
+                    Text="AI 管理提醒"
                     FontSize="22"
                     FontWeight="SemiBold" />
 
-                <TextBlock Text="进行中项目：3 个" FontSize="16" />
-                <TextBlock Text="待处理任务：12 项" FontSize="16" />
-                <TextBlock Text="延期或高风险任务：2 项" FontSize="16" />
-                <TextBlock Text="器材异常记录：1 条" FontSize="16" />
-                <TextBlock Text="本周 AI 协作记录：5 条" FontSize="16" />
-            </StackPanel>
+                <ListView
+                    x:Name="AiRecordsListView"
+                    SelectionMode="None"
+                    MaxHeight="260">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Padding="8" Spacing="4">
+                                <TextBlock
+                                    Text="{Binding RelatedModule}"
+                                    FontSize="16"
+                                    FontWeight="SemiBold" />
 
-            <StackPanel Spacing="12">
-                <TextBlock
-                    Text="管理提醒"
-                    FontSize="22"
-                    FontWeight="SemiBold" />
+                                <TextBlock
+                                    Text="{Binding Question}"
+                                    FontSize="14"
+                                    TextWrapping="Wrap" />
 
-                <TextBlock
-                    Text="1. 电控方向任务数量较多，建议检查成员负载是否过高。"
-                    FontSize="16"
-                    TextWrapping="Wrap" />
-
-                <TextBlock
-                    Text="2. 器材台账中存在未归还设备，建议在下一次调试前确认状态。"
-                    FontSize="16"
-                    TextWrapping="Wrap" />
-
-                <TextBlock
-                    Text="3. 本周周报需要补充 AI 协作过程和人工修正记录。"
-                    FontSize="16"
-                    TextWrapping="Wrap" />
+                                <TextBlock
+                                    Text="{Binding FinalDecision}"
+                                    FontSize="14"
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </StackPanel>
 
         </StackPanel>

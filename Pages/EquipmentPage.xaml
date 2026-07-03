@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ScrollViewer>
-        <StackPanel Margin="32" Spacing="20">
+        <StackPanel Margin="32" Spacing="24">
 
             <StackPanel Spacing="8">
                 <TextBlock
@@ -18,28 +18,136 @@
                     TextWrapping="Wrap" />
             </StackPanel>
 
+            <Grid ColumnSpacing="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Border
+                    Grid.Column="0"
+                    Padding="20"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="器材总数" FontSize="14" />
+                        <TextBlock x:Name="EquipmentCountText" FontSize="30" FontWeight="SemiBold" />
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Grid.Column="1"
+                    Padding="20"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="可用器材" FontSize="14" />
+                        <TextBlock x:Name="AvailableEquipmentCountText" FontSize="30" FontWeight="SemiBold" />
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Grid.Column="2"
+                    Padding="20"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="使用中" FontSize="14" />
+                        <TextBlock x:Name="UsingEquipmentCountText" FontSize="30" FontWeight="SemiBold" />
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Grid.Column="3"
+                    Padding="20"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="异常器材" FontSize="14" />
+                        <TextBlock x:Name="AbnormalEquipmentCountText" FontSize="30" FontWeight="SemiBold" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
             <StackPanel Spacing="12">
                 <TextBlock
-                    Text="器材信息"
+                    Text="器材台账"
                     FontSize="22"
                     FontWeight="SemiBold" />
 
-                <TextBlock Text="器材名称：用于标识具体设备或物资。" FontSize="16" />
-                <TextBlock Text="器材编号：用于区分同类设备。" FontSize="16" />
-                <TextBlock Text="当前状态：可用、借出、损坏、维修中、报废。" FontSize="16" />
-                <TextBlock Text="关联任务：记录器材当前服务于哪个项目或任务。" FontSize="16" />
-            </StackPanel>
+                <ListView
+                    x:Name="EquipmentListView"
+                    SelectionMode="Single">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Border
+                                Padding="12"
+                                Margin="0,0,0,8"
+                                BorderBrush="Gray"
+                                BorderThickness="1"
+                                CornerRadius="8">
 
-            <StackPanel Spacing="8">
-                <TextBlock
-                    Text="示例器材"
-                    FontSize="22"
-                    FontWeight="SemiBold" />
+                                <StackPanel Spacing="6">
+                                    <TextBlock
+                                        Text="{Binding Name}"
+                                        FontSize="18"
+                                        FontWeight="SemiBold"
+                                        TextWrapping="Wrap" />
 
-                <TextBlock Text="器材名称：F407 主控板" FontSize="16" />
-                <TextBlock Text="状态：可用" FontSize="16" />
-                <TextBlock Text="负责人：电控方向" FontSize="16" />
-                <TextBlock Text="关联任务：底盘控制系统调试" FontSize="16" />
+                                    <Grid ColumnSpacing="16">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock
+                                            Grid.Column="0"
+                                            Text="{Binding Code}"
+                                            FontSize="14" />
+
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            Text="{Binding Category}"
+                                            FontSize="14" />
+
+                                        <TextBlock
+                                            Grid.Column="2"
+                                            Text="{Binding Status}"
+                                            FontSize="14" />
+
+                                        <TextBlock
+                                            Grid.Column="3"
+                                            Text="{Binding Location}"
+                                            FontSize="14" />
+                                    </Grid>
+
+                                    <TextBlock
+                                        Text="{Binding CurrentHolder}"
+                                        FontSize="14"
+                                        TextWrapping="Wrap" />
+
+                                    <TextBlock
+                                        Text="{Binding RelatedTask}"
+                                        FontSize="14"
+                                        TextWrapping="Wrap" />
+
+                                    <TextBlock
+                                        Text="{Binding MaintenanceRecord}"
+                                        FontSize="14"
+                                        TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </StackPanel>
 
         </StackPanel>

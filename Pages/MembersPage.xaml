@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ScrollViewer>
-        <StackPanel Margin="32" Spacing="20">
+        <StackPanel Margin="32" Spacing="24">
 
             <StackPanel Spacing="8">
                 <TextBlock
@@ -18,28 +18,135 @@
                     TextWrapping="Wrap" />
             </StackPanel>
 
+            <Grid ColumnSpacing="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Border
+                    Grid.Column="0"
+                    Padding="20"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="成员总数" FontSize="14" />
+                        <TextBlock x:Name="MemberCountText" FontSize="30" FontWeight="SemiBold" />
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Grid.Column="1"
+                    Padding="20"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="正常负载" FontSize="14" />
+                        <TextBlock x:Name="NormalWorkloadCountText" FontSize="30" FontWeight="SemiBold" />
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Grid.Column="2"
+                    Padding="20"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="可独立完成" FontSize="14" />
+                        <TextBlock x:Name="IndependentCountText" FontSize="30" FontWeight="SemiBold" />
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Grid.Column="3"
+                    Padding="20"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="任务负载总数" FontSize="14" />
+                        <TextBlock x:Name="TotalTaskLoadText" FontSize="30" FontWeight="SemiBold" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
             <StackPanel Spacing="12">
                 <TextBlock
-                    Text="成员画像"
+                    Text="成员能力矩阵"
                     FontSize="22"
                     FontWeight="SemiBold" />
 
-                <TextBlock Text="基础信息：姓名、年级、方向、联系方式。" FontSize="16" />
-                <TextBlock Text="能力标签：C#、C++、STM32、机械设计、视觉算法、文档写作等。" FontSize="16" />
-                <TextBlock Text="能力等级：入门、熟悉、可独立完成、可带人。" FontSize="16" />
-                <TextBlock Text="任务负载：当前负责的任务数量与风险任务数量。" FontSize="16" />
-            </StackPanel>
+                <ListView
+                    x:Name="MembersListView"
+                    SelectionMode="Single">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Border
+                                Padding="12"
+                                Margin="0,0,0,8"
+                                BorderBrush="Gray"
+                                BorderThickness="1"
+                                CornerRadius="8">
 
-            <StackPanel Spacing="8">
-                <TextBlock
-                    Text="示例成员"
-                    FontSize="22"
-                    FontWeight="SemiBold" />
+                                <StackPanel Spacing="6">
+                                    <TextBlock
+                                        Text="{Binding Name}"
+                                        FontSize="18"
+                                        FontWeight="SemiBold" />
 
-                <TextBlock Text="姓名：杨扬文琦" FontSize="16" />
-                <TextBlock Text="方向：项目管理 / AI 应用 / 桌面开发" FontSize="16" />
-                <TextBlock Text="当前任务：系统框架搭建、项目文档整理" FontSize="16" />
-                <TextBlock Text="负载状态：正常" FontSize="16" />
+                                    <TextBlock
+                                        Text="{Binding Direction}"
+                                        FontSize="14"
+                                        TextWrapping="Wrap" />
+
+                                    <Grid ColumnSpacing="16">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock
+                                            Grid.Column="0"
+                                            Text="{Binding Grade}"
+                                            FontSize="14" />
+
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            Text="{Binding Role}"
+                                            FontSize="14" />
+
+                                        <TextBlock
+                                            Grid.Column="2"
+                                            Text="{Binding AbilityLevel}"
+                                            FontSize="14" />
+
+                                        <TextBlock
+                                            Grid.Column="3"
+                                            Text="{Binding WorkloadStatus}"
+                                            FontSize="14" />
+                                    </Grid>
+
+                                    <TextBlock
+                                        Text="{Binding SkillTags}"
+                                        FontSize="14"
+                                        TextWrapping="Wrap" />
+
+                                    <TextBlock
+                                        Text="{Binding GrowthPlan}"
+                                        FontSize="14"
+                                        TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </StackPanel>
 
         </StackPanel>

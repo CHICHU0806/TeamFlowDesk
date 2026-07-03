@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ScrollViewer>
-        <StackPanel Margin="32" Spacing="20">
+        <StackPanel Margin="32" Spacing="24">
 
             <StackPanel Spacing="8">
                 <TextBlock
@@ -18,29 +18,131 @@
                     TextWrapping="Wrap" />
             </StackPanel>
 
+            <Grid ColumnSpacing="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Border
+                    Grid.Column="0"
+                    Padding="20"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="任务总数" FontSize="14" />
+                        <TextBlock x:Name="TaskCountText" FontSize="30" FontWeight="SemiBold" />
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Grid.Column="1"
+                    Padding="20"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="已完成" FontSize="14" />
+                        <TextBlock x:Name="CompletedTaskCountText" FontSize="30" FontWeight="SemiBold" />
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Grid.Column="2"
+                    Padding="20"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="进行中" FontSize="14" />
+                        <TextBlock x:Name="DoingTaskCountText" FontSize="30" FontWeight="SemiBold" />
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Grid.Column="3"
+                    Padding="20"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="高风险" FontSize="14" />
+                        <TextBlock x:Name="RiskTaskCountText" FontSize="30" FontWeight="SemiBold" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
             <StackPanel Spacing="12">
                 <TextBlock
-                    Text="任务状态"
+                    Text="任务列表"
                     FontSize="22"
                     FontWeight="SemiBold" />
 
-                <TextBlock Text="待处理：尚未开始的任务。" FontSize="16" />
-                <TextBlock Text="进行中：已经分配并正在推进的任务。" FontSize="16" />
-                <TextBlock Text="待验收：任务已完成，等待负责人确认。" FontSize="16" />
-                <TextBlock Text="已完成：任务验收通过并归档。" FontSize="16" />
-                <TextBlock Text="高风险：存在延期、资源不足或技术阻塞的问题。" FontSize="16" />
-            </StackPanel>
+                <ListView
+                    x:Name="TasksListView"
+                    SelectionMode="Single">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Border
+                                Padding="12"
+                                Margin="0,0,0,8"
+                                BorderBrush="Gray"
+                                BorderThickness="1"
+                                CornerRadius="8">
 
-            <StackPanel Spacing="8">
-                <TextBlock
-                    Text="示例任务"
-                    FontSize="22"
-                    FontWeight="SemiBold" />
+                                <StackPanel Spacing="6">
+                                    <TextBlock
+                                        Text="{Binding Title}"
+                                        FontSize="18"
+                                        FontWeight="SemiBold"
+                                        TextWrapping="Wrap" />
 
-                <TextBlock Text="任务名称：完成管理驾驶舱页面原型" FontSize="16" />
-                <TextBlock Text="负责人：杨扬文琦" FontSize="16" />
-                <TextBlock Text="截止时间：2026 年 7 月 5 日" FontSize="16" />
-                <TextBlock Text="当前状态：进行中" FontSize="16" />
+                                    <TextBlock
+                                        Text="{Binding Description}"
+                                        FontSize="14"
+                                        TextWrapping="Wrap" />
+
+                                    <Grid ColumnSpacing="16">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock
+                                            Grid.Column="0"
+                                            Text="{Binding OwnerName}"
+                                            FontSize="14" />
+
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            Text="{Binding Status}"
+                                            FontSize="14" />
+
+                                        <TextBlock
+                                            Grid.Column="2"
+                                            Text="{Binding Priority}"
+                                            FontSize="14" />
+
+                                        <TextBlock
+                                            Grid.Column="3"
+                                            Text="{Binding RiskLevel}"
+                                            FontSize="14" />
+                                    </Grid>
+
+                                    <TextBlock
+                                        Text="{Binding OutputRequirement}"
+                                        FontSize="14"
+                                        TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </StackPanel>
 
         </StackPanel>
