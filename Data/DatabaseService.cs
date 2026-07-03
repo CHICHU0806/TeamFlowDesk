@@ -29,25 +29,53 @@ public static class DatabaseService
         using var connection = new SqliteConnection(ConnectionString);
         connection.Open();
 
+        CreateTasksTable(connection);
+        CreateEquipmentTable(connection);
+    }
+
+    private static void CreateTasksTable(SqliteConnection connection)
+    {
         var command = connection.CreateCommand();
 
         command.CommandText =
-            """
-            CREATE TABLE IF NOT EXISTS Tasks (
-                Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                ProjectId INTEGER NOT NULL,
-                Title TEXT NOT NULL,
-                Description TEXT NOT NULL,
-                OwnerName TEXT NOT NULL,
-                Collaborators TEXT NOT NULL,
-                Status TEXT NOT NULL,
-                Priority TEXT NOT NULL,
-                RiskLevel TEXT NOT NULL,
-                Deadline TEXT NOT NULL,
-                RelatedEquipment TEXT NOT NULL,
-                OutputRequirement TEXT NOT NULL
-            );
-            """;
+        """
+        CREATE TABLE IF NOT EXISTS Tasks (
+            Id INTEGER PRIMARY KEY AUTOINCREMENT,
+            ProjectId INTEGER NOT NULL,
+            Title TEXT NOT NULL,
+            Description TEXT NOT NULL,
+            OwnerName TEXT NOT NULL,
+            Collaborators TEXT NOT NULL,
+            Status TEXT NOT NULL,
+            Priority TEXT NOT NULL,
+            RiskLevel TEXT NOT NULL,
+            Deadline TEXT NOT NULL,
+            RelatedEquipment TEXT NOT NULL,
+            OutputRequirement TEXT NOT NULL
+        );
+        """;
+
+        command.ExecuteNonQuery();
+    }
+
+    private static void CreateEquipmentTable(SqliteConnection connection)
+    {
+        var command = connection.CreateCommand();
+
+        command.CommandText =
+        """
+        CREATE TABLE IF NOT EXISTS Equipment (
+            Id INTEGER PRIMARY KEY AUTOINCREMENT,
+            Name TEXT NOT NULL,
+            Code TEXT NOT NULL,
+            Category TEXT NOT NULL,
+            Status TEXT NOT NULL,
+            Location TEXT NOT NULL,
+            CurrentHolder TEXT NOT NULL,
+            RelatedTask TEXT NOT NULL,
+            MaintenanceRecord TEXT NOT NULL
+        );
+        """;
 
         command.ExecuteNonQuery();
     }
