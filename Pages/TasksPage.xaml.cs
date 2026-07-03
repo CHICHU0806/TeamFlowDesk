@@ -1,8 +1,10 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using TeamFlowDesk.Data;
 using TeamFlowDesk.Models;
-using TeamFlowDesk.Services;
 
 namespace TeamFlowDesk.Pages;
 
@@ -14,15 +16,16 @@ public sealed partial class TasksPage : Page
     {
         InitializeComponent();
 
-        _tasks = new ObservableCollection<TaskItem>(MockDataService.GetTasks());
-        TasksListView.ItemsSource = _tasks;
+        TaskRepository.SeedIfEmpty();
+        _tasks = new ObservableCollection<TaskItem>(TaskRepository.GetAll());
 
+        TasksListView.ItemsSource = _tasks;
         TaskDeadlineDatePicker.Date = DateTimeOffset.Now.AddDays(3);
 
         RefreshStatistics();
     }
 
-    private void AddTaskButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    private void AddTaskButton_Click(object sender, RoutedEventArgs e)
     {
         var title = TaskTitleTextBox.Text.Trim();
         var ownerName = TaskOwnerTextBox.Text.Trim();
@@ -41,7 +44,6 @@ public sealed partial class TasksPage : Page
 
         var newTask = new TaskItem
         {
-            Id = _tasks.Count == 0 ? 1 : _tasks.Max(task => task.Id) + 1,
             ProjectId = 1,
             Title = title,
             Description = TaskDescriptionTextBox.Text.Trim(),
@@ -55,7 +57,8 @@ public sealed partial class TasksPage : Page
             OutputRequirement = TaskOutputTextBox.Text.Trim()
         };
 
-        _tasks.Add(newTask);
+        newTask.Id = TaskRepository.Add(newTask);
+        _tasks.Insert(0, newTask);
 
         RefreshStatistics();
         ClearTaskForm();
@@ -63,13 +66,13 @@ public sealed partial class TasksPage : Page
         TaskFormMessageText.Text = $"已新增任务：{newTask.Title}";
     }
 
-    private void ClearTaskFormButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    private void ClearTaskFormButton_Click(object sender, RoutedEventArgs e)
     {
         ClearTaskForm();
         TaskFormMessageText.Text = "输入内容已清空。";
     }
 
-    private void CompleteTaskButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    private void CompleteTaskButton_Click(object sender, RoutedEventArgs e)
     {
         if (sender is not Button button || button.Tag is null)
         {
@@ -91,6 +94,8 @@ public sealed partial class TasksPage : Page
         task.Status = "已完成";
         task.RiskLevel = "正常";
 
+        TaskRepository.Update(task);
+
         TasksListView.ItemsSource = null;
         TasksListView.ItemsSource = _tasks;
 
@@ -99,7 +104,7 @@ public sealed partial class TasksPage : Page
         TaskFormMessageText.Text = $"任务已标记完成：{task.Title}";
     }
 
-    private void DeleteTaskButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    private void DeleteTaskButton_Click(object sender, RoutedEventArgs e)
     {
         if (sender is not Button button || button.Tag is null)
         {
@@ -118,6 +123,7 @@ public sealed partial class TasksPage : Page
             return;
         }
 
+        TaskRepository.Delete(task.Id);
         _tasks.Remove(task);
 
         RefreshStatistics();
@@ -128,12 +134,21 @@ public sealed partial class TasksPage : Page
     private void RefreshStatistics()
     {
         TaskCountText.Text = _tasks.Count.ToString();
-        CompletedTaskCountText.Text = _tasks.Count(task => task.Status == "已完成").ToString();
-        DoingTaskCountText.Text = _tasks.Count(task => task.Status == "进行中").ToString();
-        RiskTaskCountText.Text = _tasks.Count(task =>
-            task.RiskLevel == "高风险" ||
-            task.Status == "延期" ||
-            task.Status == "滞后").ToString();
+
+        CompletedTaskCountText.Text = _tasks
+            .Count(task => task.Status == "已完成")
+            .ToString();
+
+        DoingTaskCountText.Text = _tasks
+            .Count(task => task.Status == "进行中")
+            .ToString();
+
+        RiskTaskCountText.Text = _tasks
+            .Count(task =>
+                task.RiskLevel == "高风险" ||
+                task.Status == "延期" ||
+                task.Status == "滞后")
+            .ToString();
     }
 
     private void ClearTaskForm()
