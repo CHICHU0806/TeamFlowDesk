@@ -31,6 +31,7 @@ public static class DatabaseService
 
         CreateTasksTable(connection);
         CreateEquipmentTable(connection);
+        CreateMembersTable(connection);
     }
 
     private static void CreateTasksTable(SqliteConnection connection)
@@ -74,6 +75,29 @@ public static class DatabaseService
             CurrentHolder TEXT NOT NULL,
             RelatedTask TEXT NOT NULL,
             MaintenanceRecord TEXT NOT NULL
+        );
+        """;
+
+        command.ExecuteNonQuery();
+    }
+
+    private static void CreateMembersTable(SqliteConnection connection)
+    {
+        var command = connection.CreateCommand();
+
+        command.CommandText =
+        """
+        CREATE TABLE IF NOT EXISTS Members (
+            Id INTEGER PRIMARY KEY AUTOINCREMENT,
+            Name TEXT NOT NULL,
+            Grade TEXT NOT NULL,
+            Direction TEXT NOT NULL,
+            Role TEXT NOT NULL,
+            SkillTags TEXT NOT NULL,
+            AbilityLevel TEXT NOT NULL,
+            CurrentTaskCount INTEGER NOT NULL,
+            WorkloadStatus TEXT NOT NULL,
+            GrowthPlan TEXT NOT NULL
         );
         """;
 
