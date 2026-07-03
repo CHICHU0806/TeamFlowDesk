@@ -26,54 +26,160 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <Border
-                    Grid.Column="0"
-                    Padding="20"
-                    BorderBrush="Gray"
-                    BorderThickness="1"
-                    CornerRadius="8">
+                <Border Grid.Column="0" Padding="20" BorderBrush="Gray" BorderThickness="1" CornerRadius="8">
                     <StackPanel Spacing="8">
                         <TextBlock Text="任务总数" FontSize="14" />
                         <TextBlock x:Name="TaskCountText" FontSize="30" FontWeight="SemiBold" />
                     </StackPanel>
                 </Border>
 
-                <Border
-                    Grid.Column="1"
-                    Padding="20"
-                    BorderBrush="Gray"
-                    BorderThickness="1"
-                    CornerRadius="8">
+                <Border Grid.Column="1" Padding="20" BorderBrush="Gray" BorderThickness="1" CornerRadius="8">
                     <StackPanel Spacing="8">
                         <TextBlock Text="已完成" FontSize="14" />
                         <TextBlock x:Name="CompletedTaskCountText" FontSize="30" FontWeight="SemiBold" />
                     </StackPanel>
                 </Border>
 
-                <Border
-                    Grid.Column="2"
-                    Padding="20"
-                    BorderBrush="Gray"
-                    BorderThickness="1"
-                    CornerRadius="8">
+                <Border Grid.Column="2" Padding="20" BorderBrush="Gray" BorderThickness="1" CornerRadius="8">
                     <StackPanel Spacing="8">
                         <TextBlock Text="进行中" FontSize="14" />
                         <TextBlock x:Name="DoingTaskCountText" FontSize="30" FontWeight="SemiBold" />
                     </StackPanel>
                 </Border>
 
-                <Border
-                    Grid.Column="3"
-                    Padding="20"
-                    BorderBrush="Gray"
-                    BorderThickness="1"
-                    CornerRadius="8">
+                <Border Grid.Column="3" Padding="20" BorderBrush="Gray" BorderThickness="1" CornerRadius="8">
                     <StackPanel Spacing="8">
                         <TextBlock Text="高风险" FontSize="14" />
                         <TextBlock x:Name="RiskTaskCountText" FontSize="30" FontWeight="SemiBold" />
                     </StackPanel>
                 </Border>
             </Grid>
+
+            <Border Padding="20" BorderBrush="Gray" BorderThickness="1" CornerRadius="8">
+                <StackPanel Spacing="16">
+
+                    <TextBlock
+                        Text="新增任务"
+                        FontSize="22"
+                        FontWeight="SemiBold" />
+
+                    <Grid ColumnSpacing="16" RowSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <TextBox
+                            x:Name="TaskTitleTextBox"
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Header="任务名称"
+                            PlaceholderText="例如：完善管理驾驶舱统计展示" />
+
+                        <TextBox
+                            x:Name="TaskOwnerTextBox"
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Header="负责人"
+                            PlaceholderText="例如：杨扬文琦" />
+
+                        <DatePicker
+                            x:Name="TaskDeadlineDatePicker"
+                            Grid.Row="0"
+                            Grid.Column="2"
+                            Header="截止时间" />
+
+                        <ComboBox
+                            x:Name="TaskStatusComboBox"
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Header="任务状态"
+                            SelectedIndex="0">
+                            <ComboBoxItem Content="待处理" />
+                            <ComboBoxItem Content="进行中" />
+                            <ComboBoxItem Content="待验收" />
+                            <ComboBoxItem Content="已完成" />
+                        </ComboBox>
+
+                        <ComboBox
+                            x:Name="TaskPriorityComboBox"
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Header="优先级"
+                            SelectedIndex="1">
+                            <ComboBoxItem Content="低" />
+                            <ComboBoxItem Content="普通" />
+                            <ComboBoxItem Content="高" />
+                        </ComboBox>
+
+                        <ComboBox
+                            x:Name="TaskRiskComboBox"
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            Header="风险等级"
+                            SelectedIndex="0">
+                            <ComboBoxItem Content="正常" />
+                            <ComboBoxItem Content="低风险" />
+                            <ComboBoxItem Content="中风险" />
+                            <ComboBoxItem Content="高风险" />
+                        </ComboBox>
+
+                        <TextBox
+                            x:Name="TaskDescriptionTextBox"
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="3"
+                            Header="任务描述"
+                            PlaceholderText="说明这个任务要解决什么问题"
+                            TextWrapping="Wrap"
+                            AcceptsReturn="True"
+                            MinHeight="80" />
+
+                        <TextBox
+                            x:Name="TaskEquipmentTextBox"
+                            Grid.Row="3"
+                            Grid.Column="0"
+                            Header="关联器材"
+                            PlaceholderText="例如：个人电脑 / F407 主控板" />
+
+                        <TextBox
+                            x:Name="TaskOutputTextBox"
+                            Grid.Row="3"
+                            Grid.Column="1"
+                            Header="交付要求"
+                            PlaceholderText="例如：可运行页面 / 设计文档" />
+
+                        <StackPanel
+                            Grid.Row="3"
+                            Grid.Column="2"
+                            Orientation="Horizontal"
+                            Spacing="12"
+                            VerticalAlignment="Bottom">
+
+                            <Button
+                                Content="新增任务"
+                                Click="AddTaskButton_Click" />
+
+                            <Button
+                                Content="清空输入"
+                                Click="ClearTaskFormButton_Click" />
+                        </StackPanel>
+                    </Grid>
+
+                    <TextBlock
+                        x:Name="TaskFormMessageText"
+                        FontSize="14"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
 
             <StackPanel Spacing="12">
                 <TextBlock
@@ -93,7 +199,7 @@
                                 BorderThickness="1"
                                 CornerRadius="8">
 
-                                <StackPanel Spacing="6">
+                                <StackPanel Spacing="8">
                                     <TextBlock
                                         Text="{Binding Title}"
                                         FontSize="18"
@@ -113,31 +219,33 @@
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
 
-                                        <TextBlock
-                                            Grid.Column="0"
-                                            Text="{Binding OwnerName}"
-                                            FontSize="14" />
-
-                                        <TextBlock
-                                            Grid.Column="1"
-                                            Text="{Binding Status}"
-                                            FontSize="14" />
-
-                                        <TextBlock
-                                            Grid.Column="2"
-                                            Text="{Binding Priority}"
-                                            FontSize="14" />
-
-                                        <TextBlock
-                                            Grid.Column="3"
-                                            Text="{Binding RiskLevel}"
-                                            FontSize="14" />
+                                        <TextBlock Grid.Column="0" Text="{Binding OwnerName}" FontSize="14" />
+                                        <TextBlock Grid.Column="1" Text="{Binding Status}" FontSize="14" />
+                                        <TextBlock Grid.Column="2" Text="{Binding Priority}" FontSize="14" />
+                                        <TextBlock Grid.Column="3" Text="{Binding RiskLevel}" FontSize="14" />
                                     </Grid>
+
+                                    <TextBlock
+                                        Text="{Binding RelatedEquipment}"
+                                        FontSize="14"
+                                        TextWrapping="Wrap" />
 
                                     <TextBlock
                                         Text="{Binding OutputRequirement}"
                                         FontSize="14"
                                         TextWrapping="Wrap" />
+
+                                    <StackPanel Orientation="Horizontal" Spacing="12">
+                                        <Button
+                                            Content="标记完成"
+                                            Tag="{Binding Id}"
+                                            Click="CompleteTaskButton_Click" />
+
+                                        <Button
+                                            Content="删除任务"
+                                            Tag="{Binding Id}"
+                                            Click="DeleteTaskButton_Click" />
+                                    </StackPanel>
                                 </StackPanel>
                             </Border>
                         </DataTemplate>
