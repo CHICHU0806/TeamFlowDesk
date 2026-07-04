@@ -24,6 +24,7 @@ public sealed partial class AiRecordsPage : Page
         AiRecordsListView.ItemsSource = _records;
 
         RefreshStatistics();
+        RefreshInsightPanel();
     }
 
     private async void GenerateAiSuggestionButton_Click(object sender, RoutedEventArgs e)
@@ -44,7 +45,7 @@ public sealed partial class AiRecordsPage : Page
         }
 
         GenerateAiSuggestionButton.IsEnabled = false;
-        AiRecordFormMessageText.Text = "正在生成 AI 建议，请稍等...";
+        AiRecordFormMessageText.Text = "正在调用用户配置的 API 生成 AI 建议，请稍等...";
 
         var result = await _aiAssistantService.GenerateManagementSuggestionAsync(
             relatedModule,
@@ -94,6 +95,7 @@ public sealed partial class AiRecordsPage : Page
         _records.Insert(0, newRecord);
 
         RefreshStatistics();
+        RefreshInsightPanel();
         ClearAiRecordForm();
 
         AiRecordFormMessageText.Text = $"已新增 AI 协作记录：{newRecord.RelatedModule}";
@@ -133,6 +135,7 @@ public sealed partial class AiRecordsPage : Page
         _records.Remove(record);
 
         RefreshStatistics();
+        RefreshInsightPanel();
 
         AiRecordFormMessageText.Text = $"AI 协作记录已删除：{record.RelatedModule}";
     }
@@ -151,6 +154,7 @@ public sealed partial class AiRecordsPage : Page
         AiRecordRepository.Update(record);
         RefreshRecordList();
         RefreshStatistics();
+        RefreshInsightPanel();
 
         AiRecordFormMessageText.Text = $"{message}：{record.RelatedModule}";
     }
@@ -188,6 +192,41 @@ public sealed partial class AiRecordsPage : Page
             .Distinct()
             .Count()
             .ToString();
+    }
+
+    private void RefreshInsightPanel()
+    {
+        AiConfigStatusText.Text = AiSettingsService.HasValidApiSettings()
+            ? "AI API 已配置。当前页面可以调用用户自己的 API 生成管理建议。"
+            : "AI API 尚未配置。请先在系统设置中填写 API Base URL、模型名称和 API Key。";
+
+        var latestRecord = _records.FirstOrDefault();
+
+        RecentModuleText.Text = latestRecord is null
+            ? "暂无协作记录。"
+            : $"{latestRecord.RelatedModule}";
+
+        var acceptedCount = _records.Count(record => record.AdoptionStatus == "采纳");
+        var partAcceptedCount = _records.Count(record => record.AdoptionStatus == "部分采纳");
+        var rejectedCount = _records.Count(record => record.AdoptionStatus == "未采纳");
+        var pendingCount = _records.Count(record => record.AdoptionStatus == "待判断");
+
+        AdoptionSummaryText.Text =
+            $"采纳 {acceptedCount} 条，部分采纳 {partAcceptedCount} 条，未采纳 {rejectedCount} 条，待判断 {pendingCount} 条。";
+
+        if (_records.Count == 0)
+        {
+            AiValueText.Text = "当前暂无 AI 协作数据。建议先围绕任务拆解、风险判断或周报生成记录一条完整协作过程。";
+            return;
+        }
+
+        if (acceptedCount + partAcceptedCount == 0)
+        {
+            AiValueText.Text = "当前 AI 建议尚未被采纳。建议重点记录人工判断原因，让系统体现“人负责最终决策”。";
+            return;
+        }
+
+        AiValueText.Text = "AI 已经参与部分团队管理环节。后续可以继续沉淀人工判断和最终决策，用于周报复盘和答辩展示。";
     }
 
     private void RefreshRecordList()
