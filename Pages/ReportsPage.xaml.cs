@@ -27,6 +27,7 @@ public sealed partial class ReportsPage : Page
             ReportEndDatePicker.Date = DateTimeOffset.Now;
 
             RefreshStatistics();
+            RefreshDataSnapshot();
         }
         catch (Exception ex)
         {
@@ -96,6 +97,8 @@ public sealed partial class ReportsPage : Page
         AiCollaborationSummaryTextBox.Text = BuildAiSummaryText(recentAiRecords);
         ManagerReviewTextBox.Text = BuildManagerReviewText(riskTasks.Count, attentionMembers.Count, abnormalEquipment.Count);
 
+        RefreshDataSnapshot();
+
         ReportFormMessageText.Text = "已根据当前任务、人员、器材和 AI 协作记录生成复盘草稿，可以继续手动修改后保存。";
     }
 
@@ -126,6 +129,7 @@ public sealed partial class ReportsPage : Page
         _reports.Insert(0, report);
 
         RefreshStatistics();
+        RefreshDataSnapshot();
         ClearReportForm();
 
         ReportFormMessageText.Text = $"复盘记录已保存：{report.Title}";
@@ -165,6 +169,7 @@ public sealed partial class ReportsPage : Page
         _reports.Remove(report);
 
         RefreshStatistics();
+        RefreshDataSnapshot();
 
         ReportFormMessageText.Text = $"复盘记录已删除：{report.Title}";
     }
@@ -183,6 +188,7 @@ public sealed partial class ReportsPage : Page
         WeeklyReportRepository.Update(report);
         RefreshReportList();
         RefreshStatistics();
+        RefreshDataSnapshot();
 
         ReportFormMessageText.Text = $"{message}：{report.Title}";
     }
@@ -225,6 +231,43 @@ public sealed partial class ReportsPage : Page
 
         ReviewStatusText.Text =
             $"当前已沉淀 {_reports.Count} 条复盘记录，其中包含 AI 协作摘要的记录有 {AiReportCountText.Text} 条。";
+    }
+
+    private void RefreshDataSnapshot()
+    {
+        var tasks = TaskRepository.GetAll();
+        var members = MemberRepository.GetAll();
+        var equipment = EquipmentRepository.GetAll();
+        var aiRecords = AiRecordRepository.GetAll();
+
+        var completedTaskCount = tasks.Count(task => task.Status == "已完成");
+        var doingTaskCount = tasks.Count(task => task.Status == "进行中" || task.Status == "待处理");
+        var riskTaskCount = tasks.Count(task =>
+            task.RiskLevel == "高风险" ||
+            task.Status == "延期" ||
+            task.Status == "滞后");
+
+        var attentionMemberCount = members.Count(member =>
+            member.WorkloadStatus == "关注" ||
+            member.WorkloadStatus == "过载");
+
+        var abnormalEquipmentCount = equipment.Count(item =>
+            item.Status == "待检查" ||
+            item.Status == "损坏" ||
+            item.Status == "维修中" ||
+            item.Status == "报废");
+
+        TaskSnapshotText.Text =
+            $"共 {tasks.Count} 项任务，已完成 {completedTaskCount} 项，推进中 {doingTaskCount} 项，风险任务 {riskTaskCount} 项。";
+
+        MemberSnapshotText.Text =
+            $"共 {members.Count} 名成员，其中需要关注的负载状态有 {attentionMemberCount} 项。";
+
+        EquipmentSnapshotText.Text =
+            $"共 {equipment.Count} 件器材，其中异常或待检查器材 {abnormalEquipmentCount} 件。";
+
+        AiSnapshotText.Text =
+            $"共沉淀 {aiRecords.Count} 条 AI 协作记录，可用于生成复盘摘要和负责人判断参考。";
     }
 
     private void RefreshReportList()

@@ -5,17 +5,36 @@
     RequestedTheme="Dark">
 
     <Page.Resources>
-        <SolidColorBrush x:Key="PageBackgroundBrush" Color="#090E1A" />
+        <SolidColorBrush x:Key="PageBackgroundBrush" Color="#080D18" />
+        <SolidColorBrush x:Key="PanelBackgroundBrush" Color="#121A2B" />
         <SolidColorBrush x:Key="CardBackgroundBrush" Color="#172033" />
+        <SolidColorBrush x:Key="CardSoftBrush" Color="#1D2840" />
         <SolidColorBrush x:Key="CardBorderBrush" Color="#334155" />
+
         <SolidColorBrush x:Key="PrimaryTextBrush" Color="#F8FAFC" />
         <SolidColorBrush x:Key="SecondaryTextBrush" Color="#CBD5E1" />
         <SolidColorBrush x:Key="MutedTextBrush" Color="#94A3B8" />
+
         <SolidColorBrush x:Key="AccentBlueBrush" Color="#60A5FA" />
         <SolidColorBrush x:Key="AccentPurpleBrush" Color="#A78BFA" />
         <SolidColorBrush x:Key="AccentGreenBrush" Color="#34D399" />
         <SolidColorBrush x:Key="AccentOrangeBrush" Color="#FBBF24" />
         <SolidColorBrush x:Key="AccentRedBrush" Color="#FB7185" />
+
+        <Style x:Key="MetricCardStyle" TargetType="Border">
+            <Setter Property="Padding" Value="18" />
+            <Setter Property="CornerRadius" Value="20" />
+            <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource CardBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+
+        <Style x:Key="EditorBoxStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="#202A3F" />
+            <Setter Property="BorderBrush" Value="#3B4A63" />
+            <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}" />
+            <Setter Property="PlaceholderForeground" Value="{StaticResource MutedTextBrush}" />
+        </Style>
     </Page.Resources>
 
     <Grid Background="{StaticResource PageBackgroundBrush}">
@@ -23,9 +42,9 @@
             <StackPanel Margin="32" Spacing="24">
 
                 <Border
-                    Padding="28"
-                    CornerRadius="24"
-                    BorderBrush="{StaticResource CardBorderBrush}"
+                    Padding="30"
+                    CornerRadius="28"
+                    BorderBrush="#3B82F6"
                     BorderThickness="1">
 
                     <Border.Background>
@@ -36,43 +55,61 @@
                         </LinearGradientBrush>
                     </Border.Background>
 
-                    <Grid ColumnSpacing="24">
+                    <Grid ColumnSpacing="28">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="2*" />
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="2.1*" />
+                            <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
 
-                        <StackPanel Grid.Column="0" Spacing="12">
+                        <StackPanel Grid.Column="0" Spacing="14">
                             <TextBlock
-                                Text="复盘中心"
-                                FontSize="40"
+                                Text="Review Center"
+                                FontSize="44"
                                 FontWeight="SemiBold"
                                 Foreground="{StaticResource PrimaryTextBrush}" />
 
                             <TextBlock
-                                Text="周报、问题、AI 协作与负责人判断的统一沉淀区"
-                                FontSize="21"
+                                Text="周报与复盘中心"
+                                FontSize="24"
                                 Foreground="{StaticResource SecondaryTextBrush}" />
 
                             <TextBlock
-                                Text="将任务推进、人员负载、器材状态和 AI 协作过程汇总为可追踪、可复盘、可继续优化的团队运行记录。"
+                                Text="把任务推进、人员负载、器材状态、AI 协作和负责人判断统一沉淀为可追踪、可复盘、可继续优化的团队运行记录。"
                                 FontSize="15"
                                 Foreground="{StaticResource MutedTextBrush}"
                                 TextWrapping="Wrap"
-                                MaxWidth="760" />
+                                MaxWidth="820" />
+
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <Border Padding="12,6" CornerRadius="999" Background="#1E3A8A">
+                                    <TextBlock Text="任务推进" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
+                                </Border>
+
+                                <Border Padding="12,6" CornerRadius="999" Background="#312E81">
+                                    <TextBlock Text="AI 协作" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
+                                </Border>
+
+                                <Border Padding="12,6" CornerRadius="999" Background="#064E3B">
+                                    <TextBlock Text="人工判断" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
+                                </Border>
+
+                                <Border Padding="12,6" CornerRadius="999" Background="#7C2D12">
+                                    <TextBlock Text="风险复盘" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
+                                </Border>
+                            </StackPanel>
                         </StackPanel>
 
                         <Border
                             Grid.Column="1"
                             Padding="22"
-                            CornerRadius="20"
-                            Background="#201E293B"
+                            CornerRadius="22"
+                            Background="#251E293B"
                             BorderBrush="#475569"
                             BorderThickness="1">
 
-                            <StackPanel Spacing="10">
+                            <StackPanel Spacing="12">
                                 <TextBlock
-                                    Text="复盘状态"
+                                    Text="当前复盘态势"
                                     FontSize="18"
                                     FontWeight="SemiBold"
                                     Foreground="{StaticResource PrimaryTextBrush}" />
@@ -83,11 +120,13 @@
                                     Foreground="{StaticResource SecondaryTextBrush}"
                                     TextWrapping="Wrap" />
 
-                                <TextBlock
-                                    Text="建议每周至少形成一条复盘记录，并保留 AI 协作摘要与人工判断。"
-                                    FontSize="13"
-                                    Foreground="{StaticResource MutedTextBrush}"
-                                    TextWrapping="Wrap" />
+                                <Border Padding="12" CornerRadius="14" Background="#243B53">
+                                    <TextBlock
+                                        Text="建议每周至少形成一条复盘记录，并保留 AI 建议、人工判断和最终管理动作。"
+                                        FontSize="13"
+                                        Foreground="{StaticResource SecondaryTextBrush}"
+                                        TextWrapping="Wrap" />
+                                </Border>
                             </StackPanel>
                         </Border>
                     </Grid>
@@ -101,289 +140,457 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <Border Grid.Column="0" Padding="20" CornerRadius="20" Background="{StaticResource CardBackgroundBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1">
+                    <Border Grid.Column="0" Style="{StaticResource MetricCardStyle}">
                         <StackPanel Spacing="8">
                             <TextBlock Text="周报总数" FontSize="14" Foreground="{StaticResource MutedTextBrush}" />
-                            <TextBlock x:Name="ReportCountText" FontSize="36" FontWeight="SemiBold" Foreground="{StaticResource AccentBlueBrush}" />
+                            <TextBlock x:Name="ReportCountText" FontSize="38" FontWeight="SemiBold" Foreground="{StaticResource AccentBlueBrush}" />
                             <TextBlock Text="已沉淀的复盘记录" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
                         </StackPanel>
                     </Border>
 
-                    <Border Grid.Column="1" Padding="20" CornerRadius="20" Background="{StaticResource CardBackgroundBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1">
+                    <Border Grid.Column="1" Style="{StaticResource MetricCardStyle}">
                         <StackPanel Spacing="8">
-                            <TextBlock Text="正常进度" FontSize="14" Foreground="{StaticResource MutedTextBrush}" />
-                            <TextBlock x:Name="NormalProgressCountText" FontSize="36" FontWeight="SemiBold" Foreground="{StaticResource AccentGreenBrush}" />
-                            <TextBlock Text="推进状态良好的记录" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
+                            <TextBlock Text="正常推进" FontSize="14" Foreground="{StaticResource MutedTextBrush}" />
+                            <TextBlock x:Name="NormalProgressCountText" FontSize="38" FontWeight="SemiBold" Foreground="{StaticResource AccentGreenBrush}" />
+                            <TextBlock Text="状态良好的复盘记录" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
                         </StackPanel>
                     </Border>
 
-                    <Border Grid.Column="2" Padding="20" CornerRadius="20" Background="{StaticResource CardBackgroundBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1">
+                    <Border Grid.Column="2" Style="{StaticResource MetricCardStyle}">
                         <StackPanel Spacing="8">
                             <TextBlock Text="风险复盘" FontSize="14" Foreground="{StaticResource MutedTextBrush}" />
-                            <TextBlock x:Name="RiskReportCountText" FontSize="36" FontWeight="SemiBold" Foreground="{StaticResource AccentRedBrush}" />
-                            <TextBlock Text="需要重点关注的复盘" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
+                            <TextBlock x:Name="RiskReportCountText" FontSize="38" FontWeight="SemiBold" Foreground="{StaticResource AccentRedBrush}" />
+                            <TextBlock Text="需要负责人关注" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
                         </StackPanel>
                     </Border>
 
-                    <Border Grid.Column="3" Padding="20" CornerRadius="20" Background="{StaticResource CardBackgroundBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1">
+                    <Border Grid.Column="3" Style="{StaticResource MetricCardStyle}">
                         <StackPanel Spacing="8">
                             <TextBlock Text="AI 协作周报" FontSize="14" Foreground="{StaticResource MutedTextBrush}" />
-                            <TextBlock x:Name="AiReportCountText" FontSize="36" FontWeight="SemiBold" Foreground="{StaticResource AccentPurpleBrush}" />
+                            <TextBlock x:Name="AiReportCountText" FontSize="38" FontWeight="SemiBold" Foreground="{StaticResource AccentPurpleBrush}" />
                             <TextBlock Text="包含 AI 摘要的记录" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
                         </StackPanel>
                     </Border>
                 </Grid>
 
-                <Border
-                    Padding="22"
-                    CornerRadius="22"
-                    Background="{StaticResource CardBackgroundBrush}"
-                    BorderBrush="{StaticResource CardBorderBrush}"
-                    BorderThickness="1">
+                <Grid ColumnSpacing="22">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1.6*" />
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
 
-                    <StackPanel Spacing="18">
+                    <Border
+                        Grid.Column="0"
+                        Padding="24"
+                        CornerRadius="26"
+                        Background="{StaticResource PanelBackgroundBrush}"
+                        BorderBrush="{StaticResource CardBorderBrush}"
+                        BorderThickness="1">
 
-                        <StackPanel Spacing="4">
-                            <TextBlock
-                                Text="新增复盘记录"
-                                FontSize="24"
-                                FontWeight="SemiBold"
-                                Foreground="{StaticResource PrimaryTextBrush}" />
+                        <StackPanel Spacing="20">
 
-                            <TextBlock
-                                Text="可以手动填写，也可以先根据当前任务、AI 记录、人员和器材状态生成一份复盘草稿。"
-                                FontSize="14"
-                                Foreground="{StaticResource MutedTextBrush}" />
+                            <Grid ColumnSpacing="16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0" Spacing="4">
+                                    <TextBlock
+                                        Text="复盘编辑器"
+                                        FontSize="26"
+                                        FontWeight="SemiBold"
+                                        Foreground="{StaticResource PrimaryTextBrush}" />
+
+                                    <TextBlock
+                                        Text="从团队数据中生成草稿，再由负责人进行判断、修正和保存。"
+                                        FontSize="14"
+                                        Foreground="{StaticResource MutedTextBrush}" />
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                                    <Button
+                                        Content="生成草稿"
+                                        Click="GenerateReportDraftButton_Click" />
+
+                                    <Button
+                                        Content="保存复盘"
+                                        Click="AddReportButton_Click" />
+
+                                    <Button
+                                        Content="清空"
+                                        Click="ClearReportFormButton_Click" />
+                                </StackPanel>
+                            </Grid>
+
+                            <Grid ColumnSpacing="14" RowSpacing="14">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1.5*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <TextBox
+                                    x:Name="ReportTitleTextBox"
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Header="周报标题"
+                                    PlaceholderText="例如：TeamFlowDesk 第二周项目复盘"
+                                    Style="{StaticResource EditorBoxStyle}" />
+
+                                <DatePicker
+                                    x:Name="ReportStartDatePicker"
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Header="开始日期" />
+
+                                <DatePicker
+                                    x:Name="ReportEndDatePicker"
+                                    Grid.Row="0"
+                                    Grid.Column="2"
+                                    Header="结束日期" />
+
+                                <ComboBox
+                                    x:Name="ProgressStatusComboBox"
+                                    Grid.Row="0"
+                                    Grid.Column="3"
+                                    Header="进度状态"
+                                    SelectedIndex="0">
+                                    <ComboBoxItem Content="正常" />
+                                    <ComboBoxItem Content="关注" />
+                                    <ComboBoxItem Content="滞后" />
+                                    <ComboBoxItem Content="高风险" />
+                                    <ComboBoxItem Content="已完成" />
+                                </ComboBox>
+
+                                <TextBlock
+                                    x:Name="ReportFormMessageText"
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="4"
+                                    FontSize="14"
+                                    Foreground="{StaticResource SecondaryTextBrush}"
+                                    TextWrapping="Wrap" />
+                            </Grid>
+
+                            <Grid ColumnSpacing="16" RowSpacing="16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <TextBox
+                                    x:Name="CompletedWorkTextBox"
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Header="本周完成工作"
+                                    TextWrapping="Wrap"
+                                    AcceptsReturn="True"
+                                    MinHeight="130"
+                                    Style="{StaticResource EditorBoxStyle}" />
+
+                                <TextBox
+                                    x:Name="ProblemsTextBox"
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Header="问题与风险"
+                                    TextWrapping="Wrap"
+                                    AcceptsReturn="True"
+                                    MinHeight="130"
+                                    Style="{StaticResource EditorBoxStyle}" />
+
+                                <TextBox
+                                    x:Name="NextPlanTextBox"
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Header="下周计划"
+                                    TextWrapping="Wrap"
+                                    AcceptsReturn="True"
+                                    MinHeight="130"
+                                    Style="{StaticResource EditorBoxStyle}" />
+
+                                <TextBox
+                                    x:Name="ManagerReviewTextBox"
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Header="负责人复盘判断"
+                                    TextWrapping="Wrap"
+                                    AcceptsReturn="True"
+                                    MinHeight="130"
+                                    Style="{StaticResource EditorBoxStyle}" />
+
+                                <TextBox
+                                    x:Name="AiCollaborationSummaryTextBox"
+                                    Grid.Row="2"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="2"
+                                    Header="AI 协作摘要"
+                                    TextWrapping="Wrap"
+                                    AcceptsReturn="True"
+                                    MinHeight="130"
+                                    Style="{StaticResource EditorBoxStyle}" />
+                            </Grid>
                         </StackPanel>
+                    </Border>
 
-                        <Grid ColumnSpacing="16" RowSpacing="14">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="1" Spacing="18">
 
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
+                        <Border
+                            Padding="22"
+                            CornerRadius="24"
+                            Background="{StaticResource PanelBackgroundBrush}"
+                            BorderBrush="{StaticResource CardBorderBrush}"
+                            BorderThickness="1">
 
-                            <TextBox
-                                x:Name="ReportTitleTextBox"
-                                Grid.Row="0"
-                                Grid.Column="0"
-                                Header="周报标题"
-                                PlaceholderText="例如：TeamFlowDesk 第二周项目复盘" />
+                            <StackPanel Spacing="16">
+                                <StackPanel Spacing="4">
+                                    <TextBlock
+                                        Text="智能数据快照"
+                                        FontSize="24"
+                                        FontWeight="SemiBold"
+                                        Foreground="{StaticResource PrimaryTextBrush}" />
 
-                            <DatePicker
-                                x:Name="ReportStartDatePicker"
-                                Grid.Row="0"
-                                Grid.Column="1"
-                                Header="开始日期" />
+                                    <TextBlock
+                                        Text="生成复盘草稿时会读取这些实时数据。"
+                                        FontSize="14"
+                                        Foreground="{StaticResource MutedTextBrush}"
+                                        TextWrapping="Wrap" />
+                                </StackPanel>
 
-                            <DatePicker
-                                x:Name="ReportEndDatePicker"
-                                Grid.Row="0"
-                                Grid.Column="2"
-                                Header="结束日期" />
+                                <Border Padding="14" CornerRadius="16" Background="#1F2937">
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Text="任务状态" FontSize="14" Foreground="{StaticResource MutedTextBrush}" />
+                                        <TextBlock x:Name="TaskSnapshotText" FontSize="15" Foreground="{StaticResource PrimaryTextBrush}" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </Border>
 
-                            <ComboBox
-                                x:Name="ProgressStatusComboBox"
-                                Grid.Row="1"
-                                Grid.Column="0"
-                                Header="进度状态"
-                                SelectedIndex="0">
-                                <ComboBoxItem Content="正常" />
-                                <ComboBoxItem Content="关注" />
-                                <ComboBoxItem Content="滞后" />
-                                <ComboBoxItem Content="高风险" />
-                                <ComboBoxItem Content="已完成" />
-                            </ComboBox>
+                                <Border Padding="14" CornerRadius="16" Background="#1F2937">
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Text="人员负载" FontSize="14" Foreground="{StaticResource MutedTextBrush}" />
+                                        <TextBlock x:Name="MemberSnapshotText" FontSize="15" Foreground="{StaticResource PrimaryTextBrush}" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </Border>
 
-                            <StackPanel
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                Grid.ColumnSpan="2"
-                                Orientation="Horizontal"
-                                Spacing="12"
-                                VerticalAlignment="Bottom">
+                                <Border Padding="14" CornerRadius="16" Background="#1F2937">
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Text="器材状态" FontSize="14" Foreground="{StaticResource MutedTextBrush}" />
+                                        <TextBlock x:Name="EquipmentSnapshotText" FontSize="15" Foreground="{StaticResource PrimaryTextBrush}" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </Border>
 
-                                <Button
-                                    Content="根据当前数据生成复盘草稿"
-                                    Click="GenerateReportDraftButton_Click" />
-
-                                <Button
-                                    Content="保存复盘"
-                                    Click="AddReportButton_Click" />
-
-                                <Button
-                                    Content="清空输入"
-                                    Click="ClearReportFormButton_Click" />
+                                <Border Padding="14" CornerRadius="16" Background="#241F3A">
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Text="AI 协作" FontSize="14" Foreground="{StaticResource MutedTextBrush}" />
+                                        <TextBlock x:Name="AiSnapshotText" FontSize="15" Foreground="{StaticResource PrimaryTextBrush}" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </Border>
                             </StackPanel>
+                        </Border>
 
-                            <TextBox
-                                x:Name="CompletedWorkTextBox"
-                                Grid.Row="2"
-                                Grid.Column="0"
-                                Header="本周完成工作"
-                                TextWrapping="Wrap"
-                                AcceptsReturn="True"
-                                MinHeight="120" />
+                        <Border
+                            Padding="22"
+                            CornerRadius="24"
+                            Background="{StaticResource PanelBackgroundBrush}"
+                            BorderBrush="{StaticResource CardBorderBrush}"
+                            BorderThickness="1">
 
-                            <TextBox
-                                x:Name="ProblemsTextBox"
-                                Grid.Row="2"
-                                Grid.Column="1"
-                                Header="问题与风险"
-                                TextWrapping="Wrap"
-                                AcceptsReturn="True"
-                                MinHeight="120" />
+                            <StackPanel Spacing="12">
+                                <TextBlock
+                                    Text="复盘闭环"
+                                    FontSize="22"
+                                    FontWeight="SemiBold"
+                                    Foreground="{StaticResource PrimaryTextBrush}" />
 
-                            <TextBox
-                                x:Name="NextPlanTextBox"
-                                Grid.Row="2"
-                                Grid.Column="2"
-                                Header="下周计划"
-                                TextWrapping="Wrap"
-                                AcceptsReturn="True"
-                                MinHeight="120" />
+                                <TextBlock
+                                    Text="1. 读取当前任务、人员、器材和 AI 记录"
+                                    FontSize="14"
+                                    Foreground="{StaticResource SecondaryTextBrush}"
+                                    TextWrapping="Wrap" />
 
-                            <TextBox
-                                x:Name="AiCollaborationSummaryTextBox"
-                                Grid.Row="3"
-                                Grid.Column="0"
-                                Grid.ColumnSpan="2"
-                                Header="AI 协作摘要"
-                                TextWrapping="Wrap"
-                                AcceptsReturn="True"
-                                MinHeight="110" />
+                                <TextBlock
+                                    Text="2. 生成复盘草稿"
+                                    FontSize="14"
+                                    Foreground="{StaticResource SecondaryTextBrush}"
+                                    TextWrapping="Wrap" />
 
-                            <TextBox
-                                x:Name="ManagerReviewTextBox"
-                                Grid.Row="3"
-                                Grid.Column="2"
-                                Header="负责人复盘判断"
-                                TextWrapping="Wrap"
-                                AcceptsReturn="True"
-                                MinHeight="110" />
+                                <TextBlock
+                                    Text="3. 负责人修正与判断"
+                                    FontSize="14"
+                                    Foreground="{StaticResource SecondaryTextBrush}"
+                                    TextWrapping="Wrap" />
 
-                            <TextBlock
-                                x:Name="ReportFormMessageText"
-                                Grid.Row="4"
-                                Grid.Column="0"
-                                Grid.ColumnSpan="3"
-                                FontSize="14"
-                                Foreground="{StaticResource SecondaryTextBrush}"
-                                TextWrapping="Wrap" />
-                        </Grid>
+                                <TextBlock
+                                    Text="4. 保存为可追踪的团队运行记录"
+                                    FontSize="14"
+                                    Foreground="{StaticResource SecondaryTextBrush}"
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Border>
                     </StackPanel>
-                </Border>
+                </Grid>
 
                 <Border
-                    Padding="22"
-                    CornerRadius="22"
-                    Background="{StaticResource CardBackgroundBrush}"
+                    Padding="24"
+                    CornerRadius="26"
+                    Background="{StaticResource PanelBackgroundBrush}"
                     BorderBrush="{StaticResource CardBorderBrush}"
                     BorderThickness="1">
 
                     <StackPanel Spacing="16">
-                        <StackPanel Spacing="4">
-                            <TextBlock
-                                Text="复盘时间线"
-                                FontSize="24"
-                                FontWeight="SemiBold"
-                                Foreground="{StaticResource PrimaryTextBrush}" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" Spacing="4">
+                                <TextBlock
+                                    Text="复盘时间线"
+                                    FontSize="26"
+                                    FontWeight="SemiBold"
+                                    Foreground="{StaticResource PrimaryTextBrush}" />
+
+                                <TextBlock
+                                    Text="按时间沉淀团队运行过程，形成答辩、交接和后续优化依据。"
+                                    FontSize="14"
+                                    Foreground="{StaticResource MutedTextBrush}" />
+                            </StackPanel>
 
                             <TextBlock
-                                Text="按时间沉淀团队管理过程，形成后续答辩、交接和优化的依据。"
-                                FontSize="14"
-                                Foreground="{StaticResource MutedTextBrush}" />
-                        </StackPanel>
+                                Grid.Column="1"
+                                Text="Timeline"
+                                FontSize="18"
+                                Foreground="{StaticResource AccentBlueBrush}"
+                                VerticalAlignment="Center" />
+                        </Grid>
 
                         <ListView
                             x:Name="ReportsListView"
                             SelectionMode="Single"
-                            Background="Transparent">
+                            Background="Transparent"
+                            Height="680">
 
                             <ListView.ItemTemplate>
                                 <DataTemplate>
                                     <Border
-                                        Margin="0,0,0,12"
-                                        Padding="18"
-                                        CornerRadius="18"
+                                        Margin="0,0,0,14"
+                                        Padding="20"
+                                        CornerRadius="22"
                                         Background="#1F2937"
                                         BorderBrush="#334155"
                                         BorderThickness="1">
 
-                                        <StackPanel Spacing="10">
-                                            <Grid ColumnSpacing="16">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="2*" />
-                                                    <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="*" />
-                                                </Grid.ColumnDefinitions>
+                                        <Grid ColumnSpacing="18">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
 
-                                                <TextBlock
-                                                    Grid.Column="0"
-                                                    Text="{Binding Title}"
-                                                    FontSize="20"
-                                                    FontWeight="SemiBold"
-                                                    Foreground="{StaticResource PrimaryTextBrush}"
-                                                    TextWrapping="Wrap" />
-
-                                                <TextBlock
-                                                    Grid.Column="1"
-                                                    Text="{Binding ProgressStatus}"
-                                                    FontSize="14"
-                                                    Foreground="{StaticResource AccentOrangeBrush}" />
-
-                                                <TextBlock
-                                                    Grid.Column="2"
-                                                    Text="{Binding EndDate}"
-                                                    FontSize="13"
-                                                    Foreground="{StaticResource MutedTextBrush}" />
-                                            </Grid>
-
-                                            <TextBlock Text="本周完成工作" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AccentGreenBrush}" />
-                                            <TextBlock Text="{Binding CompletedWork}" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" />
-
-                                            <TextBlock Text="问题与风险" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AccentRedBrush}" />
-                                            <TextBlock Text="{Binding Problems}" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" />
-
-                                            <TextBlock Text="下周计划" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AccentBlueBrush}" />
-                                            <TextBlock Text="{Binding NextPlan}" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" />
-
-                                            <TextBlock Text="AI 协作摘要" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AccentPurpleBrush}" />
-                                            <TextBlock Text="{Binding AiCollaborationSummary}" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" />
-
-                                            <TextBlock Text="负责人复盘判断" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AccentOrangeBrush}" />
-                                            <TextBlock Text="{Binding ManagerReview}" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" />
-
-                                            <StackPanel Orientation="Horizontal" Spacing="12">
-                                                <Button
-                                                    Content="标记正常"
-                                                    Tag="{Binding Id}"
-                                                    Click="SetNormalReportButton_Click" />
-
-                                                <Button
-                                                    Content="标记关注"
-                                                    Tag="{Binding Id}"
-                                                    Click="SetAttentionReportButton_Click" />
-
-                                                <Button
-                                                    Content="标记高风险"
-                                                    Tag="{Binding Id}"
-                                                    Click="SetHighRiskReportButton_Click" />
-
-                                                <Button
-                                                    Content="删除复盘"
-                                                    Tag="{Binding Id}"
-                                                    Click="DeleteReportButton_Click" />
+                                            <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+                                                <Border Width="16" Height="16" CornerRadius="8" Background="#60A5FA" />
+                                                <Rectangle Width="2" Height="260" Fill="#334155" Margin="0,8,0,0" />
                                             </StackPanel>
-                                        </StackPanel>
+
+                                            <StackPanel Grid.Column="1" Spacing="10">
+                                                <Grid ColumnSpacing="16">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="2*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <TextBlock
+                                                        Grid.Column="0"
+                                                        Text="{Binding Title}"
+                                                        FontSize="21"
+                                                        FontWeight="SemiBold"
+                                                        Foreground="{StaticResource PrimaryTextBrush}"
+                                                        TextWrapping="Wrap" />
+
+                                                    <Border
+                                                        Grid.Column="1"
+                                                        Padding="10,4"
+                                                        CornerRadius="999"
+                                                        Background="#334155">
+                                                        <TextBlock
+                                                            Text="{Binding ProgressStatus}"
+                                                            FontSize="13"
+                                                            Foreground="{StaticResource AccentOrangeBrush}" />
+                                                    </Border>
+
+                                                    <TextBlock
+                                                        Grid.Column="2"
+                                                        Text="{Binding EndDate}"
+                                                        FontSize="13"
+                                                        Foreground="{StaticResource MutedTextBrush}"
+                                                        VerticalAlignment="Center" />
+                                                </Grid>
+
+                                                <Grid ColumnSpacing="14">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <StackPanel Grid.Column="0" Spacing="8">
+                                                        <TextBlock Text="本周完成工作" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AccentGreenBrush}" />
+                                                        <TextBlock Text="{Binding CompletedWork}" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" MaxHeight="96" />
+
+                                                        <TextBlock Text="下周计划" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AccentBlueBrush}" />
+                                                        <TextBlock Text="{Binding NextPlan}" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" MaxHeight="96" />
+                                                    </StackPanel>
+
+                                                    <StackPanel Grid.Column="1" Spacing="8">
+                                                        <TextBlock Text="问题与风险" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AccentRedBrush}" />
+                                                        <TextBlock Text="{Binding Problems}" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" MaxHeight="96" />
+
+                                                        <TextBlock Text="AI 协作摘要" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AccentPurpleBrush}" />
+                                                        <TextBlock Text="{Binding AiCollaborationSummary}" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" MaxHeight="96" />
+                                                    </StackPanel>
+                                                </Grid>
+
+                                                <Border Padding="14" CornerRadius="14" Background="#172033">
+                                                    <StackPanel Spacing="4">
+                                                        <TextBlock Text="负责人复盘判断" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AccentOrangeBrush}" />
+                                                        <TextBlock Text="{Binding ManagerReview}" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" />
+                                                    </StackPanel>
+                                                </Border>
+
+                                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                                    <Button
+                                                        Content="标记正常"
+                                                        Tag="{Binding Id}"
+                                                        Click="SetNormalReportButton_Click" />
+
+                                                    <Button
+                                                        Content="标记关注"
+                                                        Tag="{Binding Id}"
+                                                        Click="SetAttentionReportButton_Click" />
+
+                                                    <Button
+                                                        Content="标记高风险"
+                                                        Tag="{Binding Id}"
+                                                        Click="SetHighRiskReportButton_Click" />
+
+                                                    <Button
+                                                        Content="删除复盘"
+                                                        Tag="{Binding Id}"
+                                                        Click="DeleteReportButton_Click" />
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Grid>
                                     </Border>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
