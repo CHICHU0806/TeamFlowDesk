@@ -476,125 +476,218 @@
                                 VerticalAlignment="Center" />
                         </Grid>
 
-                        <ListView
-                            x:Name="ReportsListView"
-                            SelectionMode="Single"
-                            Background="Transparent"
-                            Height="680">
+                        <ItemsControl
+                            x:Name="ReportsListView">
 
-                            <ListView.ItemTemplate>
+                            <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Border
-                                        Margin="0,0,0,14"
-                                        Padding="20"
+                                        Margin="0,0,0,16"
+                                        Padding="22"
                                         CornerRadius="22"
-                                        Background="#1F2937"
+                                        Background="#1B2537"
                                         BorderBrush="#334155"
                                         BorderThickness="1">
 
-                                        <Grid ColumnSpacing="18">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
+                                        <StackPanel Spacing="16">
 
-                                            <StackPanel Grid.Column="0" HorizontalAlignment="Center">
-                                                <Border Width="16" Height="16" CornerRadius="8" Background="#60A5FA" />
-                                                <Rectangle Width="2" Height="260" Fill="#334155" Margin="0,8,0,0" />
-                                            </StackPanel>
+                                            <Grid ColumnSpacing="16">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
 
-                                            <StackPanel Grid.Column="1" Spacing="10">
-                                                <Grid ColumnSpacing="16">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="2*" />
-                                                        <ColumnDefinition Width="Auto" />
-                                                        <ColumnDefinition Width="Auto" />
-                                                    </Grid.ColumnDefinitions>
-
+                                                <StackPanel Grid.Column="0" Spacing="5">
                                                     <TextBlock
-                                                        Grid.Column="0"
                                                         Text="{Binding Title}"
-                                                        FontSize="21"
+                                                        FontSize="22"
                                                         FontWeight="SemiBold"
                                                         Foreground="{StaticResource PrimaryTextBrush}"
                                                         TextWrapping="Wrap" />
 
-                                                    <Border
-                                                        Grid.Column="1"
-                                                        Padding="10,4"
-                                                        CornerRadius="999"
-                                                        Background="#334155">
-                                                        <TextBlock
-                                                            Text="{Binding ProgressStatus}"
-                                                            FontSize="13"
-                                                            Foreground="{StaticResource AccentOrangeBrush}" />
-                                                    </Border>
-
                                                     <TextBlock
-                                                        Grid.Column="2"
                                                         Text="{Binding EndDate}"
                                                         FontSize="13"
-                                                        Foreground="{StaticResource MutedTextBrush}"
-                                                        VerticalAlignment="Center" />
-                                                </Grid>
+                                                        Foreground="{StaticResource MutedTextBrush}" />
+                                                </StackPanel>
 
-                                                <Grid ColumnSpacing="14">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="*" />
-                                                        <ColumnDefinition Width="*" />
-                                                    </Grid.ColumnDefinitions>
+                                                <Border
+                                                    Grid.Column="1"
+                                                    Padding="10,5"
+                                                    CornerRadius="999"
+                                                    Background="#263244"
+                                                    VerticalAlignment="Top">
+                                                    <TextBlock
+                                                        Text="{Binding ProgressStatus}"
+                                                        FontSize="13"
+                                                        Foreground="{StaticResource AccentOrangeBrush}" />
+                                                </Border>
 
-                                                    <StackPanel Grid.Column="0" Spacing="8">
-                                                        <TextBlock Text="本周完成工作" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AccentGreenBrush}" />
-                                                        <TextBlock Text="{Binding CompletedWork}" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" MaxHeight="96" />
+                                                <Border
+                                                    Grid.Column="2"
+                                                    Padding="10,5"
+                                                    CornerRadius="999"
+                                                    Background="#241F3A"
+                                                    VerticalAlignment="Top">
+                                                    <TextBlock
+                                                        Text="Review"
+                                                        FontSize="13"
+                                                        Foreground="{StaticResource AccentPurpleBrush}" />
+                                                </Border>
+                                            </Grid>
 
-                                                        <TextBlock Text="下周计划" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AccentBlueBrush}" />
-                                                        <TextBlock Text="{Binding NextPlan}" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" MaxHeight="96" />
-                                                    </StackPanel>
+                                            <Grid ColumnSpacing="14">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="1.1*" />
+                                                    <ColumnDefinition Width="1.1*" />
+                                                    <ColumnDefinition Width="1*" />
+                                                </Grid.ColumnDefinitions>
 
-                                                    <StackPanel Grid.Column="1" Spacing="8">
-                                                        <TextBlock Text="问题与风险" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AccentRedBrush}" />
-                                                        <TextBlock Text="{Binding Problems}" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" MaxHeight="96" />
+                                                <Border
+                                                    Grid.Column="0"
+                                                    Padding="15"
+                                                    CornerRadius="16"
+                                                    Background="#162033">
+                                                    <StackPanel Spacing="8">
+                                                        <TextBlock
+                                                            Text="本周完成工作"
+                                                            FontSize="14"
+                                                            FontWeight="SemiBold"
+                                                            Foreground="{StaticResource AccentGreenBrush}" />
 
-                                                        <TextBlock Text="AI 协作摘要" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AccentPurpleBrush}" />
-                                                        <TextBlock Text="{Binding AiCollaborationSummary}" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" MaxHeight="96" />
-                                                    </StackPanel>
-                                                </Grid>
-
-                                                <Border Padding="14" CornerRadius="14" Background="#172033">
-                                                    <StackPanel Spacing="4">
-                                                        <TextBlock Text="负责人复盘判断" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AccentOrangeBrush}" />
-                                                        <TextBlock Text="{Binding ManagerReview}" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" />
+                                                        <TextBlock
+                                                            Text="{Binding CompletedWork}"
+                                                            FontSize="14"
+                                                            Foreground="{StaticResource SecondaryTextBrush}"
+                                                            TextWrapping="Wrap"
+                                                            MaxLines="6"
+                                                            TextTrimming="CharacterEllipsis" />
                                                     </StackPanel>
                                                 </Border>
 
-                                                <StackPanel Orientation="Horizontal" Spacing="12">
-                                                    <Button
-                                                        Content="标记正常"
-                                                        Tag="{Binding Id}"
-                                                        Click="SetNormalReportButton_Click" />
+                                                <Border
+                                                    Grid.Column="1"
+                                                    Padding="15"
+                                                    CornerRadius="16"
+                                                    Background="#162033">
+                                                    <StackPanel Spacing="8">
+                                                        <TextBlock
+                                                            Text="问题与风险"
+                                                            FontSize="14"
+                                                            FontWeight="SemiBold"
+                                                            Foreground="{StaticResource AccentRedBrush}" />
 
-                                                    <Button
-                                                        Content="标记关注"
-                                                        Tag="{Binding Id}"
-                                                        Click="SetAttentionReportButton_Click" />
+                                                        <TextBlock
+                                                            Text="{Binding Problems}"
+                                                            FontSize="14"
+                                                            Foreground="{StaticResource SecondaryTextBrush}"
+                                                            TextWrapping="Wrap"
+                                                            MaxLines="6"
+                                                            TextTrimming="CharacterEllipsis" />
+                                                    </StackPanel>
+                                                </Border>
 
-                                                    <Button
-                                                        Content="标记高风险"
-                                                        Tag="{Binding Id}"
-                                                        Click="SetHighRiskReportButton_Click" />
+                                                <Border
+                                                    Grid.Column="2"
+                                                    Padding="15"
+                                                    CornerRadius="16"
+                                                    Background="#162033">
+                                                    <StackPanel Spacing="8">
+                                                        <TextBlock
+                                                            Text="下周计划"
+                                                            FontSize="14"
+                                                            FontWeight="SemiBold"
+                                                            Foreground="{StaticResource AccentBlueBrush}" />
 
-                                                    <Button
-                                                        Content="删除复盘"
-                                                        Tag="{Binding Id}"
-                                                        Click="DeleteReportButton_Click" />
-                                                </StackPanel>
+                                                        <TextBlock
+                                                            Text="{Binding NextPlan}"
+                                                            FontSize="14"
+                                                            Foreground="{StaticResource SecondaryTextBrush}"
+                                                            TextWrapping="Wrap"
+                                                            MaxLines="6"
+                                                            TextTrimming="CharacterEllipsis" />
+                                                    </StackPanel>
+                                                </Border>
+                                            </Grid>
+
+                                            <Grid ColumnSpacing="14">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="1*" />
+                                                    <ColumnDefinition Width="1*" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <Border
+                                                    Grid.Column="0"
+                                                    Padding="15"
+                                                    CornerRadius="16"
+                                                    Background="#201B35">
+                                                    <StackPanel Spacing="8">
+                                                        <TextBlock
+                                                            Text="AI 协作摘要"
+                                                            FontSize="14"
+                                                            FontWeight="SemiBold"
+                                                            Foreground="{StaticResource AccentPurpleBrush}" />
+
+                                                        <TextBlock
+                                                            Text="{Binding AiCollaborationSummary}"
+                                                            FontSize="14"
+                                                            Foreground="{StaticResource SecondaryTextBrush}"
+                                                            TextWrapping="Wrap"
+                                                            MaxLines="5"
+                                                            TextTrimming="CharacterEllipsis" />
+                                                    </StackPanel>
+                                                </Border>
+
+                                                <Border
+                                                    Grid.Column="1"
+                                                    Padding="15"
+                                                    CornerRadius="16"
+                                                    Background="#1C2638">
+                                                    <StackPanel Spacing="8">
+                                                        <TextBlock
+                                                            Text="负责人复盘判断"
+                                                            FontSize="14"
+                                                            FontWeight="SemiBold"
+                                                            Foreground="{StaticResource AccentOrangeBrush}" />
+
+                                                        <TextBlock
+                                                            Text="{Binding ManagerReview}"
+                                                            FontSize="14"
+                                                            Foreground="{StaticResource SecondaryTextBrush}"
+                                                            TextWrapping="Wrap"
+                                                            MaxLines="5"
+                                                            TextTrimming="CharacterEllipsis" />
+                                                    </StackPanel>
+                                                </Border>
+                                            </Grid>
+
+                                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                                <Button
+                                                    Content="标记正常"
+                                                    Tag="{Binding Id}"
+                                                    Click="SetNormalReportButton_Click" />
+
+                                                <Button
+                                                    Content="标记关注"
+                                                    Tag="{Binding Id}"
+                                                    Click="SetAttentionReportButton_Click" />
+
+                                                <Button
+                                                    Content="标记高风险"
+                                                    Tag="{Binding Id}"
+                                                    Click="SetHighRiskReportButton_Click" />
+
+                                                <Button
+                                                    Content="删除复盘"
+                                                    Tag="{Binding Id}"
+                                                    Click="DeleteReportButton_Click" />
                                             </StackPanel>
-                                        </Grid>
+                                        </StackPanel>
                                     </Border>
                                 </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </StackPanel>
                 </Border>
 

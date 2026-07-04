@@ -122,6 +122,48 @@ public sealed partial class AiRecordsPage : Page
         UpdateAdoptionStatus(sender, "未采纳", "记录已标记为未采纳");
     }
 
+    private async void ShowAiRecordDetailButton_Click(object sender, RoutedEventArgs e)
+    {
+        var record = GetRecordFromButton(sender);
+
+        if (record is null)
+        {
+            return;
+        }
+
+        var detailPanel = new StackPanel
+        {
+            Spacing = 16,
+            MaxWidth = 920
+        };
+
+        detailPanel.Children.Add(CreateDetailBlock("关联模块", record.RelatedModule));
+        detailPanel.Children.Add(CreateDetailBlock("问题描述", record.Question));
+        detailPanel.Children.Add(CreateDetailBlock("AI 建议", record.AiSuggestion));
+        detailPanel.Children.Add(CreateDetailBlock("人工判断", record.HumanJudgement));
+        detailPanel.Children.Add(CreateDetailBlock("最终决策", record.FinalDecision));
+        detailPanel.Children.Add(CreateDetailBlock("采纳状态", record.AdoptionStatus));
+        detailPanel.Children.Add(CreateDetailBlock("创建时间", record.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")));
+
+        var scrollViewer = new ScrollViewer
+        {
+            Content = detailPanel,
+            MaxHeight = 680,
+            VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+            HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled
+        };
+
+        var dialog = new ContentDialog
+        {
+            Title = "AI 协作记录详情",
+            Content = scrollViewer,
+            CloseButtonText = "关闭",
+            XamlRoot = XamlRoot
+        };
+
+        await dialog.ShowAsync();
+    }
+
     private void DeleteAiRecordButton_Click(object sender, RoutedEventArgs e)
     {
         var record = GetRecordFromButton(sender);
@@ -204,7 +246,7 @@ public sealed partial class AiRecordsPage : Page
 
         RecentModuleText.Text = latestRecord is null
             ? "暂无协作记录。"
-            : $"{latestRecord.RelatedModule}";
+            : latestRecord.RelatedModule;
 
         var acceptedCount = _records.Count(record => record.AdoptionStatus == "采纳");
         var partAcceptedCount = _records.Count(record => record.AdoptionStatus == "部分采纳");
@@ -244,6 +286,32 @@ public sealed partial class AiRecordsPage : Page
         FinalDecisionTextBox.Text = string.Empty;
 
         AdoptionStatusComboBox.SelectedIndex = 1;
+    }
+
+    private static StackPanel CreateDetailBlock(string title, string content)
+    {
+        var panel = new StackPanel
+        {
+            Spacing = 6
+        };
+
+        panel.Children.Add(new TextBlock
+        {
+            Text = title,
+            FontSize = 15,
+            FontWeight = Microsoft.UI.Text.FontWeights.SemiBold,
+            TextWrapping = TextWrapping.Wrap
+        });
+
+        panel.Children.Add(new TextBlock
+        {
+            Text = string.IsNullOrWhiteSpace(content) ? "暂无内容" : content,
+            FontSize = 14,
+            TextWrapping = TextWrapping.Wrap,
+            IsTextSelectionEnabled = true
+        });
+
+        return panel;
     }
 
     private static string GetComboBoxText(ComboBox comboBox, string fallback)

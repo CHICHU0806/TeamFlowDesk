@@ -82,7 +82,7 @@
                             Grid.Row="0"
                             Grid.Column="0"
                             Header="成员姓名"
-                            PlaceholderText="例如：杨扬文琦" />
+                            PlaceholderText="例如：杨杨文琦" />
 
                         <TextBox
                             x:Name="MemberGradeTextBox"

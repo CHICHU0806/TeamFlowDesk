@@ -6,9 +6,9 @@
 
     <Page.Resources>
         <SolidColorBrush x:Key="PageBackgroundBrush" Color="#080D18" />
-        <SolidColorBrush x:Key="PanelBackgroundBrush" Color="#121A2B" />
-        <SolidColorBrush x:Key="CardBackgroundBrush" Color="#172033" />
-        <SolidColorBrush x:Key="CardSoftBrush" Color="#1D2840" />
+        <SolidColorBrush x:Key="PanelBackgroundBrush" Color="#111827" />
+        <SolidColorBrush x:Key="CardBackgroundBrush" Color="#162033" />
+        <SolidColorBrush x:Key="CardSoftBrush" Color="#1E293B" />
         <SolidColorBrush x:Key="CardBorderBrush" Color="#334155" />
 
         <SolidColorBrush x:Key="PrimaryTextBrush" Color="#F8FAFC" />
@@ -23,91 +23,103 @@
 
         <Style x:Key="MetricCardStyle" TargetType="Border">
             <Setter Property="Padding" Value="18" />
-            <Setter Property="CornerRadius" Value="20" />
+            <Setter Property="CornerRadius" Value="18" />
             <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}" />
             <Setter Property="BorderBrush" Value="{StaticResource CardBorderBrush}" />
             <Setter Property="BorderThickness" Value="1" />
         </Style>
 
+        <Style x:Key="InsightCardStyle" TargetType="Border">
+            <Setter Property="Padding" Value="16" />
+            <Setter Property="CornerRadius" Value="18" />
+            <Setter Property="Background" Value="#1B2638" />
+            <Setter Property="BorderBrush" Value="#2F3D55" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+
         <Style x:Key="EditorBoxStyle" TargetType="TextBox">
-            <Setter Property="Background" Value="#202A3F" />
-            <Setter Property="BorderBrush" Value="#3B4A63" />
+            <Setter Property="Background" Value="#1C2638" />
+            <Setter Property="BorderBrush" Value="#40516B" />
             <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}" />
             <Setter Property="PlaceholderForeground" Value="{StaticResource MutedTextBrush}" />
         </Style>
     </Page.Resources>
 
     <Grid Background="{StaticResource PageBackgroundBrush}">
-        <ScrollViewer>
-            <StackPanel Margin="32" Spacing="24">
+        <ScrollViewer
+            VerticalScrollBarVisibility="Auto"
+            HorizontalScrollBarVisibility="Disabled"
+            HorizontalScrollMode="Disabled">
+
+            <StackPanel Margin="28" Spacing="22">
 
                 <Border
                     Padding="30"
-                    CornerRadius="28"
-                    BorderBrush="#7C3AED"
+                    CornerRadius="26"
+                    BorderBrush="#5B5FE9"
                     BorderThickness="1">
 
                     <Border.Background>
                         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Color="#3B0764" Offset="0" />
-                            <GradientStop Color="#312E81" Offset="0.48" />
+                            <GradientStop Color="#2E1065" Offset="0" />
+                            <GradientStop Color="#1E1B4B" Offset="0.45" />
                             <GradientStop Color="#0F172A" Offset="1" />
                         </LinearGradientBrush>
                     </Border.Background>
 
                     <Grid ColumnSpacing="28">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="2.1*" />
+                            <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
 
-                        <StackPanel Grid.Column="0" Spacing="14">
+                        <StackPanel Grid.Column="0" Spacing="12">
                             <TextBlock
                                 Text="AI Command Console"
-                                FontSize="44"
+                                FontSize="42"
                                 FontWeight="SemiBold"
                                 Foreground="{StaticResource PrimaryTextBrush}" />
 
                             <TextBlock
                                 Text="AI 协作调度台"
-                                FontSize="24"
+                                FontSize="23"
                                 Foreground="{StaticResource SecondaryTextBrush}" />
 
                             <TextBlock
-                                Text="记录 AI 在任务拆解、风险分析、复盘生成和管理决策中的辅助过程，并保留人工判断、修正意见和最终采纳结果。"
+                                Text="这里记录 AI 如何参与团队管理：负责人提出问题，AI 给出建议，负责人进行人工判断，最终形成可追踪的管理动作。"
                                 FontSize="15"
                                 Foreground="{StaticResource MutedTextBrush}"
                                 TextWrapping="Wrap"
                                 MaxWidth="820" />
 
-                            <StackPanel Orientation="Horizontal" Spacing="12">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
                                 <Border Padding="12,6" CornerRadius="999" Background="#312E81">
-                                    <TextBlock Text="用户自定义 API" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
+                                    <TextBlock Text="自定义 API" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
                                 </Border>
 
                                 <Border Padding="12,6" CornerRadius="999" Background="#4C1D95">
-                                    <TextBlock Text="AI 建议生成" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
+                                    <TextBlock Text="建议生成" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
                                 </Border>
 
                                 <Border Padding="12,6" CornerRadius="999" Background="#064E3B">
-                                    <TextBlock Text="人工判断闭环" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
+                                    <TextBlock Text="人工判断" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
                                 </Border>
 
                                 <Border Padding="12,6" CornerRadius="999" Background="#7C2D12">
-                                    <TextBlock Text="采纳状态追踪" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
+                                    <TextBlock Text="决策追踪" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
                                 </Border>
                             </StackPanel>
                         </StackPanel>
 
                         <Border
                             Grid.Column="1"
-                            Padding="22"
-                            CornerRadius="22"
-                            Background="#251E293B"
+                            Padding="20"
+                            CornerRadius="20"
+                            Background="#241B2D47"
                             BorderBrush="#475569"
                             BorderThickness="1">
 
-                            <StackPanel Spacing="12">
+                            <StackPanel Spacing="10">
                                 <TextBlock
                                     Text="AI 调度状态"
                                     FontSize="18"
@@ -132,7 +144,7 @@
                     </Grid>
                 </Border>
 
-                <Grid ColumnSpacing="16">
+                <Grid ColumnSpacing="14">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
@@ -141,49 +153,115 @@
                     </Grid.ColumnDefinitions>
 
                     <Border Grid.Column="0" Style="{StaticResource MetricCardStyle}">
-                        <StackPanel Spacing="8">
+                        <StackPanel Spacing="6">
                             <TextBlock Text="记录总数" FontSize="14" Foreground="{StaticResource MutedTextBrush}" />
-                            <TextBlock x:Name="RecordCountText" FontSize="38" FontWeight="SemiBold" Foreground="{StaticResource AccentBlueBrush}" />
-                            <TextBlock Text="已沉淀的 AI 协作过程" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
+                            <TextBlock x:Name="RecordCountText" FontSize="36" FontWeight="SemiBold" Foreground="{StaticResource AccentBlueBrush}" />
+                            <TextBlock Text="AI 协作过程" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
                         </StackPanel>
                     </Border>
 
                     <Border Grid.Column="1" Style="{StaticResource MetricCardStyle}">
-                        <StackPanel Spacing="8">
+                        <StackPanel Spacing="6">
                             <TextBlock Text="采纳记录" FontSize="14" Foreground="{StaticResource MutedTextBrush}" />
-                            <TextBlock x:Name="AcceptedCountText" FontSize="38" FontWeight="SemiBold" Foreground="{StaticResource AccentGreenBrush}" />
-                            <TextBlock Text="AI 建议被直接采纳" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
+                            <TextBlock x:Name="AcceptedCountText" FontSize="36" FontWeight="SemiBold" Foreground="{StaticResource AccentGreenBrush}" />
+                            <TextBlock Text="直接进入方案" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
                         </StackPanel>
                     </Border>
 
                     <Border Grid.Column="2" Style="{StaticResource MetricCardStyle}">
-                        <StackPanel Spacing="8">
+                        <StackPanel Spacing="6">
                             <TextBlock Text="部分采纳" FontSize="14" Foreground="{StaticResource MutedTextBrush}" />
-                            <TextBlock x:Name="PartAcceptedCountText" FontSize="38" FontWeight="SemiBold" Foreground="{StaticResource AccentPurpleBrush}" />
-                            <TextBlock Text="经人工修正后使用" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
+                            <TextBlock x:Name="PartAcceptedCountText" FontSize="36" FontWeight="SemiBold" Foreground="{StaticResource AccentPurpleBrush}" />
+                            <TextBlock Text="经人工修正" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
                         </StackPanel>
                     </Border>
 
                     <Border Grid.Column="3" Style="{StaticResource MetricCardStyle}">
-                        <StackPanel Spacing="8">
+                        <StackPanel Spacing="6">
                             <TextBlock Text="涉及模块" FontSize="14" Foreground="{StaticResource MutedTextBrush}" />
-                            <TextBlock x:Name="ModuleCountText" FontSize="38" FontWeight="SemiBold" Foreground="{StaticResource AccentOrangeBrush}" />
-                            <TextBlock Text="AI 参与的管理场景" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
+                            <TextBlock x:Name="ModuleCountText" FontSize="36" FontWeight="SemiBold" Foreground="{StaticResource AccentOrangeBrush}" />
+                            <TextBlock Text="管理场景数量" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
                         </StackPanel>
                     </Border>
                 </Grid>
 
-                <Grid ColumnSpacing="22">
+                <Border
+                    Padding="22"
+                    CornerRadius="24"
+                    Background="{StaticResource PanelBackgroundBrush}"
+                    BorderBrush="{StaticResource CardBorderBrush}"
+                    BorderThickness="1">
+
+                    <StackPanel Spacing="16">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" Spacing="4">
+                                <TextBlock
+                                    Text="协作洞察"
+                                    FontSize="24"
+                                    FontWeight="SemiBold"
+                                    Foreground="{StaticResource PrimaryTextBrush}" />
+
+                                <TextBlock
+                                    Text="用简洁指标判断 AI 是否真正进入团队管理流程，而不是停留在普通问答。"
+                                    FontSize="14"
+                                    Foreground="{StaticResource MutedTextBrush}"
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+
+                            <TextBlock
+                                Grid.Column="1"
+                                Text="Decision Trace"
+                                FontSize="17"
+                                Foreground="{StaticResource AccentPurpleBrush}"
+                                VerticalAlignment="Center" />
+                        </Grid>
+
+                        <Grid ColumnSpacing="14">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <Border Grid.Column="0" Style="{StaticResource InsightCardStyle}">
+                                <StackPanel Spacing="5">
+                                    <TextBlock Text="最近协作模块" FontSize="13" Foreground="{StaticResource MutedTextBrush}" />
+                                    <TextBlock x:Name="RecentModuleText" FontSize="17" FontWeight="SemiBold" Foreground="{StaticResource PrimaryTextBrush}" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="1" Style="{StaticResource InsightCardStyle}">
+                                <StackPanel Spacing="5">
+                                    <TextBlock Text="采纳结构" FontSize="13" Foreground="{StaticResource MutedTextBrush}" />
+                                    <TextBlock x:Name="AdoptionSummaryText" FontSize="15" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="2" Style="{StaticResource InsightCardStyle}">
+                                <StackPanel Spacing="5">
+                                    <TextBlock Text="管理价值" FontSize="13" Foreground="{StaticResource MutedTextBrush}" />
+                                    <TextBlock x:Name="AiValueText" FontSize="15" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <Grid ColumnSpacing="20">
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="1.25*" />
-                        <ColumnDefinition Width="1.25*" />
-                        <ColumnDefinition Width="0.85*" />
                     </Grid.ColumnDefinitions>
 
                     <Border
                         Grid.Column="0"
                         Padding="24"
-                        CornerRadius="26"
+                        CornerRadius="24"
                         Background="{StaticResource PanelBackgroundBrush}"
                         BorderBrush="{StaticResource CardBorderBrush}"
                         BorderThickness="1">
@@ -191,16 +269,15 @@
                         <StackPanel Spacing="18">
                             <StackPanel Spacing="4">
                                 <TextBlock
-                                    Text="AI 输入区"
-                                    FontSize="26"
+                                    Text="提出问题"
+                                    FontSize="25"
                                     FontWeight="SemiBold"
                                     Foreground="{StaticResource PrimaryTextBrush}" />
 
                                 <TextBlock
-                                    Text="先描述问题，再调用用户配置的 API 生成管理建议。"
+                                    Text="描述当前管理场景，生成结构化 AI 建议。"
                                     FontSize="14"
-                                    Foreground="{StaticResource MutedTextBrush}"
-                                    TextWrapping="Wrap" />
+                                    Foreground="{StaticResource MutedTextBrush}" />
                             </StackPanel>
 
                             <TextBox
@@ -226,9 +303,11 @@
                                 TextWrapping="Wrap"
                                 AcceptsReturn="True"
                                 MinHeight="170"
+                                MaxHeight="260"
+                                ScrollViewer.VerticalScrollBarVisibility="Auto"
                                 Style="{StaticResource EditorBoxStyle}" />
 
-                            <StackPanel Orientation="Horizontal" Spacing="12">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
                                 <Button
                                     x:Name="GenerateAiSuggestionButton"
                                     Content="生成 AI 建议"
@@ -254,7 +333,7 @@
                     <Border
                         Grid.Column="1"
                         Padding="24"
-                        CornerRadius="26"
+                        CornerRadius="24"
                         Background="{StaticResource PanelBackgroundBrush}"
                         BorderBrush="{StaticResource CardBorderBrush}"
                         BorderThickness="1">
@@ -262,13 +341,13 @@
                         <StackPanel Spacing="18">
                             <StackPanel Spacing="4">
                                 <TextBlock
-                                    Text="建议与判断"
-                                    FontSize="26"
+                                    Text="建议、判断与决策"
+                                    FontSize="25"
                                     FontWeight="SemiBold"
                                     Foreground="{StaticResource PrimaryTextBrush}" />
 
                                 <TextBlock
-                                    Text="AI 建议只作为参考，必须经过人工判断后才能形成最终决策。"
+                                    Text="AI 生成的是建议，负责人需要在这里完成判断、修正与最终决策。"
                                     FontSize="14"
                                     Foreground="{StaticResource MutedTextBrush}"
                                     TextWrapping="Wrap" />
@@ -280,109 +359,53 @@
                                 PlaceholderText="点击左侧“生成 AI 建议”后，这里会自动填入内容。"
                                 TextWrapping="Wrap"
                                 AcceptsReturn="True"
-                                MinHeight="170"
+                                MinHeight="220"
+                                MaxHeight="360"
+                                ScrollViewer.VerticalScrollBarVisibility="Auto"
                                 Style="{StaticResource EditorBoxStyle}" />
 
-                            <TextBox
-                                x:Name="HumanJudgementTextBox"
-                                Header="人工判断"
-                                PlaceholderText="记录你对 AI 建议的判断、筛选、质疑、补充或修正。"
-                                TextWrapping="Wrap"
-                                AcceptsReturn="True"
-                                MinHeight="135"
-                                Style="{StaticResource EditorBoxStyle}" />
+                            <Grid ColumnSpacing="14">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
 
-                            <TextBox
-                                x:Name="FinalDecisionTextBox"
-                                Header="最终决策"
-                                PlaceholderText="记录最终采用的方案，以及为什么这样处理。"
-                                TextWrapping="Wrap"
-                                AcceptsReturn="True"
-                                MinHeight="135"
-                                Style="{StaticResource EditorBoxStyle}" />
+                                <TextBox
+                                    x:Name="HumanJudgementTextBox"
+                                    Grid.Column="0"
+                                    Header="人工判断"
+                                    PlaceholderText="记录你对 AI 建议的筛选、质疑、补充或修正。"
+                                    TextWrapping="Wrap"
+                                    AcceptsReturn="True"
+                                    MinHeight="150"
+                                    MaxHeight="260"
+                                    ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                    Style="{StaticResource EditorBoxStyle}" />
+
+                                <TextBox
+                                    x:Name="FinalDecisionTextBox"
+                                    Grid.Column="1"
+                                    Header="最终决策"
+                                    PlaceholderText="记录最终采用的方案，以及为什么这样处理。"
+                                    TextWrapping="Wrap"
+                                    AcceptsReturn="True"
+                                    MinHeight="150"
+                                    MaxHeight="260"
+                                    ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                    Style="{StaticResource EditorBoxStyle}" />
+                            </Grid>
                         </StackPanel>
                     </Border>
-
-                    <StackPanel Grid.Column="2" Spacing="18">
-
-                        <Border
-                            Padding="22"
-                            CornerRadius="24"
-                            Background="{StaticResource PanelBackgroundBrush}"
-                            BorderBrush="{StaticResource CardBorderBrush}"
-                            BorderThickness="1">
-
-                            <StackPanel Spacing="16">
-                                <StackPanel Spacing="4">
-                                    <TextBlock
-                                        Text="协作洞察"
-                                        FontSize="24"
-                                        FontWeight="SemiBold"
-                                        Foreground="{StaticResource PrimaryTextBrush}" />
-
-                                    <TextBlock
-                                        Text="帮助负责人判断 AI 是否真正进入管理流程。"
-                                        FontSize="14"
-                                        Foreground="{StaticResource MutedTextBrush}"
-                                        TextWrapping="Wrap" />
-                                </StackPanel>
-
-                                <Border Padding="14" CornerRadius="16" Background="#241F3A">
-                                    <StackPanel Spacing="4">
-                                        <TextBlock Text="最近协作模块" FontSize="14" Foreground="{StaticResource MutedTextBrush}" />
-                                        <TextBlock x:Name="RecentModuleText" FontSize="15" Foreground="{StaticResource PrimaryTextBrush}" TextWrapping="Wrap" />
-                                    </StackPanel>
-                                </Border>
-
-                                <Border Padding="14" CornerRadius="16" Background="#1F2937">
-                                    <StackPanel Spacing="4">
-                                        <TextBlock Text="采纳结构" FontSize="14" Foreground="{StaticResource MutedTextBrush}" />
-                                        <TextBlock x:Name="AdoptionSummaryText" FontSize="15" Foreground="{StaticResource PrimaryTextBrush}" TextWrapping="Wrap" />
-                                    </StackPanel>
-                                </Border>
-
-                                <Border Padding="14" CornerRadius="16" Background="#1F2937">
-                                    <StackPanel Spacing="4">
-                                        <TextBlock Text="管理价值" FontSize="14" Foreground="{StaticResource MutedTextBrush}" />
-                                        <TextBlock x:Name="AiValueText" FontSize="15" Foreground="{StaticResource PrimaryTextBrush}" TextWrapping="Wrap" />
-                                    </StackPanel>
-                                </Border>
-                            </StackPanel>
-                        </Border>
-
-                        <Border
-                            Padding="22"
-                            CornerRadius="24"
-                            Background="{StaticResource PanelBackgroundBrush}"
-                            BorderBrush="{StaticResource CardBorderBrush}"
-                            BorderThickness="1">
-
-                            <StackPanel Spacing="12">
-                                <TextBlock
-                                    Text="AI 协作闭环"
-                                    FontSize="22"
-                                    FontWeight="SemiBold"
-                                    Foreground="{StaticResource PrimaryTextBrush}" />
-
-                                <TextBlock Text="1. 负责人提出管理问题" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" />
-                                <TextBlock Text="2. AI 给出结构化建议" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" />
-                                <TextBlock Text="3. 负责人进行人工判断" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" />
-                                <TextBlock Text="4. 形成最终管理动作" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" />
-                                <TextBlock Text="5. 保存为可复盘记录" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" />
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
                 </Grid>
 
                 <Border
                     Padding="24"
-                    CornerRadius="26"
+                    CornerRadius="24"
                     Background="{StaticResource PanelBackgroundBrush}"
                     BorderBrush="{StaticResource CardBorderBrush}"
                     BorderThickness="1">
 
                     <StackPanel Spacing="16">
-
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -391,142 +414,174 @@
 
                             <StackPanel Grid.Column="0" Spacing="4">
                                 <TextBlock
-                                    Text="AI 协作时间线"
-                                    FontSize="26"
+                                    Text="AI 协作记录"
+                                    FontSize="25"
                                     FontWeight="SemiBold"
                                     Foreground="{StaticResource PrimaryTextBrush}" />
 
                                 <TextBlock
-                                    Text="每一条记录都应该能回答：AI 提了什么、人怎么判断、最后采取了什么方案。"
+                                    Text="列表只显示摘要，完整内容通过“查看详情”打开，避免长文本破坏页面布局。"
                                     FontSize="14"
                                     Foreground="{StaticResource MutedTextBrush}" />
                             </StackPanel>
 
-                            <TextBlock
-                                Grid.Column="1"
-                                Text="Decision Trace"
-                                FontSize="18"
-                                Foreground="{StaticResource AccentPurpleBrush}"
-                                VerticalAlignment="Center" />
+                            <Border Grid.Column="1" Padding="12,6" CornerRadius="999" Background="#241F3A" VerticalAlignment="Center">
+                                <TextBlock Text="Traceable Records" FontSize="13" Foreground="{StaticResource AccentPurpleBrush}" />
+                            </Border>
                         </Grid>
 
-                        <ListView
-                            x:Name="AiRecordsListView"
-                            SelectionMode="Single"
-                            Background="Transparent"
-                            Height="680">
+                        <ItemsControl
+                            x:Name="AiRecordsListView">
 
-                            <ListView.ItemTemplate>
+                            <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Border
                                         Margin="0,0,0,14"
                                         Padding="20"
-                                        CornerRadius="22"
-                                        Background="#1F2937"
+                                        CornerRadius="20"
+                                        Background="#1B2537"
                                         BorderBrush="#334155"
                                         BorderThickness="1">
 
-                                        <Grid ColumnSpacing="18">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
+                                        <StackPanel Spacing="14">
 
-                                            <StackPanel Grid.Column="0" HorizontalAlignment="Center">
-                                                <Border Width="16" Height="16" CornerRadius="8" Background="#A78BFA" />
-                                                <Rectangle Width="2" Height="300" Fill="#334155" Margin="0,8,0,0" />
-                                            </StackPanel>
+                                            <Grid ColumnSpacing="14">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
 
-                                            <StackPanel Grid.Column="1" Spacing="10">
-
-                                                <Grid ColumnSpacing="16">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="2*" />
-                                                        <ColumnDefinition Width="Auto" />
-                                                        <ColumnDefinition Width="Auto" />
-                                                    </Grid.ColumnDefinitions>
-
+                                                <StackPanel Grid.Column="0" Spacing="4">
                                                     <TextBlock
-                                                        Grid.Column="0"
                                                         Text="{Binding RelatedModule}"
                                                         FontSize="21"
                                                         FontWeight="SemiBold"
                                                         Foreground="{StaticResource PrimaryTextBrush}"
                                                         TextWrapping="Wrap" />
 
-                                                    <Border
-                                                        Grid.Column="1"
-                                                        Padding="10,4"
-                                                        CornerRadius="999"
-                                                        Background="#334155">
-                                                        <TextBlock
-                                                            Text="{Binding AdoptionStatus}"
-                                                            FontSize="13"
-                                                            Foreground="{StaticResource AccentPurpleBrush}" />
-                                                    </Border>
-
                                                     <TextBlock
-                                                        Grid.Column="2"
-                                                        Text="{Binding CreatedAt}"
-                                                        FontSize="13"
-                                                        Foreground="{StaticResource MutedTextBrush}"
-                                                        VerticalAlignment="Center" />
-                                                </Grid>
+                                                        Text="{Binding Question}"
+                                                        FontSize="14"
+                                                        Foreground="{StaticResource SecondaryTextBrush}"
+                                                        TextWrapping="Wrap"
+                                                        MaxLines="2"
+                                                        TextTrimming="CharacterEllipsis" />
+                                                </StackPanel>
 
-                                                <Border Padding="14" CornerRadius="14" Background="#172033">
-                                                    <StackPanel Spacing="4">
-                                                        <TextBlock Text="问题描述" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AccentBlueBrush}" />
-                                                        <TextBlock Text="{Binding Question}" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" />
+                                                <Border
+                                                    Grid.Column="1"
+                                                    Padding="10,5"
+                                                    CornerRadius="999"
+                                                    Background="#2B2542"
+                                                    VerticalAlignment="Top">
+                                                    <TextBlock
+                                                        Text="{Binding AdoptionStatus}"
+                                                        FontSize="13"
+                                                        Foreground="{StaticResource AccentPurpleBrush}" />
+                                                </Border>
+
+                                                <TextBlock
+                                                    Grid.Column="2"
+                                                    Text="{Binding CreatedAt}"
+                                                    FontSize="13"
+                                                    Foreground="{StaticResource MutedTextBrush}"
+                                                    VerticalAlignment="Top" />
+                                            </Grid>
+
+                                            <Grid ColumnSpacing="14">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="1.1*" />
+                                                    <ColumnDefinition Width="1*" />
+                                                    <ColumnDefinition Width="1*" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <Border Grid.Column="0" Padding="14" CornerRadius="14" Background="#162033">
+                                                    <StackPanel Spacing="6">
+                                                        <TextBlock
+                                                            Text="AI 建议"
+                                                            FontSize="14"
+                                                            FontWeight="SemiBold"
+                                                            Foreground="{StaticResource AccentPurpleBrush}" />
+
+                                                        <TextBlock
+                                                            Text="{Binding AiSuggestion}"
+                                                            FontSize="14"
+                                                            Foreground="{StaticResource SecondaryTextBrush}"
+                                                            TextWrapping="Wrap"
+                                                            MaxLines="5"
+                                                            TextTrimming="CharacterEllipsis" />
                                                     </StackPanel>
                                                 </Border>
 
-                                                <Grid ColumnSpacing="14">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="*" />
-                                                        <ColumnDefinition Width="*" />
-                                                    </Grid.ColumnDefinitions>
+                                                <Border Grid.Column="1" Padding="14" CornerRadius="14" Background="#162033">
+                                                    <StackPanel Spacing="6">
+                                                        <TextBlock
+                                                            Text="人工判断"
+                                                            FontSize="14"
+                                                            FontWeight="SemiBold"
+                                                            Foreground="{StaticResource AccentOrangeBrush}" />
 
-                                                    <StackPanel Grid.Column="0" Spacing="8">
-                                                        <TextBlock Text="AI 建议" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AccentPurpleBrush}" />
-                                                        <TextBlock Text="{Binding AiSuggestion}" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" MaxHeight="120" />
-
-                                                        <TextBlock Text="人工判断" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AccentOrangeBrush}" />
-                                                        <TextBlock Text="{Binding HumanJudgement}" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" MaxHeight="100" />
+                                                        <TextBlock
+                                                            Text="{Binding HumanJudgement}"
+                                                            FontSize="14"
+                                                            Foreground="{StaticResource SecondaryTextBrush}"
+                                                            TextWrapping="Wrap"
+                                                            MaxLines="5"
+                                                            TextTrimming="CharacterEllipsis" />
                                                     </StackPanel>
+                                                </Border>
 
-                                                    <StackPanel Grid.Column="1" Spacing="8">
-                                                        <TextBlock Text="最终决策" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AccentGreenBrush}" />
-                                                        <TextBlock Text="{Binding FinalDecision}" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" MaxHeight="160" />
+                                                <Border Grid.Column="2" Padding="14" CornerRadius="14" Background="#162033">
+                                                    <StackPanel Spacing="6">
+                                                        <TextBlock
+                                                            Text="最终决策"
+                                                            FontSize="14"
+                                                            FontWeight="SemiBold"
+                                                            Foreground="{StaticResource AccentGreenBrush}" />
+
+                                                        <TextBlock
+                                                            Text="{Binding FinalDecision}"
+                                                            FontSize="14"
+                                                            Foreground="{StaticResource SecondaryTextBrush}"
+                                                            TextWrapping="Wrap"
+                                                            MaxLines="5"
+                                                            TextTrimming="CharacterEllipsis" />
                                                     </StackPanel>
-                                                </Grid>
+                                                </Border>
+                                            </Grid>
 
-                                                <StackPanel Orientation="Horizontal" Spacing="12">
-                                                    <Button
-                                                        Content="标记采纳"
-                                                        Tag="{Binding Id}"
-                                                        Click="SetAcceptedButton_Click" />
+                                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                                <Button
+                                                    Content="查看详情"
+                                                    Tag="{Binding Id}"
+                                                    Click="ShowAiRecordDetailButton_Click" />
 
-                                                    <Button
-                                                        Content="标记部分采纳"
-                                                        Tag="{Binding Id}"
-                                                        Click="SetPartAcceptedButton_Click" />
+                                                <Button
+                                                    Content="标记采纳"
+                                                    Tag="{Binding Id}"
+                                                    Click="SetAcceptedButton_Click" />
 
-                                                    <Button
-                                                        Content="标记未采纳"
-                                                        Tag="{Binding Id}"
-                                                        Click="SetRejectedButton_Click" />
+                                                <Button
+                                                    Content="标记部分采纳"
+                                                    Tag="{Binding Id}"
+                                                    Click="SetPartAcceptedButton_Click" />
 
-                                                    <Button
-                                                        Content="删除记录"
-                                                        Tag="{Binding Id}"
-                                                        Click="DeleteAiRecordButton_Click" />
-                                                </StackPanel>
+                                                <Button
+                                                    Content="标记未采纳"
+                                                    Tag="{Binding Id}"
+                                                    Click="SetRejectedButton_Click" />
+
+                                                <Button
+                                                    Content="删除记录"
+                                                    Tag="{Binding Id}"
+                                                    Click="DeleteAiRecordButton_Click" />
                                             </StackPanel>
-                                        </Grid>
+                                        </StackPanel>
                                     </Border>
                                 </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </StackPanel>
                 </Border>
 
