@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ScrollViewer>
-        <StackPanel Margin="32" Spacing="20">
+        <StackPanel Margin="32" Spacing="24">
 
             <StackPanel Spacing="8">
                 <TextBlock
@@ -13,41 +13,94 @@
                     FontWeight="SemiBold" />
 
                 <TextBlock
-                    Text="用于配置系统运行方式、数据存储方式和后续扩展选项。当前阶段保留基础设置页面。"
+                    Text="用于配置系统运行方式、本地数据策略和 AI 协作接口。当前系统采用本地私有化存储，AI API 由用户自行配置。"
                     FontSize="16"
                     TextWrapping="Wrap" />
             </StackPanel>
 
-            <StackPanel Spacing="12">
-                <TextBlock
-                    Text="基础设置"
-                    FontSize="22"
-                    FontWeight="SemiBold" />
+            <Border Padding="20" BorderBrush="Gray" BorderThickness="1" CornerRadius="8">
+                <StackPanel Spacing="16">
 
-                <CheckBox
-                    Content="启动后默认进入管理驾驶舱"
-                    IsChecked="True" />
+                    <TextBlock
+                        Text="AI 接口配置"
+                        FontSize="22"
+                        FontWeight="SemiBold" />
 
-                <CheckBox
-                    Content="启用本地私有化数据存储提示"
-                    IsChecked="True" />
+                    <TextBlock
+                        Text="请填写你自己的 OpenAI-compatible API 配置。API Key 只保存在本机用户目录，不会写入项目代码。"
+                        FontSize="14"
+                        TextWrapping="Wrap" />
 
-                <CheckBox
-                    Content="在周报中保留 AI 协作记录"
-                    IsChecked="True" />
-            </StackPanel>
+                    <TextBox
+                        x:Name="AiBaseUrlTextBox"
+                        Header="API Base URL"
+                        PlaceholderText="例如：https://api.openai.com/v1" />
 
-            <StackPanel Spacing="8">
-                <TextBlock
-                    Text="数据策略"
-                    FontSize="22"
-                    FontWeight="SemiBold" />
+                    <TextBox
+                        x:Name="AiModelTextBox"
+                        Header="模型名称"
+                        PlaceholderText="例如：填写你当前 API 可用的模型名" />
 
-                <TextBlock
-                    Text="当前版本以本地单机使用为主，后续可扩展 SQLite 数据持久化、数据备份、导出报告和局域网同步功能。"
-                    FontSize="16"
-                    TextWrapping="Wrap" />
-            </StackPanel>
+                    <PasswordBox
+                        x:Name="AiApiKeyPasswordBox"
+                        Header="API Key"
+                        PlaceholderText="请输入你自己的 API Key" />
+
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <Button
+                            Content="保存 AI 配置"
+                            Click="SaveAiSettingsButton_Click" />
+
+                        <Button
+                            Content="重新读取配置"
+                            Click="ReloadAiSettingsButton_Click" />
+
+                        <Button
+                            Content="清空配置"
+                            Click="ClearAiSettingsButton_Click" />
+                    </StackPanel>
+
+                    <TextBlock
+                        x:Name="AiSettingsMessageText"
+                        FontSize="14"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+            <Border Padding="20" BorderBrush="Gray" BorderThickness="1" CornerRadius="8">
+                <StackPanel Spacing="12">
+                    <TextBlock
+                        Text="基础设置"
+                        FontSize="22"
+                        FontWeight="SemiBold" />
+
+                    <CheckBox
+                        Content="启动后默认进入管理驾驶舱"
+                        IsChecked="True" />
+
+                    <CheckBox
+                        Content="启用本地私有化数据存储提示"
+                        IsChecked="True" />
+
+                    <CheckBox
+                        Content="在周报中保留 AI 协作记录"
+                        IsChecked="True" />
+                </StackPanel>
+            </Border>
+
+            <Border Padding="20" BorderBrush="Gray" BorderThickness="1" CornerRadius="8">
+                <StackPanel Spacing="8">
+                    <TextBlock
+                        Text="数据策略"
+                        FontSize="22"
+                        FontWeight="SemiBold" />
+
+                    <TextBlock
+                        Text="当前版本以本地单机使用为主，任务、人员、器材和 AI 协作记录均通过 SQLite 保存到本机。后续可扩展数据备份、导出报告和局域网同步功能。"
+                        FontSize="16"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
 
         </StackPanel>
     </ScrollViewer>

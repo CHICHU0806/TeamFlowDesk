@@ -32,6 +32,8 @@ public static class DatabaseService
         CreateTasksTable(connection);
         CreateEquipmentTable(connection);
         CreateMembersTable(connection);
+        CreateAiRecordsTable(connection);
+        CreateWeeklyReportsTable(connection);
     }
 
     private static void CreateTasksTable(SqliteConnection connection)
@@ -98,6 +100,50 @@ public static class DatabaseService
             CurrentTaskCount INTEGER NOT NULL,
             WorkloadStatus TEXT NOT NULL,
             GrowthPlan TEXT NOT NULL
+        );
+        """;
+
+        command.ExecuteNonQuery();
+    }
+
+    private static void CreateAiRecordsTable(SqliteConnection connection)
+    {
+        var command = connection.CreateCommand();
+
+        command.CommandText =
+        """
+        CREATE TABLE IF NOT EXISTS AiRecords (
+            Id INTEGER PRIMARY KEY AUTOINCREMENT,
+            RelatedModule TEXT NOT NULL,
+            Question TEXT NOT NULL,
+            AiSuggestion TEXT NOT NULL,
+            HumanJudgement TEXT NOT NULL,
+            FinalDecision TEXT NOT NULL,
+            AdoptionStatus TEXT NOT NULL,
+            CreatedAt TEXT NOT NULL
+        );
+        """;
+
+        command.ExecuteNonQuery();
+    }
+
+    private static void CreateWeeklyReportsTable(SqliteConnection connection)
+    {
+        var command = connection.CreateCommand();
+
+        command.CommandText =
+        """
+        CREATE TABLE IF NOT EXISTS WeeklyReports (
+            Id INTEGER PRIMARY KEY AUTOINCREMENT,
+            Title TEXT NOT NULL,
+            StartDate TEXT NOT NULL,
+            EndDate TEXT NOT NULL,
+            CompletedWork TEXT NOT NULL,
+            Problems TEXT NOT NULL,
+            NextPlan TEXT NOT NULL,
+            AiCollaborationSummary TEXT NOT NULL,
+            ManagerReview TEXT NOT NULL,
+            ProgressStatus TEXT NOT NULL
         );
         """;
 
