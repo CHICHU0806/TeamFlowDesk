@@ -73,34 +73,46 @@ public sealed partial class TasksPage : Page
 
     private void SetDoingTaskButton_Click(object sender, RoutedEventArgs e)
     {
-        UpdateTaskStatus(sender, "进行中", null, "任务已标记为进行中");
+        PreserveScrollPosition(() =>
+        {
+            UpdateTaskStatus(sender, "进行中", null, "任务已标记为进行中");
+        });
     }
 
     private void CompleteTaskButton_Click(object sender, RoutedEventArgs e)
     {
-        UpdateTaskStatus(sender, "已完成", "正常", "任务已标记完成");
+        PreserveScrollPosition(() =>
+        {
+            UpdateTaskStatus(sender, "已完成", "正常", "任务已标记完成");
+        });
     }
 
     private void SetHighRiskTaskButton_Click(object sender, RoutedEventArgs e)
     {
-        UpdateTaskStatus(sender, null, "高风险", "任务已标记为高风险");
+        PreserveScrollPosition(() =>
+        {
+            UpdateTaskStatus(sender, null, "高风险", "任务已标记为高风险");
+        });
     }
 
     private void DeleteTaskButton_Click(object sender, RoutedEventArgs e)
     {
-        var task = GetTaskFromButton(sender);
-
-        if (task is null)
+        PreserveScrollPosition(() =>
         {
-            return;
-        }
+            var task = GetTaskFromButton(sender);
 
-        TaskRepository.Delete(task.Id);
-        _tasks.Remove(task);
+            if (task is null)
+            {
+                return;
+            }
 
-        RefreshAll();
+            TaskRepository.Delete(task.Id);
+            _tasks.Remove(task);
 
-        TaskFormMessageText.Text = $"任务已删除：{task.Title}";
+            RefreshAll();
+
+            TaskFormMessageText.Text = $"任务已删除：{task.Title}";
+        });
     }
 
     private void UpdateTaskStatus(object sender, string? status, string? riskLevel, string message)
@@ -144,6 +156,18 @@ public sealed partial class TasksPage : Page
         return _tasks.FirstOrDefault(task => task.Id == taskId);
     }
 
+    private void PreserveScrollPosition(Action action)
+    {
+        var verticalOffset = RootScrollViewer.VerticalOffset;
+
+        action();
+
+        DispatcherQueue.TryEnqueue(() =>
+        {
+            RootScrollViewer.ChangeView(null, verticalOffset, null, disableAnimation: true);
+        });
+    }
+    
     private void RefreshAll()
     {
         RefreshStatistics();

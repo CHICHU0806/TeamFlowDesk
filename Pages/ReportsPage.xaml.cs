@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using TeamFlowDesk.Data;
@@ -10,96 +12,76 @@ namespace TeamFlowDesk.Pages;
 
 public sealed partial class ReportsPage : Page
 {
-    private readonly ObservableCollection<WeeklyReportItem> _reports;
+    private readonly ObservableCollection<WeeklyReportItem> _reports = new();
 
     public ReportsPage()
     {
         InitializeComponent();
 
+        ReportStartDatePicker.Date = DateTimeOffset.Now.AddDays(-7);
+        ReportEndDatePicker.Date = DateTimeOffset.Now;
+        ProgressStatusComboBox.SelectedIndex = 0;
+
         try
         {
             WeeklyReportRepository.SeedIfEmpty();
-            _reports = new ObservableCollection<WeeklyReportItem>(WeeklyReportRepository.GetAll());
+
+            foreach (var report in WeeklyReportRepository.GetAll())
+            {
+                _reports.Add(report);
+            }
 
             ReportsListView.ItemsSource = _reports;
-
-            ReportStartDatePicker.Date = DateTimeOffset.Now.AddDays(-7);
-            ReportEndDatePicker.Date = DateTimeOffset.Now;
 
             RefreshStatistics();
             RefreshDataSnapshot();
         }
         catch (Exception ex)
         {
-            _reports = new ObservableCollection<WeeklyReportItem>();
             ReportsListView.ItemsSource = _reports;
-
-            ReportStartDatePicker.Date = DateTimeOffset.Now.AddDays(-7);
-            ReportEndDatePicker.Date = DateTimeOffset.Now;
-
             ReportFormMessageText.Text = $"复盘页面加载失败：{ex.Message}";
+            ReviewStatusText.Text = "复盘数据暂时无法读取，请检查数据库初始化状态。";
         }
     }
 
     private void GenerateReportDraftButton_Click(object sender, RoutedEventArgs e)
     {
-        var tasks = TaskRepository.GetAll();
-        var members = MemberRepository.GetAll();
-        var equipment = EquipmentRepository.GetAll();
-        var aiRecords = AiRecordRepository.GetAll();
-
-        var completedTasks = tasks
-            .Where(task => task.Status == "已完成")
-            .Take(5)
-            .ToList();
-
-        var doingTasks = tasks
-            .Where(task => task.Status == "进行中" || task.Status == "待处理")
-            .Take(5)
-            .ToList();
-
-        var riskTasks = tasks
-            .Where(task =>
-                task.RiskLevel == "高风险" ||
-                task.Status == "延期" ||
-                task.Status == "滞后")
-            .Take(5)
-            .ToList();
-
-        var attentionMembers = members
-            .Where(member =>
-                member.WorkloadStatus == "关注" ||
-                member.WorkloadStatus == "过载")
-            .Take(5)
-            .ToList();
-
-        var abnormalEquipment = equipment
-            .Where(item =>
-                item.Status == "待检查" ||
-                item.Status == "损坏" ||
-                item.Status == "维修中" ||
-                item.Status == "报废")
-            .Take(5)
-            .ToList();
-
-        var recentAiRecords = aiRecords
-            .Take(5)
-            .ToList();
-
-        if (string.IsNullOrWhiteSpace(ReportTitleTextBox.Text))
+        try
         {
-            ReportTitleTextBox.Text = $"TeamFlowDesk 复盘记录 {DateTimeOffset.Now:yyyy-MM-dd}";
+            var tasks = TaskRepository.GetAll();
+            var members = MemberRepository.GetAll();
+            var equipment = EquipmentRepository.GetAll();
+            var aiRecords = AiRecordRepository.GetAll();
+
+            ReportTitleTextBox.Text = $"TeamFlowDesk 周报复盘 {DateTimeOffset.Now:MM.dd}";
+            ReportStartDatePicker.Date = DateTimeOffset.Now.AddDays(-7);
+            ReportEndDatePicker.Date = DateTimeOffset.Now;
+
+            CompletedWorkTextBox.Text = BuildCompletedWorkText(tasks);
+            ProblemsTextBox.Text = BuildProblemsText(tasks, members, equipment);
+            NextPlanTextBox.Text = BuildNextPlanText(tasks);
+            AiCollaborationSummaryTextBox.Text = BuildAiSummaryText(aiRecords);
+            ManagerReviewTextBox.Text = BuildManagerReviewText(tasks, members, equipment, aiRecords);
+
+            var hasHighRisk = tasks.Any(task =>
+                                  task.RiskLevel == "高风险" ||
+                                  task.Status == "延期" ||
+                                  task.Status == "滞后")
+                              || members.Any(member =>
+                                  member.WorkloadStatus == "关注" ||
+                                  member.WorkloadStatus == "过载")
+                              || equipment.Any(IsAbnormalEquipment);
+
+            ProgressStatusComboBox.SelectedIndex = hasHighRisk ? 1 : 0;
+
+            RefreshDataSnapshot();
+
+            ReportFormMessageText.Text = "已根据当前任务、人员、器材和 AI 协作记录生成复盘草稿，请继续人工修正。";
         }
-
-        CompletedWorkTextBox.Text = BuildCompletedWorkText(completedTasks, doingTasks);
-        ProblemsTextBox.Text = BuildProblemsText(riskTasks, attentionMembers, abnormalEquipment);
-        NextPlanTextBox.Text = BuildNextPlanText(doingTasks, riskTasks);
-        AiCollaborationSummaryTextBox.Text = BuildAiSummaryText(recentAiRecords);
-        ManagerReviewTextBox.Text = BuildManagerReviewText(riskTasks.Count, attentionMembers.Count, abnormalEquipment.Count);
-
-        RefreshDataSnapshot();
-
-        ReportFormMessageText.Text = "已根据当前任务、人员、器材和 AI 协作记录生成复盘草稿，可以继续手动修改后保存。";
+        catch (Exception ex)
+        {
+            ReportFormMessageText.Text = $"生成复盘草稿失败：{ex.Message}";
+        }
     }
 
     private void AddReportButton_Click(object sender, RoutedEventArgs e)
@@ -112,7 +94,7 @@ public sealed partial class ReportsPage : Page
             return;
         }
 
-        var report = new WeeklyReportItem
+        var newReport = new WeeklyReportItem
         {
             Title = title,
             StartDate = ReportStartDatePicker.Date,
@@ -125,56 +107,118 @@ public sealed partial class ReportsPage : Page
             ProgressStatus = GetComboBoxText(ProgressStatusComboBox, "正常")
         };
 
-        report.Id = WeeklyReportRepository.Add(report);
-        _reports.Insert(0, report);
+        try
+        {
+            newReport.Id = WeeklyReportRepository.Add(newReport);
+            _reports.Insert(0, newReport);
 
-        RefreshStatistics();
-        RefreshDataSnapshot();
-        ClearReportForm();
+            RefreshStatistics();
+            RefreshDataSnapshot();
+            ClearReportForm();
 
-        ReportFormMessageText.Text = $"复盘记录已保存：{report.Title}";
+            ReportFormMessageText.Text = $"已新增复盘记录：{newReport.Title}";
+        }
+        catch (Exception ex)
+        {
+            ReportFormMessageText.Text = $"保存复盘失败：{ex.Message}";
+        }
     }
 
     private void ClearReportFormButton_Click(object sender, RoutedEventArgs e)
     {
         ClearReportForm();
-        ReportFormMessageText.Text = "输入内容已清空。";
+        ReportFormMessageText.Text = "复盘编辑器已清空。";
     }
 
     private void SetNormalReportButton_Click(object sender, RoutedEventArgs e)
     {
-        UpdateReportStatus(sender, "正常", "复盘记录已标记为正常");
+        PreserveScrollPosition(() =>
+        {
+            UpdateReportStatus(sender, "正常", "复盘记录已标记为正常");
+        });
     }
 
     private void SetAttentionReportButton_Click(object sender, RoutedEventArgs e)
     {
-        UpdateReportStatus(sender, "关注", "复盘记录已标记为关注");
+        PreserveScrollPosition(() =>
+        {
+            UpdateReportStatus(sender, "关注", "复盘记录已标记为关注");
+        });
     }
 
     private void SetHighRiskReportButton_Click(object sender, RoutedEventArgs e)
     {
-        UpdateReportStatus(sender, "高风险", "复盘记录已标记为高风险");
+        PreserveScrollPosition(() =>
+        {
+            UpdateReportStatus(sender, "高风险", "复盘记录已标记为高风险");
+        });
+    }
+
+    private async void ShowReportDetailButton_Click(object sender, RoutedEventArgs e)
+    {
+        var report = GetReportFromButton(sender);
+
+        if (report is null)
+        {
+            return;
+        }
+
+        var detailPanel = new StackPanel
+        {
+            Spacing = 16,
+            MaxWidth = 940
+        };
+
+        detailPanel.Children.Add(CreateDetailBlock("周报标题", report.Title));
+        detailPanel.Children.Add(CreateDetailBlock("复盘周期", $"{report.StartDate:yyyy-MM-dd} 至 {report.EndDate:yyyy-MM-dd}"));
+        detailPanel.Children.Add(CreateDetailBlock("进度状态", report.ProgressStatus));
+        detailPanel.Children.Add(CreateDetailBlock("本周完成工作", report.CompletedWork));
+        detailPanel.Children.Add(CreateDetailBlock("问题与风险", report.Problems));
+        detailPanel.Children.Add(CreateDetailBlock("下周计划", report.NextPlan));
+        detailPanel.Children.Add(CreateDetailBlock("AI 协作摘要", report.AiCollaborationSummary));
+        detailPanel.Children.Add(CreateDetailBlock("负责人复盘判断", report.ManagerReview));
+
+        var scrollViewer = new ScrollViewer
+        {
+            Content = detailPanel,
+            MaxHeight = 700,
+            VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+            HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled
+        };
+
+        var dialog = new ContentDialog
+        {
+            Title = "复盘记录详情",
+            Content = scrollViewer,
+            CloseButtonText = "关闭",
+            XamlRoot = XamlRoot
+        };
+
+        await dialog.ShowAsync();
     }
 
     private void DeleteReportButton_Click(object sender, RoutedEventArgs e)
     {
-        var report = GetReportFromButton(sender);
-
-        if (report is null)
+        PreserveScrollPosition(() =>
         {
-            return;
-        }
+            var report = GetReportFromButton(sender);
 
-        WeeklyReportRepository.Delete(report.Id);
-        _reports.Remove(report);
+            if (report is null)
+            {
+                return;
+            }
 
-        RefreshStatistics();
-        RefreshDataSnapshot();
+            WeeklyReportRepository.Delete(report.Id);
+            _reports.Remove(report);
 
-        ReportFormMessageText.Text = $"复盘记录已删除：{report.Title}";
+            RefreshStatistics();
+            RefreshDataSnapshot();
+
+            ReportFormMessageText.Text = $"复盘记录已删除：{report.Title}";
+        });
     }
 
-    private void UpdateReportStatus(object sender, string status, string message)
+    private void UpdateReportStatus(object sender, string progressStatus, string message)
     {
         var report = GetReportFromButton(sender);
 
@@ -183,9 +227,10 @@ public sealed partial class ReportsPage : Page
             return;
         }
 
-        report.ProgressStatus = status;
+        report.ProgressStatus = progressStatus;
 
         WeeklyReportRepository.Update(report);
+
         RefreshReportList();
         RefreshStatistics();
         RefreshDataSnapshot();
@@ -206,6 +251,22 @@ public sealed partial class ReportsPage : Page
         }
 
         return _reports.FirstOrDefault(report => report.Id == reportId);
+    }
+
+    private void PreserveScrollPosition(Action action)
+    {
+        var verticalOffset = RootScrollViewer.VerticalOffset;
+
+        action();
+
+        DispatcherQueue.TryEnqueue(() =>
+        {
+            RootScrollViewer.ChangeView(
+                null,
+                verticalOffset,
+                null,
+                disableAnimation: true);
+        });
     }
 
     private void RefreshStatistics()
@@ -229,45 +290,66 @@ public sealed partial class ReportsPage : Page
             .Count(report => !string.IsNullOrWhiteSpace(report.AiCollaborationSummary))
             .ToString();
 
-        ReviewStatusText.Text =
-            $"当前已沉淀 {_reports.Count} 条复盘记录，其中包含 AI 协作摘要的记录有 {AiReportCountText.Text} 条。";
+        var riskCount = _reports.Count(report =>
+            report.ProgressStatus == "关注" ||
+            report.ProgressStatus == "滞后" ||
+            report.ProgressStatus == "高风险");
+
+        if (_reports.Count == 0)
+        {
+            ReviewStatusText.Text = "当前暂无复盘记录，建议先生成一条周报草稿并人工修正保存。";
+        }
+        else if (riskCount > 0)
+        {
+            ReviewStatusText.Text = $"当前已有 {_reports.Count} 条复盘记录，其中 {riskCount} 条需要负责人关注。";
+        }
+        else
+        {
+            ReviewStatusText.Text = $"当前已有 {_reports.Count} 条复盘记录，整体推进状态较稳定。";
+        }
     }
 
     private void RefreshDataSnapshot()
     {
-        var tasks = TaskRepository.GetAll();
-        var members = MemberRepository.GetAll();
-        var equipment = EquipmentRepository.GetAll();
-        var aiRecords = AiRecordRepository.GetAll();
+        try
+        {
+            var tasks = TaskRepository.GetAll();
+            var members = MemberRepository.GetAll();
+            var equipment = EquipmentRepository.GetAll();
+            var aiRecords = AiRecordRepository.GetAll();
 
-        var completedTaskCount = tasks.Count(task => task.Status == "已完成");
-        var doingTaskCount = tasks.Count(task => task.Status == "进行中" || task.Status == "待处理");
-        var riskTaskCount = tasks.Count(task =>
-            task.RiskLevel == "高风险" ||
-            task.Status == "延期" ||
-            task.Status == "滞后");
+            var completedTaskCount = tasks.Count(task => task.Status == "已完成");
+            var doingTaskCount = tasks.Count(task => task.Status == "进行中" || task.Status == "待处理");
+            var riskTaskCount = tasks.Count(task =>
+                task.RiskLevel == "高风险" ||
+                task.Status == "延期" ||
+                task.Status == "滞后");
 
-        var attentionMemberCount = members.Count(member =>
-            member.WorkloadStatus == "关注" ||
-            member.WorkloadStatus == "过载");
+            var attentionMemberCount = members.Count(member =>
+                member.WorkloadStatus == "关注" ||
+                member.WorkloadStatus == "过载");
 
-        var abnormalEquipmentCount = equipment.Count(item =>
-            item.Status == "待检查" ||
-            item.Status == "损坏" ||
-            item.Status == "维修中" ||
-            item.Status == "报废");
+            var abnormalEquipmentCount = equipment.Count(IsAbnormalEquipment);
 
-        TaskSnapshotText.Text =
-            $"共 {tasks.Count} 项任务，已完成 {completedTaskCount} 项，推进中 {doingTaskCount} 项，风险任务 {riskTaskCount} 项。";
+            TaskSnapshotText.Text =
+                $"共 {tasks.Count} 项任务，已完成 {completedTaskCount} 项，推进中 {doingTaskCount} 项，风险任务 {riskTaskCount} 项。";
 
-        MemberSnapshotText.Text =
-            $"共 {members.Count} 名成员，其中需要关注的负载状态有 {attentionMemberCount} 项。";
+            MemberSnapshotText.Text =
+                $"共 {members.Count} 名成员，其中需要关注的负载状态有 {attentionMemberCount} 项。";
 
-        EquipmentSnapshotText.Text =
-            $"共 {equipment.Count} 件器材，其中异常或待检查器材 {abnormalEquipmentCount} 件。";
+            EquipmentSnapshotText.Text =
+                $"共 {equipment.Count} 件器材，其中异常或待检查器材 {abnormalEquipmentCount} 件。";
 
-        AiSnapshotText.Text =
-            $"共沉淀 {aiRecords.Count} 条 AI 协作记录，可用于生成复盘摘要和负责人判断参考。";
+            AiSnapshotText.Text =
+                $"共沉淀 {aiRecords.Count} 条 AI 协作记录，可用于生成复盘摘要和负责人判断参考。";
+        }
+        catch (Exception ex)
+        {
+            TaskSnapshotText.Text = $"数据快照读取失败：{ex.Message}";
+            MemberSnapshotText.Text = "暂无有效数据。";
+            EquipmentSnapshotText.Text = "暂无有效数据。";
+            AiSnapshotText.Text = "暂无有效数据。";
+        }
     }
 
     private void RefreshReportList()
@@ -290,137 +372,164 @@ public sealed partial class ReportsPage : Page
         ProgressStatusComboBox.SelectedIndex = 0;
     }
 
-    private static string BuildCompletedWorkText(
-        System.Collections.Generic.IReadOnlyCollection<TaskItem> completedTasks,
-        System.Collections.Generic.IReadOnlyCollection<TaskItem> doingTasks)
+    private static string BuildCompletedWorkText(IReadOnlyCollection<TaskItem> tasks)
     {
-        var text = "本阶段系统根据当前任务数据整理出以下完成情况：\n";
+        var completedTasks = tasks
+            .Where(task => task.Status == "已完成")
+            .Take(6)
+            .Select(task => $"· {task.Title}（负责人：{SafeText(task.OwnerName)}）")
+            .ToList();
 
         if (completedTasks.Count == 0)
         {
-            text += "1. 当前暂无已完成任务记录，需要负责人进一步更新任务状态。\n";
-        }
-        else
-        {
-            var index = 1;
-
-            foreach (var task in completedTasks)
-            {
-                text += $"{index}. 已完成任务：{task.Title}，负责人：{task.OwnerName}。\n";
-                index++;
-            }
+            return "本周暂无明确标记为已完成的任务，建议负责人检查任务状态是否及时更新。";
         }
 
-        if (doingTasks.Count > 0)
-        {
-            text += "\n仍在推进中的任务包括：\n";
-
-            foreach (var task in doingTasks)
-            {
-                text += $"- {task.Title}，当前状态：{task.Status}。\n";
-            }
-        }
-
-        return text;
+        return string.Join(Environment.NewLine, completedTasks);
     }
 
     private static string BuildProblemsText(
-        System.Collections.Generic.IReadOnlyCollection<TaskItem> riskTasks,
-        System.Collections.Generic.IReadOnlyCollection<MemberItem> attentionMembers,
-        System.Collections.Generic.IReadOnlyCollection<EquipmentItem> abnormalEquipment)
+        IReadOnlyCollection<TaskItem> tasks,
+        IReadOnlyCollection<MemberItem> members,
+        IReadOnlyCollection<EquipmentItem> equipment)
     {
-        var text = "当前系统识别出的主要问题与风险如下：\n";
+        var problems = new List<string>();
 
-        if (riskTasks.Count == 0 && attentionMembers.Count == 0 && abnormalEquipment.Count == 0)
+        var riskTasks = tasks
+            .Where(task =>
+                task.RiskLevel == "高风险" ||
+                task.Status == "延期" ||
+                task.Status == "滞后")
+            .Take(5)
+            .Select(task => $"· 风险任务：{task.Title}（状态：{task.Status}，风险：{task.RiskLevel}）");
+
+        problems.AddRange(riskTasks);
+
+        var attentionMembers = members
+            .Where(member =>
+                member.WorkloadStatus == "关注" ||
+                member.WorkloadStatus == "过载")
+            .Take(5)
+            .Select(member => $"· 成员负载需关注：{member.Name}（状态：{member.WorkloadStatus}，任务数：{member.CurrentTaskCount}）");
+
+        problems.AddRange(attentionMembers);
+
+        var abnormalEquipment = equipment
+            .Where(IsAbnormalEquipment)
+            .Take(5)
+            .Select(item => $"· 器材异常：{item.Name}（状态：{item.Status}）");
+
+        problems.AddRange(abnormalEquipment);
+
+        if (problems.Count == 0)
         {
-            return text + "1. 当前暂无明显高风险任务、过载成员或异常器材，整体推进状态较平稳。";
+            return "当前未发现明显风险项，但仍建议负责人继续检查任务截止时间、成员负载和器材状态。";
         }
 
-        var index = 1;
-
-        foreach (var task in riskTasks)
-        {
-            text += $"{index}. 任务风险：{task.Title}，状态：{task.Status}，风险等级：{task.RiskLevel}。\n";
-            index++;
-        }
-
-        foreach (var member in attentionMembers)
-        {
-            text += $"{index}. 人员负载风险：{member.Name}，当前任务数：{member.CurrentTaskCount}，负载状态：{member.WorkloadStatus}。\n";
-            index++;
-        }
-
-        foreach (var item in abnormalEquipment)
-        {
-            text += $"{index}. 器材风险：{item.Name}，当前状态：{item.Status}，存放位置：{item.Location}。\n";
-            index++;
-        }
-
-        return text;
+        return string.Join(Environment.NewLine, problems);
     }
 
-    private static string BuildNextPlanText(
-        System.Collections.Generic.IReadOnlyCollection<TaskItem> doingTasks,
-        System.Collections.Generic.IReadOnlyCollection<TaskItem> riskTasks)
+    private static string BuildNextPlanText(IReadOnlyCollection<TaskItem> tasks)
     {
-        var text = "下一阶段建议围绕以下方向推进：\n";
+        var nextTasks = tasks
+            .Where(task =>
+                task.Status == "待处理" ||
+                task.Status == "进行中" ||
+                task.RiskLevel == "高风险")
+            .Take(6)
+            .Select(task => $"· 继续推进：{task.Title}（负责人：{SafeText(task.OwnerName)}，输出要求：{SafeText(task.OutputRequirement)}）")
+            .ToList();
 
-        var index = 1;
-
-        foreach (var task in doingTasks.Take(3))
+        if (nextTasks.Count == 0)
         {
-            text += $"{index}. 继续推进任务：{task.Title}，明确负责人 {task.OwnerName} 的下一步输出要求。\n";
-            index++;
+            return "下周建议围绕项目下一阶段目标重新拆解任务，并明确负责人、截止时间和输出要求。";
         }
 
-        foreach (var task in riskTasks.Take(3))
-        {
-            text += $"{index}. 优先处理风险任务：{task.Title}，需要重新评估任务拆分、截止时间和资源支持。\n";
-            index++;
-        }
-
-        if (index == 1)
-        {
-            text += "1. 继续保持任务状态更新，围绕项目阶段目标形成新的任务拆解。\n";
-        }
-
-        text += $"{index}. 保持 AI 协作记录和人工判断记录同步沉淀，便于后续答辩和复盘。";
-
-        return text;
+        return string.Join(Environment.NewLine, nextTasks);
     }
 
-    private static string BuildAiSummaryText(
-        System.Collections.Generic.IReadOnlyCollection<AiRecordItem> aiRecords)
+    private static string BuildAiSummaryText(IReadOnlyCollection<AiRecordItem> aiRecords)
     {
-        if (aiRecords.Count == 0)
+        var latestAiRecords = aiRecords
+            .OrderByDescending(record => record.CreatedAt)
+            .Take(4)
+            .Select(record =>
+                $"· {record.RelatedModule}：{SafeText(record.FinalDecision)}（采纳状态：{record.AdoptionStatus}）")
+            .ToList();
+
+        if (latestAiRecords.Count == 0)
         {
-            return "当前暂无 AI 协作记录。后续可以在 AI 协作记录页面中记录问题、AI 建议、人工判断和最终决策。";
+            return "本周暂无 AI 协作记录。建议后续在任务拆解、风险判断和复盘生成中记录 AI 建议与人工判断过程。";
         }
 
-        var text = "本阶段已沉淀以下 AI 协作过程：\n";
-        var index = 1;
-
-        foreach (var record in aiRecords)
-        {
-            text += $"{index}. 关联模块：{record.RelatedModule}；问题：{record.Question}；采纳状态：{record.AdoptionStatus}。\n";
-            index++;
-        }
-
-        return text;
+        return string.Join(Environment.NewLine, latestAiRecords);
     }
 
     private static string BuildManagerReviewText(
-        int riskTaskCount,
-        int attentionMemberCount,
-        int abnormalEquipmentCount)
+        IReadOnlyCollection<TaskItem> tasks,
+        IReadOnlyCollection<MemberItem> members,
+        IReadOnlyCollection<EquipmentItem> equipment,
+        IReadOnlyCollection<AiRecordItem> aiRecords)
     {
+        var riskTaskCount = tasks.Count(task =>
+            task.RiskLevel == "高风险" ||
+            task.Status == "延期" ||
+            task.Status == "滞后");
+
+        var attentionMemberCount = members.Count(member =>
+            member.WorkloadStatus == "关注" ||
+            member.WorkloadStatus == "过载");
+
+        var abnormalEquipmentCount = equipment.Count(IsAbnormalEquipment);
+
+        var aiRecordCount = aiRecords.Count;
+
         if (riskTaskCount == 0 && attentionMemberCount == 0 && abnormalEquipmentCount == 0)
         {
-            return "从当前数据看，团队运行状态整体平稳。后续应继续保持任务状态、AI 协作记录和周报复盘的持续更新。";
+            return $"整体来看，本周团队运行状态较稳定。AI 协作记录共 {aiRecordCount} 条，后续可以继续沉淀关键决策过程，并保持任务、人员和器材数据及时更新。";
         }
 
         return
-            $"从当前数据看，系统识别到 {riskTaskCount} 项任务风险、{attentionMemberCount} 项人员负载风险和 {abnormalEquipmentCount} 项器材风险。后续需要负责人优先处理阻塞项，并根据实际情况调整任务分配和资源支持。";
+            $"本周需要重点关注：风险任务 {riskTaskCount} 项，成员负载异常 {attentionMemberCount} 项，器材异常 {abnormalEquipmentCount} 项。建议负责人优先处理会影响项目推进节奏的阻塞项，并在下周复盘中检查整改结果。AI 协作记录共 {aiRecordCount} 条，可作为辅助判断参考，但最终管理动作仍需负责人确认。";
+    }
+
+    private static StackPanel CreateDetailBlock(string title, string content)
+    {
+        var panel = new StackPanel
+        {
+            Spacing = 6
+        };
+
+        panel.Children.Add(new TextBlock
+        {
+            Text = title,
+            FontSize = 15,
+            FontWeight = FontWeights.SemiBold,
+            TextWrapping = TextWrapping.Wrap
+        });
+
+        panel.Children.Add(new TextBlock
+        {
+            Text = string.IsNullOrWhiteSpace(content) ? "暂无内容" : content,
+            FontSize = 14,
+            TextWrapping = TextWrapping.Wrap,
+            IsTextSelectionEnabled = true
+        });
+
+        return panel;
+    }
+
+    private static bool IsAbnormalEquipment(EquipmentItem item)
+    {
+        return item.Status == "待检查" ||
+               item.Status == "维修中" ||
+               item.Status == "损坏" ||
+               item.Status == "报废";
+    }
+
+    private static string SafeText(string text)
+    {
+        return string.IsNullOrWhiteSpace(text) ? "暂无" : text;
     }
 
     private static string GetComboBoxText(ComboBox comboBox, string fallback)

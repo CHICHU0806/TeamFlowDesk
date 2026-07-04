@@ -18,9 +18,7 @@ public sealed partial class MembersPage : Page
         MemberRepository.SeedIfEmpty();
         _members = new ObservableCollection<MemberItem>(MemberRepository.GetAll());
 
-        MembersListView.ItemsSource = _members;
-
-        RefreshStatistics();
+        RefreshAll();
     }
 
     private void AddMemberButton_Click(object sender, RoutedEventArgs e)
@@ -61,7 +59,7 @@ public sealed partial class MembersPage : Page
         newMember.Id = MemberRepository.Add(newMember);
         _members.Insert(0, newMember);
 
-        RefreshStatistics();
+        RefreshAll();
         ClearMemberForm();
 
         MemberFormMessageText.Text = $"已新增成员：{newMember.Name}";
@@ -75,53 +73,81 @@ public sealed partial class MembersPage : Page
 
     private void IncreaseTaskCountButton_Click(object sender, RoutedEventArgs e)
     {
-        var member = GetMemberFromButton(sender);
-
-        if (member is null)
+        PreserveScrollPosition(() =>
         {
-            return;
-        }
+            var member = GetMemberFromButton(sender);
 
-        member.CurrentTaskCount++;
+            if (member is null)
+            {
+                return;
+            }
 
-        if (member.CurrentTaskCount >= 4)
-        {
-            member.WorkloadStatus = "关注";
-        }
+            member.CurrentTaskCount++;
 
-        MemberRepository.Update(member);
-        RefreshMemberList();
-        RefreshStatistics();
+            if (member.CurrentTaskCount >= 5)
+            {
+                member.WorkloadStatus = "过载";
+            }
+            else if (member.CurrentTaskCount >= 3)
+            {
+                member.WorkloadStatus = "关注";
+            }
+            else if (member.CurrentTaskCount == 0)
+            {
+                member.WorkloadStatus = "空闲";
+            }
+            else
+            {
+                member.WorkloadStatus = "正常";
+            }
 
-        MemberFormMessageText.Text = $"已增加任务负载：{member.Name}";
+            MemberRepository.Update(member);
+            RefreshAll();
+
+            MemberFormMessageText.Text = $"已增加任务负载：{member.Name}";
+        });
     }
-
+    
     private void DecreaseTaskCountButton_Click(object sender, RoutedEventArgs e)
     {
-        var member = GetMemberFromButton(sender);
-
-        if (member is null)
+        PreserveScrollPosition(() =>
         {
-            return;
-        }
+            var member = GetMemberFromButton(sender);
 
-        if (member.CurrentTaskCount > 0)
-        {
-            member.CurrentTaskCount--;
-        }
+            if (member is null)
+            {
+                return;
+            }
 
-        if (member.CurrentTaskCount <= 2)
-        {
-            member.WorkloadStatus = "正常";
-        }
+            if (member.CurrentTaskCount > 0)
+            {
+                member.CurrentTaskCount--;
+            }
 
-        MemberRepository.Update(member);
-        RefreshMemberList();
-        RefreshStatistics();
+            if (member.CurrentTaskCount == 0)
+            {
+                member.WorkloadStatus = "空闲";
+            }
+            else if (member.CurrentTaskCount <= 2)
+            {
+                member.WorkloadStatus = "正常";
+            }
+            else if (member.CurrentTaskCount <= 4)
+            {
+                member.WorkloadStatus = "关注";
+            }
+            else
+            {
+                member.WorkloadStatus = "过载";
+            }
 
-        MemberFormMessageText.Text = $"已减少任务负载：{member.Name}";
+            MemberRepository.Update(member);
+            RefreshAll();
+
+            MemberFormMessageText.Text = $"已减少任务负载：{member.Name}";
+        });
     }
-
+    
     private void SetNormalWorkloadButton_Click(object sender, RoutedEventArgs e)
     {
         UpdateMemberWorkloadStatus(sender, "正常", "成员已标记为正常负载");
@@ -132,41 +158,56 @@ public sealed partial class MembersPage : Page
         UpdateMemberWorkloadStatus(sender, "关注", "成员已标记为需要关注");
     }
 
+    private void SetOverloadWorkloadButton_Click(object sender, RoutedEventArgs e)
+    {
+        UpdateMemberWorkloadStatus(sender, "过载", "成员已标记为过载");
+    }
+
+    private void SetIdleWorkloadButton_Click(object sender, RoutedEventArgs e)
+    {
+        UpdateMemberWorkloadStatus(sender, "空闲", "成员已标记为空闲");
+    }
+
     private void DeleteMemberButton_Click(object sender, RoutedEventArgs e)
     {
-        var member = GetMemberFromButton(sender);
-
-        if (member is null)
+        PreserveScrollPosition(() =>
         {
-            return;
-        }
+            var member = GetMemberFromButton(sender);
 
-        MemberRepository.Delete(member.Id);
-        _members.Remove(member);
+            if (member is null)
+            {
+                return;
+            }
 
-        RefreshStatistics();
+            MemberRepository.Delete(member.Id);
+            _members.Remove(member);
 
-        MemberFormMessageText.Text = $"成员已删除：{member.Name}";
+            RefreshAll();
+
+            MemberFormMessageText.Text = $"成员已删除：{member.Name}";
+        });
     }
-
+    
     private void UpdateMemberWorkloadStatus(object sender, string workloadStatus, string message)
     {
-        var member = GetMemberFromButton(sender);
-
-        if (member is null)
+        PreserveScrollPosition(() =>
         {
-            return;
-        }
+            var member = GetMemberFromButton(sender);
 
-        member.WorkloadStatus = workloadStatus;
+            if (member is null)
+            {
+                return;
+            }
 
-        MemberRepository.Update(member);
-        RefreshMemberList();
-        RefreshStatistics();
+            member.WorkloadStatus = workloadStatus;
 
-        MemberFormMessageText.Text = $"{message}：{member.Name}";
+            MemberRepository.Update(member);
+            RefreshAll();
+
+            MemberFormMessageText.Text = $"{message}：{member.Name}";
+        });
     }
-
+    
     private MemberItem? GetMemberFromButton(object sender)
     {
         if (sender is not Button button || button.Tag is null)
@@ -180,6 +221,29 @@ public sealed partial class MembersPage : Page
         }
 
         return _members.FirstOrDefault(member => member.Id == memberId);
+    }
+
+    private void PreserveScrollPosition(Action action)
+    {
+        var verticalOffset = RootScrollViewer.VerticalOffset;
+
+        action();
+
+        DispatcherQueue.TryEnqueue(() =>
+        {
+            RootScrollViewer.ChangeView(
+                null,
+                verticalOffset,
+                null,
+                disableAnimation: true);
+        });
+    }
+    
+    private void RefreshAll()
+    {
+        RefreshStatistics();
+        RefreshInsights();
+        RefreshMemberCards();
     }
 
     private void RefreshStatistics()
@@ -201,10 +265,58 @@ public sealed partial class MembersPage : Page
             .ToString();
     }
 
-    private void RefreshMemberList()
+    private void RefreshInsights()
     {
-        MembersListView.ItemsSource = null;
-        MembersListView.ItemsSource = _members;
+        var attentionCount = _members.Count(member => member.WorkloadStatus == "关注");
+        var overloadCount = _members.Count(member => member.WorkloadStatus == "过载");
+        var idleCount = _members.Count(member => member.WorkloadStatus == "空闲");
+        var independentCount = _members.Count(member =>
+            member.AbilityLevel == "可独立完成" ||
+            member.AbilityLevel == "可带人");
+
+        MemberStatusSummaryText.Text =
+            $"当前共有 {_members.Count} 名成员，任务负载总数为 {_members.Sum(member => member.CurrentTaskCount)}，其中关注 {attentionCount} 人，过载 {overloadCount} 人，空闲 {idleCount} 人。";
+
+        if (overloadCount > 0)
+        {
+            WorkloadInsightText.Text = $"当前存在 {overloadCount} 名过载成员，建议负责人优先调整任务分配，避免关键成员长期承担过多任务。";
+        }
+        else if (attentionCount > 0)
+        {
+            WorkloadInsightText.Text = $"当前有 {attentionCount} 名成员需要关注，可以检查其任务数量、截止时间和任务难度是否合理。";
+        }
+        else if (idleCount > 0)
+        {
+            WorkloadInsightText.Text = $"当前有 {idleCount} 名成员处于空闲状态，可以考虑安排学习任务、辅助任务或阶段性练习任务。";
+        }
+        else
+        {
+            WorkloadInsightText.Text = "当前成员负载整体较平稳，可以继续保持任务状态更新。";
+        }
+
+        AbilityInsightText.Text = independentCount == 0
+            ? "当前暂无可独立完成或可带人的成员记录，建议进一步细化成员能力等级。"
+            : $"当前有 {independentCount} 名成员具备独立完成或带人能力，可优先承担关键任务或带新人任务。";
+
+        var beginnerCount = _members.Count(member =>
+            member.AbilityLevel == "入门" ||
+            member.AbilityLevel == "熟悉");
+
+        TrainingInsightText.Text = beginnerCount == 0
+            ? "当前成员能力整体较成熟，后续可以重点沉淀经验文档和交接机制。"
+            : $"当前有 {beginnerCount} 名成员仍处于入门或熟悉阶段，建议结合任务作战板安排低风险练习任务，形成培养闭环。";
+    }
+
+    private void RefreshMemberCards()
+    {
+        MembersItemsControl.ItemsSource = _members
+            .OrderByDescending(member =>
+                member.WorkloadStatus == "过载" ? 4 :
+                member.WorkloadStatus == "关注" ? 3 :
+                member.WorkloadStatus == "正常" ? 2 :
+                member.WorkloadStatus == "空闲" ? 1 : 0)
+            .ThenByDescending(member => member.CurrentTaskCount)
+            .ToList();
     }
 
     private void ClearMemberForm()

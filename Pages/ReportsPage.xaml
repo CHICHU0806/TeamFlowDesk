@@ -38,7 +38,12 @@
     </Page.Resources>
 
     <Grid Background="{StaticResource PageBackgroundBrush}">
-        <ScrollViewer>
+        <ScrollViewer
+            x:Name="RootScrollViewer"
+            VerticalScrollBarVisibility="Auto"
+            HorizontalScrollBarVisibility="Disabled"
+            HorizontalScrollMode="Disabled">
+
             <StackPanel Margin="32" Spacing="24">
 
                 <Border
@@ -299,6 +304,8 @@
                                     TextWrapping="Wrap"
                                     AcceptsReturn="True"
                                     MinHeight="130"
+                                    MaxHeight="260"
+                                    ScrollViewer.VerticalScrollBarVisibility="Auto"
                                     Style="{StaticResource EditorBoxStyle}" />
 
                                 <TextBox
@@ -309,6 +316,8 @@
                                     TextWrapping="Wrap"
                                     AcceptsReturn="True"
                                     MinHeight="130"
+                                    MaxHeight="260"
+                                    ScrollViewer.VerticalScrollBarVisibility="Auto"
                                     Style="{StaticResource EditorBoxStyle}" />
 
                                 <TextBox
@@ -319,6 +328,8 @@
                                     TextWrapping="Wrap"
                                     AcceptsReturn="True"
                                     MinHeight="130"
+                                    MaxHeight="260"
+                                    ScrollViewer.VerticalScrollBarVisibility="Auto"
                                     Style="{StaticResource EditorBoxStyle}" />
 
                                 <TextBox
@@ -329,6 +340,8 @@
                                     TextWrapping="Wrap"
                                     AcceptsReturn="True"
                                     MinHeight="130"
+                                    MaxHeight="260"
+                                    ScrollViewer.VerticalScrollBarVisibility="Auto"
                                     Style="{StaticResource EditorBoxStyle}" />
 
                                 <TextBox
@@ -340,6 +353,8 @@
                                     TextWrapping="Wrap"
                                     AcceptsReturn="True"
                                     MinHeight="130"
+                                    MaxHeight="280"
+                                    ScrollViewer.VerticalScrollBarVisibility="Auto"
                                     Style="{StaticResource EditorBoxStyle}" />
                             </Grid>
                         </StackPanel>
@@ -413,29 +428,10 @@
                                     FontWeight="SemiBold"
                                     Foreground="{StaticResource PrimaryTextBrush}" />
 
-                                <TextBlock
-                                    Text="1. 读取当前任务、人员、器材和 AI 记录"
-                                    FontSize="14"
-                                    Foreground="{StaticResource SecondaryTextBrush}"
-                                    TextWrapping="Wrap" />
-
-                                <TextBlock
-                                    Text="2. 生成复盘草稿"
-                                    FontSize="14"
-                                    Foreground="{StaticResource SecondaryTextBrush}"
-                                    TextWrapping="Wrap" />
-
-                                <TextBlock
-                                    Text="3. 负责人修正与判断"
-                                    FontSize="14"
-                                    Foreground="{StaticResource SecondaryTextBrush}"
-                                    TextWrapping="Wrap" />
-
-                                <TextBlock
-                                    Text="4. 保存为可追踪的团队运行记录"
-                                    FontSize="14"
-                                    Foreground="{StaticResource SecondaryTextBrush}"
-                                    TextWrapping="Wrap" />
+                                <TextBlock Text="1. 读取当前任务、人员、器材和 AI 记录" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" />
+                                <TextBlock Text="2. 生成复盘草稿" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" />
+                                <TextBlock Text="3. 负责人修正与判断" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" />
+                                <TextBlock Text="4. 保存为可追踪的团队运行记录" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" />
                             </StackPanel>
                         </Border>
                     </StackPanel>
@@ -457,28 +453,26 @@
 
                             <StackPanel Grid.Column="0" Spacing="4">
                                 <TextBlock
-                                    Text="复盘时间线"
+                                    Text="复盘记录"
                                     FontSize="26"
                                     FontWeight="SemiBold"
                                     Foreground="{StaticResource PrimaryTextBrush}" />
 
                                 <TextBlock
-                                    Text="按时间沉淀团队运行过程，形成答辩、交接和后续优化依据。"
+                                    Text="列表只显示摘要，完整复盘内容通过“查看详情”打开，避免长文本破坏页面布局。"
                                     FontSize="14"
                                     Foreground="{StaticResource MutedTextBrush}" />
                             </StackPanel>
 
                             <TextBlock
                                 Grid.Column="1"
-                                Text="Timeline"
+                                Text="Review Records"
                                 FontSize="18"
                                 Foreground="{StaticResource AccentBlueBrush}"
                                 VerticalAlignment="Center" />
                         </Grid>
 
-                        <ItemsControl
-                            x:Name="ReportsListView">
-
+                        <ItemsControl x:Name="ReportsListView">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Border
@@ -544,11 +538,7 @@
                                                     <ColumnDefinition Width="1*" />
                                                 </Grid.ColumnDefinitions>
 
-                                                <Border
-                                                    Grid.Column="0"
-                                                    Padding="15"
-                                                    CornerRadius="16"
-                                                    Background="#162033">
+                                                <Border Grid.Column="0" Padding="15" CornerRadius="16" Background="#162033">
                                                     <StackPanel Spacing="8">
                                                         <TextBlock
                                                             Text="本周完成工作"
@@ -566,11 +556,7 @@
                                                     </StackPanel>
                                                 </Border>
 
-                                                <Border
-                                                    Grid.Column="1"
-                                                    Padding="15"
-                                                    CornerRadius="16"
-                                                    Background="#162033">
+                                                <Border Grid.Column="1" Padding="15" CornerRadius="16" Background="#162033">
                                                     <StackPanel Spacing="8">
                                                         <TextBlock
                                                             Text="问题与风险"
@@ -588,11 +574,7 @@
                                                     </StackPanel>
                                                 </Border>
 
-                                                <Border
-                                                    Grid.Column="2"
-                                                    Padding="15"
-                                                    CornerRadius="16"
-                                                    Background="#162033">
+                                                <Border Grid.Column="2" Padding="15" CornerRadius="16" Background="#162033">
                                                     <StackPanel Spacing="8">
                                                         <TextBlock
                                                             Text="下周计划"
@@ -617,11 +599,7 @@
                                                     <ColumnDefinition Width="1*" />
                                                 </Grid.ColumnDefinitions>
 
-                                                <Border
-                                                    Grid.Column="0"
-                                                    Padding="15"
-                                                    CornerRadius="16"
-                                                    Background="#201B35">
+                                                <Border Grid.Column="0" Padding="15" CornerRadius="16" Background="#201B35">
                                                     <StackPanel Spacing="8">
                                                         <TextBlock
                                                             Text="AI 协作摘要"
@@ -639,11 +617,7 @@
                                                     </StackPanel>
                                                 </Border>
 
-                                                <Border
-                                                    Grid.Column="1"
-                                                    Padding="15"
-                                                    CornerRadius="16"
-                                                    Background="#1C2638">
+                                                <Border Grid.Column="1" Padding="15" CornerRadius="16" Background="#1C2638">
                                                     <StackPanel Spacing="8">
                                                         <TextBlock
                                                             Text="负责人复盘判断"
@@ -663,6 +637,11 @@
                                             </Grid>
 
                                             <StackPanel Orientation="Horizontal" Spacing="10">
+                                                <Button
+                                                    Content="查看详情"
+                                                    Tag="{Binding Id}"
+                                                    Click="ShowReportDetailButton_Click" />
+
                                                 <Button
                                                     Content="标记正常"
                                                     Tag="{Binding Id}"

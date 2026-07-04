@@ -47,6 +47,7 @@
 
     <Grid Background="{StaticResource PageBackgroundBrush}">
         <ScrollViewer
+            x:Name="RootScrollViewer"
             VerticalScrollBarVisibility="Auto"
             HorizontalScrollBarVisibility="Disabled"
             HorizontalScrollMode="Disabled">

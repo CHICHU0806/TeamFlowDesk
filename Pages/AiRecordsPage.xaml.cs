@@ -109,17 +109,26 @@ public sealed partial class AiRecordsPage : Page
 
     private void SetAcceptedButton_Click(object sender, RoutedEventArgs e)
     {
-        UpdateAdoptionStatus(sender, "采纳", "记录已标记为采纳");
+        PreserveScrollPosition(() =>
+        {
+            UpdateAdoptionStatus(sender, "采纳", "记录已标记为采纳");
+        });
     }
 
     private void SetPartAcceptedButton_Click(object sender, RoutedEventArgs e)
     {
-        UpdateAdoptionStatus(sender, "部分采纳", "记录已标记为部分采纳");
+        PreserveScrollPosition(() =>
+        {
+            UpdateAdoptionStatus(sender, "部分采纳", "记录已标记为部分采纳");
+        });
     }
 
     private void SetRejectedButton_Click(object sender, RoutedEventArgs e)
     {
-        UpdateAdoptionStatus(sender, "未采纳", "记录已标记为未采纳");
+        PreserveScrollPosition(() =>
+        {
+            UpdateAdoptionStatus(sender, "未采纳", "记录已标记为未采纳");
+        });
     }
 
     private async void ShowAiRecordDetailButton_Click(object sender, RoutedEventArgs e)
@@ -166,20 +175,23 @@ public sealed partial class AiRecordsPage : Page
 
     private void DeleteAiRecordButton_Click(object sender, RoutedEventArgs e)
     {
-        var record = GetRecordFromButton(sender);
-
-        if (record is null)
+        PreserveScrollPosition(() =>
         {
-            return;
-        }
+            var record = GetRecordFromButton(sender);
 
-        AiRecordRepository.Delete(record.Id);
-        _records.Remove(record);
+            if (record is null)
+            {
+                return;
+            }
 
-        RefreshStatistics();
-        RefreshInsightPanel();
+            AiRecordRepository.Delete(record.Id);
+            _records.Remove(record);
 
-        AiRecordFormMessageText.Text = $"AI 协作记录已删除：{record.RelatedModule}";
+            RefreshStatistics();
+            RefreshInsightPanel();
+
+            AiRecordFormMessageText.Text = $"AI 协作记录已删除：{record.RelatedModule}";
+        });
     }
 
     private void UpdateAdoptionStatus(object sender, string adoptionStatus, string message)
@@ -216,6 +228,31 @@ public sealed partial class AiRecordsPage : Page
         return _records.FirstOrDefault(record => record.Id == recordId);
     }
 
+    private void PreserveScrollPosition(Action action)
+    {
+        var verticalOffset = RootScrollViewer.VerticalOffset;
+
+        action();
+
+        DispatcherQueue.TryEnqueue(() =>
+        {
+            RootScrollViewer.ChangeView(
+                null,
+                verticalOffset,
+                null,
+                disableAnimation: true);
+            
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                RootScrollViewer.ChangeView(
+                    null,
+                    verticalOffset,
+                    null,
+                    disableAnimation: true);
+            });
+        });
+    }
+    
     private void RefreshStatistics()
     {
         RecordCountText.Text = _records.Count.ToString();
