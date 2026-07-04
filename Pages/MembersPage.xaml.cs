@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using TeamFlowDesk.Data;
 using TeamFlowDesk.Models;
+using TeamFlowDesk.Services.Ui;
 
 namespace TeamFlowDesk.Pages;
 
@@ -50,9 +51,13 @@ public sealed partial class MembersPage : Page
             Direction = MemberDirectionTextBox.Text.Trim(),
             Role = MemberRoleTextBox.Text.Trim(),
             SkillTags = MemberSkillTagsTextBox.Text.Trim(),
-            AbilityLevel = GetComboBoxText(MemberAbilityComboBox, "入门"),
+            AbilityLevel = PageInteractionService.GetComboBoxText(
+                MemberAbilityComboBox,
+                "入门"),
             CurrentTaskCount = taskCount,
-            WorkloadStatus = GetComboBoxText(MemberWorkloadComboBox, "正常"),
+            WorkloadStatus = PageInteractionService.GetComboBoxText(
+                MemberWorkloadComboBox,
+                "正常"),
             GrowthPlan = MemberGrowthPlanTextBox.Text.Trim()
         };
 
@@ -73,7 +78,7 @@ public sealed partial class MembersPage : Page
 
     private void IncreaseTaskCountButton_Click(object sender, RoutedEventArgs e)
     {
-        PreserveScrollPosition(() =>
+        PageInteractionService.RunKeepingScrollPosition(this, () =>
         {
             var member = GetMemberFromButton(sender);
 
@@ -82,35 +87,30 @@ public sealed partial class MembersPage : Page
                 return;
             }
 
-            member.CurrentTaskCount++;
+            var newTaskCount = member.CurrentTaskCount + 1;
+            var newWorkloadStatus = CalculateWorkloadStatus(newTaskCount);
 
-            if (member.CurrentTaskCount >= 5)
-            {
-                member.WorkloadStatus = "过载";
-            }
-            else if (member.CurrentTaskCount >= 3)
-            {
-                member.WorkloadStatus = "关注";
-            }
-            else if (member.CurrentTaskCount == 0)
-            {
-                member.WorkloadStatus = "空闲";
-            }
-            else
-            {
-                member.WorkloadStatus = "正常";
-            }
+            var updatedMember = CopyMemberWithNewState(
+                member,
+                newTaskCount,
+                newWorkloadStatus);
 
-            MemberRepository.Update(member);
+            MemberRepository.Update(updatedMember);
+
+            PageInteractionService.ReplaceItem(
+                _members,
+                member,
+                updatedMember);
+
             RefreshAll();
 
-            MemberFormMessageText.Text = $"已增加任务负载：{member.Name}";
+            MemberFormMessageText.Text = $"已增加任务负载：{updatedMember.Name}";
         });
     }
-    
+
     private void DecreaseTaskCountButton_Click(object sender, RoutedEventArgs e)
     {
-        PreserveScrollPosition(() =>
+        PageInteractionService.RunKeepingScrollPosition(this, () =>
         {
             var member = GetMemberFromButton(sender);
 
@@ -119,35 +119,30 @@ public sealed partial class MembersPage : Page
                 return;
             }
 
-            if (member.CurrentTaskCount > 0)
-            {
-                member.CurrentTaskCount--;
-            }
+            var newTaskCount = member.CurrentTaskCount > 0
+                ? member.CurrentTaskCount - 1
+                : 0;
 
-            if (member.CurrentTaskCount == 0)
-            {
-                member.WorkloadStatus = "空闲";
-            }
-            else if (member.CurrentTaskCount <= 2)
-            {
-                member.WorkloadStatus = "正常";
-            }
-            else if (member.CurrentTaskCount <= 4)
-            {
-                member.WorkloadStatus = "关注";
-            }
-            else
-            {
-                member.WorkloadStatus = "过载";
-            }
+            var newWorkloadStatus = CalculateWorkloadStatus(newTaskCount);
 
-            MemberRepository.Update(member);
+            var updatedMember = CopyMemberWithNewState(
+                member,
+                newTaskCount,
+                newWorkloadStatus);
+
+            MemberRepository.Update(updatedMember);
+
+            PageInteractionService.ReplaceItem(
+                _members,
+                member,
+                updatedMember);
+
             RefreshAll();
 
-            MemberFormMessageText.Text = $"已减少任务负载：{member.Name}";
+            MemberFormMessageText.Text = $"已减少任务负载：{updatedMember.Name}";
         });
     }
-    
+
     private void SetNormalWorkloadButton_Click(object sender, RoutedEventArgs e)
     {
         UpdateMemberWorkloadStatus(sender, "正常", "成员已标记为正常负载");
@@ -170,7 +165,7 @@ public sealed partial class MembersPage : Page
 
     private void DeleteMemberButton_Click(object sender, RoutedEventArgs e)
     {
-        PreserveScrollPosition(() =>
+        PageInteractionService.RunKeepingScrollPosition(this, () =>
         {
             var member = GetMemberFromButton(sender);
 
@@ -187,10 +182,13 @@ public sealed partial class MembersPage : Page
             MemberFormMessageText.Text = $"成员已删除：{member.Name}";
         });
     }
-    
-    private void UpdateMemberWorkloadStatus(object sender, string workloadStatus, string message)
+
+    private void UpdateMemberWorkloadStatus(
+        object sender,
+        string workloadStatus,
+        string message)
     {
-        PreserveScrollPosition(() =>
+        PageInteractionService.RunKeepingScrollPosition(this, () =>
         {
             var member = GetMemberFromButton(sender);
 
@@ -199,46 +197,72 @@ public sealed partial class MembersPage : Page
                 return;
             }
 
-            member.WorkloadStatus = workloadStatus;
+            var updatedMember = CopyMemberWithNewState(
+                member,
+                member.CurrentTaskCount,
+                workloadStatus);
 
-            MemberRepository.Update(member);
+            MemberRepository.Update(updatedMember);
+
+            PageInteractionService.ReplaceItem(
+                _members,
+                member,
+                updatedMember);
+
             RefreshAll();
 
-            MemberFormMessageText.Text = $"{message}：{member.Name}";
+            MemberFormMessageText.Text = $"{message}：{updatedMember.Name}";
         });
     }
-    
+
     private MemberItem? GetMemberFromButton(object sender)
     {
-        if (sender is not Button button || button.Tag is null)
-        {
-            return null;
-        }
-
-        if (!int.TryParse(button.Tag.ToString(), out var memberId))
-        {
-            return null;
-        }
-
-        return _members.FirstOrDefault(member => member.Id == memberId);
+        return PageInteractionService.GetItemFromButton(
+            sender,
+            _members,
+            member => member.Id);
     }
 
-    private void PreserveScrollPosition(Action action)
+    private static MemberItem CopyMemberWithNewState(
+        MemberItem source,
+        int currentTaskCount,
+        string workloadStatus)
     {
-        var verticalOffset = RootScrollViewer.VerticalOffset;
-
-        action();
-
-        DispatcherQueue.TryEnqueue(() =>
+        return new MemberItem
         {
-            RootScrollViewer.ChangeView(
-                null,
-                verticalOffset,
-                null,
-                disableAnimation: true);
-        });
+            Id = source.Id,
+            Name = source.Name,
+            Grade = source.Grade,
+            Direction = source.Direction,
+            Role = source.Role,
+            SkillTags = source.SkillTags,
+            AbilityLevel = source.AbilityLevel,
+            CurrentTaskCount = currentTaskCount,
+            WorkloadStatus = workloadStatus,
+            GrowthPlan = source.GrowthPlan
+        };
     }
-    
+
+    private static string CalculateWorkloadStatus(int currentTaskCount)
+    {
+        if (currentTaskCount <= 0)
+        {
+            return "空闲";
+        }
+
+        if (currentTaskCount <= 2)
+        {
+            return "正常";
+        }
+
+        if (currentTaskCount <= 4)
+        {
+            return "关注";
+        }
+
+        return "过载";
+    }
+
     private void RefreshAll()
     {
         RefreshStatistics();
@@ -255,9 +279,7 @@ public sealed partial class MembersPage : Page
             .ToString();
 
         IndependentCountText.Text = _members
-            .Count(member =>
-                member.AbilityLevel == "可独立完成" ||
-                member.AbilityLevel == "可带人")
+            .Count(IsIndependentMember)
             .ToString();
 
         TotalTaskLoadText.Text = _members
@@ -270,9 +292,7 @@ public sealed partial class MembersPage : Page
         var attentionCount = _members.Count(member => member.WorkloadStatus == "关注");
         var overloadCount = _members.Count(member => member.WorkloadStatus == "过载");
         var idleCount = _members.Count(member => member.WorkloadStatus == "空闲");
-        var independentCount = _members.Count(member =>
-            member.AbilityLevel == "可独立完成" ||
-            member.AbilityLevel == "可带人");
+        var independentCount = _members.Count(IsIndependentMember);
 
         MemberStatusSummaryText.Text =
             $"当前共有 {_members.Count} 名成员，任务负载总数为 {_members.Sum(member => member.CurrentTaskCount)}，其中关注 {attentionCount} 人，过载 {overloadCount} 人，空闲 {idleCount} 人。";
@@ -310,12 +330,9 @@ public sealed partial class MembersPage : Page
     private void RefreshMemberCards()
     {
         MembersItemsControl.ItemsSource = _members
-            .OrderByDescending(member =>
-                member.WorkloadStatus == "过载" ? 4 :
-                member.WorkloadStatus == "关注" ? 3 :
-                member.WorkloadStatus == "正常" ? 2 :
-                member.WorkloadStatus == "空闲" ? 1 : 0)
+            .OrderByDescending(GetWorkloadSortWeight)
             .ThenByDescending(member => member.CurrentTaskCount)
+            .ThenBy(member => member.Name)
             .ToList();
     }
 
@@ -333,14 +350,21 @@ public sealed partial class MembersPage : Page
         MemberWorkloadComboBox.SelectedIndex = 0;
     }
 
-    private static string GetComboBoxText(ComboBox comboBox, string fallback)
+    private static bool IsIndependentMember(MemberItem member)
     {
-        if (comboBox.SelectedItem is ComboBoxItem selectedItem &&
-            selectedItem.Content is not null)
-        {
-            return selectedItem.Content.ToString() ?? fallback;
-        }
+        return member.AbilityLevel == "可独立完成" ||
+               member.AbilityLevel == "可带人";
+    }
 
-        return fallback;
+    private static int GetWorkloadSortWeight(MemberItem member)
+    {
+        return member.WorkloadStatus switch
+        {
+            "过载" => 4,
+            "关注" => 3,
+            "正常" => 2,
+            "空闲" => 1,
+            _ => 0
+        };
     }
 }

@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using TeamFlowDesk.Data;
 using TeamFlowDesk.Models;
+using TeamFlowDesk.Services.Ui;
 
 namespace TeamFlowDesk.Pages;
 
@@ -104,7 +104,9 @@ public sealed partial class ReportsPage : Page
             NextPlan = NextPlanTextBox.Text.Trim(),
             AiCollaborationSummary = AiCollaborationSummaryTextBox.Text.Trim(),
             ManagerReview = ManagerReviewTextBox.Text.Trim(),
-            ProgressStatus = GetComboBoxText(ProgressStatusComboBox, "正常")
+            ProgressStatus = PageInteractionService.GetComboBoxText(
+                ProgressStatusComboBox,
+                "正常")
         };
 
         try
@@ -132,26 +134,17 @@ public sealed partial class ReportsPage : Page
 
     private void SetNormalReportButton_Click(object sender, RoutedEventArgs e)
     {
-        PreserveScrollPosition(() =>
-        {
-            UpdateReportStatus(sender, "正常", "复盘记录已标记为正常");
-        });
+        UpdateReportStatus(sender, "正常", "复盘记录已标记为正常");
     }
 
     private void SetAttentionReportButton_Click(object sender, RoutedEventArgs e)
     {
-        PreserveScrollPosition(() =>
-        {
-            UpdateReportStatus(sender, "关注", "复盘记录已标记为关注");
-        });
+        UpdateReportStatus(sender, "关注", "复盘记录已标记为关注");
     }
 
     private void SetHighRiskReportButton_Click(object sender, RoutedEventArgs e)
     {
-        PreserveScrollPosition(() =>
-        {
-            UpdateReportStatus(sender, "高风险", "复盘记录已标记为高风险");
-        });
+        UpdateReportStatus(sender, "高风险", "复盘记录已标记为高风险");
     }
 
     private async void ShowReportDetailButton_Click(object sender, RoutedEventArgs e)
@@ -163,43 +156,25 @@ public sealed partial class ReportsPage : Page
             return;
         }
 
-        var detailPanel = new StackPanel
-        {
-            Spacing = 16,
-            MaxWidth = 940
-        };
-
-        detailPanel.Children.Add(CreateDetailBlock("周报标题", report.Title));
-        detailPanel.Children.Add(CreateDetailBlock("复盘周期", $"{report.StartDate:yyyy-MM-dd} 至 {report.EndDate:yyyy-MM-dd}"));
-        detailPanel.Children.Add(CreateDetailBlock("进度状态", report.ProgressStatus));
-        detailPanel.Children.Add(CreateDetailBlock("本周完成工作", report.CompletedWork));
-        detailPanel.Children.Add(CreateDetailBlock("问题与风险", report.Problems));
-        detailPanel.Children.Add(CreateDetailBlock("下周计划", report.NextPlan));
-        detailPanel.Children.Add(CreateDetailBlock("AI 协作摘要", report.AiCollaborationSummary));
-        detailPanel.Children.Add(CreateDetailBlock("负责人复盘判断", report.ManagerReview));
-
-        var scrollViewer = new ScrollViewer
-        {
-            Content = detailPanel,
-            MaxHeight = 700,
-            VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-            HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled
-        };
-
-        var dialog = new ContentDialog
-        {
-            Title = "复盘记录详情",
-            Content = scrollViewer,
-            CloseButtonText = "关闭",
-            XamlRoot = XamlRoot
-        };
-
-        await dialog.ShowAsync();
+        await PageInteractionService.ShowDetailDialogAsync(
+            this,
+            "复盘记录详情",
+            new[]
+            {
+                new DetailSection("周报标题", report.Title),
+                new DetailSection("复盘周期", $"{report.StartDate:yyyy-MM-dd} 至 {report.EndDate:yyyy-MM-dd}"),
+                new DetailSection("进度状态", report.ProgressStatus),
+                new DetailSection("本周完成工作", report.CompletedWork),
+                new DetailSection("问题与风险", report.Problems),
+                new DetailSection("下周计划", report.NextPlan),
+                new DetailSection("AI 协作摘要", report.AiCollaborationSummary),
+                new DetailSection("负责人复盘判断", report.ManagerReview)
+            });
     }
 
     private void DeleteReportButton_Click(object sender, RoutedEventArgs e)
     {
-        PreserveScrollPosition(() =>
+        PageInteractionService.RunKeepingScrollPosition(this, () =>
         {
             var report = GetReportFromButton(sender);
 
@@ -220,53 +195,56 @@ public sealed partial class ReportsPage : Page
 
     private void UpdateReportStatus(object sender, string progressStatus, string message)
     {
-        var report = GetReportFromButton(sender);
-
-        if (report is null)
+        PageInteractionService.RunKeepingScrollPosition(this, () =>
         {
-            return;
-        }
+            var report = GetReportFromButton(sender);
 
-        report.ProgressStatus = progressStatus;
+            if (report is null)
+            {
+                return;
+            }
 
-        WeeklyReportRepository.Update(report);
+            var updatedReport = CopyReportWithNewStatus(report, progressStatus);
 
-        RefreshReportList();
-        RefreshStatistics();
-        RefreshDataSnapshot();
+            WeeklyReportRepository.Update(updatedReport);
 
-        ReportFormMessageText.Text = $"{message}：{report.Title}";
+            PageInteractionService.ReplaceItem(
+                _reports,
+                report,
+                updatedReport);
+
+            RefreshStatistics();
+            RefreshDataSnapshot();
+
+            ReportFormMessageText.Text = $"{message}：{updatedReport.Title}";
+        });
     }
 
     private WeeklyReportItem? GetReportFromButton(object sender)
     {
-        if (sender is not Button button || button.Tag is null)
-        {
-            return null;
-        }
-
-        if (!int.TryParse(button.Tag.ToString(), out var reportId))
-        {
-            return null;
-        }
-
-        return _reports.FirstOrDefault(report => report.Id == reportId);
+        return PageInteractionService.GetItemFromButton(
+            sender,
+            _reports,
+            report => report.Id);
     }
 
-    private void PreserveScrollPosition(Action action)
+    private static WeeklyReportItem CopyReportWithNewStatus(
+        WeeklyReportItem source,
+        string progressStatus)
     {
-        var verticalOffset = RootScrollViewer.VerticalOffset;
-
-        action();
-
-        DispatcherQueue.TryEnqueue(() =>
+        return new WeeklyReportItem
         {
-            RootScrollViewer.ChangeView(
-                null,
-                verticalOffset,
-                null,
-                disableAnimation: true);
-        });
+            Id = source.Id,
+            Title = source.Title,
+            StartDate = source.StartDate,
+            EndDate = source.EndDate,
+            CompletedWork = source.CompletedWork,
+            Problems = source.Problems,
+            NextPlan = source.NextPlan,
+            AiCollaborationSummary = source.AiCollaborationSummary,
+            ManagerReview = source.ManagerReview,
+            ProgressStatus = progressStatus
+        };
     }
 
     private void RefreshStatistics()
@@ -350,12 +328,6 @@ public sealed partial class ReportsPage : Page
             EquipmentSnapshotText.Text = "暂无有效数据。";
             AiSnapshotText.Text = "暂无有效数据。";
         }
-    }
-
-    private void RefreshReportList()
-    {
-        ReportsListView.ItemsSource = null;
-        ReportsListView.ItemsSource = _reports;
     }
 
     private void ClearReportForm()
@@ -493,32 +465,6 @@ public sealed partial class ReportsPage : Page
             $"本周需要重点关注：风险任务 {riskTaskCount} 项，成员负载异常 {attentionMemberCount} 项，器材异常 {abnormalEquipmentCount} 项。建议负责人优先处理会影响项目推进节奏的阻塞项，并在下周复盘中检查整改结果。AI 协作记录共 {aiRecordCount} 条，可作为辅助判断参考，但最终管理动作仍需负责人确认。";
     }
 
-    private static StackPanel CreateDetailBlock(string title, string content)
-    {
-        var panel = new StackPanel
-        {
-            Spacing = 6
-        };
-
-        panel.Children.Add(new TextBlock
-        {
-            Text = title,
-            FontSize = 15,
-            FontWeight = FontWeights.SemiBold,
-            TextWrapping = TextWrapping.Wrap
-        });
-
-        panel.Children.Add(new TextBlock
-        {
-            Text = string.IsNullOrWhiteSpace(content) ? "暂无内容" : content,
-            FontSize = 14,
-            TextWrapping = TextWrapping.Wrap,
-            IsTextSelectionEnabled = true
-        });
-
-        return panel;
-    }
-
     private static bool IsAbnormalEquipment(EquipmentItem item)
     {
         return item.Status == "待检查" ||
@@ -530,16 +476,5 @@ public sealed partial class ReportsPage : Page
     private static string SafeText(string text)
     {
         return string.IsNullOrWhiteSpace(text) ? "暂无" : text;
-    }
-
-    private static string GetComboBoxText(ComboBox comboBox, string fallback)
-    {
-        if (comboBox.SelectedItem is ComboBoxItem selectedItem &&
-            selectedItem.Content is not null)
-        {
-            return selectedItem.Content.ToString() ?? fallback;
-        }
-
-        return fallback;
     }
 }

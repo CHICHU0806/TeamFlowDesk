@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Controls;
 using TeamFlowDesk.Data;
 using TeamFlowDesk.Models;
 using TeamFlowDesk.Services;
+using TeamFlowDesk.Services.Ui;
 
 namespace TeamFlowDesk.Pages;
 
@@ -87,7 +88,9 @@ public sealed partial class AiRecordsPage : Page
             AiSuggestion = AiSuggestionTextBox.Text.Trim(),
             HumanJudgement = HumanJudgementTextBox.Text.Trim(),
             FinalDecision = FinalDecisionTextBox.Text.Trim(),
-            AdoptionStatus = GetComboBoxText(AdoptionStatusComboBox, "部分采纳"),
+            AdoptionStatus = PageInteractionService.GetComboBoxText(
+                AdoptionStatusComboBox,
+                "部分采纳"),
             CreatedAt = DateTimeOffset.Now
         };
 
@@ -109,26 +112,17 @@ public sealed partial class AiRecordsPage : Page
 
     private void SetAcceptedButton_Click(object sender, RoutedEventArgs e)
     {
-        PreserveScrollPosition(() =>
-        {
-            UpdateAdoptionStatus(sender, "采纳", "记录已标记为采纳");
-        });
+        UpdateAdoptionStatus(sender, "采纳", "记录已标记为采纳");
     }
 
     private void SetPartAcceptedButton_Click(object sender, RoutedEventArgs e)
     {
-        PreserveScrollPosition(() =>
-        {
-            UpdateAdoptionStatus(sender, "部分采纳", "记录已标记为部分采纳");
-        });
+        UpdateAdoptionStatus(sender, "部分采纳", "记录已标记为部分采纳");
     }
 
     private void SetRejectedButton_Click(object sender, RoutedEventArgs e)
     {
-        PreserveScrollPosition(() =>
-        {
-            UpdateAdoptionStatus(sender, "未采纳", "记录已标记为未采纳");
-        });
+        UpdateAdoptionStatus(sender, "未采纳", "记录已标记为未采纳");
     }
 
     private async void ShowAiRecordDetailButton_Click(object sender, RoutedEventArgs e)
@@ -140,42 +134,24 @@ public sealed partial class AiRecordsPage : Page
             return;
         }
 
-        var detailPanel = new StackPanel
-        {
-            Spacing = 16,
-            MaxWidth = 920
-        };
-
-        detailPanel.Children.Add(CreateDetailBlock("关联模块", record.RelatedModule));
-        detailPanel.Children.Add(CreateDetailBlock("问题描述", record.Question));
-        detailPanel.Children.Add(CreateDetailBlock("AI 建议", record.AiSuggestion));
-        detailPanel.Children.Add(CreateDetailBlock("人工判断", record.HumanJudgement));
-        detailPanel.Children.Add(CreateDetailBlock("最终决策", record.FinalDecision));
-        detailPanel.Children.Add(CreateDetailBlock("采纳状态", record.AdoptionStatus));
-        detailPanel.Children.Add(CreateDetailBlock("创建时间", record.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")));
-
-        var scrollViewer = new ScrollViewer
-        {
-            Content = detailPanel,
-            MaxHeight = 680,
-            VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-            HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled
-        };
-
-        var dialog = new ContentDialog
-        {
-            Title = "AI 协作记录详情",
-            Content = scrollViewer,
-            CloseButtonText = "关闭",
-            XamlRoot = XamlRoot
-        };
-
-        await dialog.ShowAsync();
+        await PageInteractionService.ShowDetailDialogAsync(
+            this,
+            "AI 协作记录详情",
+            new[]
+            {
+                new DetailSection("关联模块", record.RelatedModule),
+                new DetailSection("问题描述", record.Question),
+                new DetailSection("AI 建议", record.AiSuggestion),
+                new DetailSection("人工判断", record.HumanJudgement),
+                new DetailSection("最终决策", record.FinalDecision),
+                new DetailSection("采纳状态", record.AdoptionStatus),
+                new DetailSection("创建时间", record.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss"))
+            });
     }
 
     private void DeleteAiRecordButton_Click(object sender, RoutedEventArgs e)
     {
-        PreserveScrollPosition(() =>
+        PageInteractionService.RunKeepingScrollPosition(this, () =>
         {
             var record = GetRecordFromButton(sender);
 
@@ -196,63 +172,56 @@ public sealed partial class AiRecordsPage : Page
 
     private void UpdateAdoptionStatus(object sender, string adoptionStatus, string message)
     {
-        var record = GetRecordFromButton(sender);
-
-        if (record is null)
+        PageInteractionService.RunKeepingScrollPosition(this, () =>
         {
-            return;
-        }
+            var record = GetRecordFromButton(sender);
 
-        record.AdoptionStatus = adoptionStatus;
+            if (record is null)
+            {
+                return;
+            }
 
-        AiRecordRepository.Update(record);
-        RefreshRecordList();
-        RefreshStatistics();
-        RefreshInsightPanel();
+            var updatedRecord = CopyRecordWithNewAdoptionStatus(record, adoptionStatus);
 
-        AiRecordFormMessageText.Text = $"{message}：{record.RelatedModule}";
+            AiRecordRepository.Update(updatedRecord);
+
+            PageInteractionService.ReplaceItem(
+                _records,
+                record,
+                updatedRecord);
+
+            RefreshStatistics();
+            RefreshInsightPanel();
+
+            AiRecordFormMessageText.Text = $"{message}：{updatedRecord.RelatedModule}";
+        });
     }
 
     private AiRecordItem? GetRecordFromButton(object sender)
     {
-        if (sender is not Button button || button.Tag is null)
-        {
-            return null;
-        }
-
-        if (!int.TryParse(button.Tag.ToString(), out var recordId))
-        {
-            return null;
-        }
-
-        return _records.FirstOrDefault(record => record.Id == recordId);
+        return PageInteractionService.GetItemFromButton(
+            sender,
+            _records,
+            record => record.Id);
     }
 
-    private void PreserveScrollPosition(Action action)
+    private static AiRecordItem CopyRecordWithNewAdoptionStatus(
+        AiRecordItem source,
+        string adoptionStatus)
     {
-        var verticalOffset = RootScrollViewer.VerticalOffset;
-
-        action();
-
-        DispatcherQueue.TryEnqueue(() =>
+        return new AiRecordItem
         {
-            RootScrollViewer.ChangeView(
-                null,
-                verticalOffset,
-                null,
-                disableAnimation: true);
-            
-            DispatcherQueue.TryEnqueue(() =>
-            {
-                RootScrollViewer.ChangeView(
-                    null,
-                    verticalOffset,
-                    null,
-                    disableAnimation: true);
-            });
-        });
+            Id = source.Id,
+            RelatedModule = source.RelatedModule,
+            Question = source.Question,
+            AiSuggestion = source.AiSuggestion,
+            HumanJudgement = source.HumanJudgement,
+            FinalDecision = source.FinalDecision,
+            AdoptionStatus = adoptionStatus,
+            CreatedAt = source.CreatedAt
+        };
     }
-    
+
     private void RefreshStatistics()
     {
         RecordCountText.Text = _records.Count.ToString();
@@ -308,12 +277,6 @@ public sealed partial class AiRecordsPage : Page
         AiValueText.Text = "AI 已经参与部分团队管理环节。后续可以继续沉淀人工判断和最终决策，用于周报复盘和答辩展示。";
     }
 
-    private void RefreshRecordList()
-    {
-        AiRecordsListView.ItemsSource = null;
-        AiRecordsListView.ItemsSource = _records;
-    }
-
     private void ClearAiRecordForm()
     {
         RelatedModuleTextBox.Text = string.Empty;
@@ -323,42 +286,5 @@ public sealed partial class AiRecordsPage : Page
         FinalDecisionTextBox.Text = string.Empty;
 
         AdoptionStatusComboBox.SelectedIndex = 1;
-    }
-
-    private static StackPanel CreateDetailBlock(string title, string content)
-    {
-        var panel = new StackPanel
-        {
-            Spacing = 6
-        };
-
-        panel.Children.Add(new TextBlock
-        {
-            Text = title,
-            FontSize = 15,
-            FontWeight = Microsoft.UI.Text.FontWeights.SemiBold,
-            TextWrapping = TextWrapping.Wrap
-        });
-
-        panel.Children.Add(new TextBlock
-        {
-            Text = string.IsNullOrWhiteSpace(content) ? "暂无内容" : content,
-            FontSize = 14,
-            TextWrapping = TextWrapping.Wrap,
-            IsTextSelectionEnabled = true
-        });
-
-        return panel;
-    }
-
-    private static string GetComboBoxText(ComboBox comboBox, string fallback)
-    {
-        if (comboBox.SelectedItem is ComboBoxItem selectedItem &&
-            selectedItem.Content is not null)
-        {
-            return selectedItem.Content.ToString() ?? fallback;
-        }
-
-        return fallback;
     }
 }

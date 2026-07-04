@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using TeamFlowDesk.Data;
 using TeamFlowDesk.Models;
+using TeamFlowDesk.Services.Ui;
 
 namespace TeamFlowDesk.Pages;
 
@@ -48,9 +49,15 @@ public sealed partial class TasksPage : Page
             Description = TaskDescriptionTextBox.Text.Trim(),
             OwnerName = ownerName,
             Collaborators = "暂无",
-            Status = GetComboBoxText(TaskStatusComboBox, "待处理"),
-            Priority = GetComboBoxText(TaskPriorityComboBox, "普通"),
-            RiskLevel = GetComboBoxText(TaskRiskComboBox, "正常"),
+            Status = PageInteractionService.GetComboBoxText(
+                TaskStatusComboBox,
+                "待处理"),
+            Priority = PageInteractionService.GetComboBoxText(
+                TaskPriorityComboBox,
+                "普通"),
+            RiskLevel = PageInteractionService.GetComboBoxText(
+                TaskRiskComboBox,
+                "正常"),
             Deadline = TaskDeadlineDatePicker.Date,
             RelatedEquipment = TaskEquipmentTextBox.Text.Trim(),
             OutputRequirement = TaskOutputTextBox.Text.Trim()
@@ -73,31 +80,22 @@ public sealed partial class TasksPage : Page
 
     private void SetDoingTaskButton_Click(object sender, RoutedEventArgs e)
     {
-        PreserveScrollPosition(() =>
-        {
-            UpdateTaskStatus(sender, "进行中", null, "任务已标记为进行中");
-        });
+        UpdateTask(sender, "进行中", null, "任务已标记为进行中");
     }
 
     private void CompleteTaskButton_Click(object sender, RoutedEventArgs e)
     {
-        PreserveScrollPosition(() =>
-        {
-            UpdateTaskStatus(sender, "已完成", "正常", "任务已标记完成");
-        });
+        UpdateTask(sender, "已完成", "正常", "任务已标记完成");
     }
 
     private void SetHighRiskTaskButton_Click(object sender, RoutedEventArgs e)
     {
-        PreserveScrollPosition(() =>
-        {
-            UpdateTaskStatus(sender, null, "高风险", "任务已标记为高风险");
-        });
+        UpdateTask(sender, null, "高风险", "任务已标记为高风险");
     }
 
     private void DeleteTaskButton_Click(object sender, RoutedEventArgs e)
     {
-        PreserveScrollPosition(() =>
+        PageInteractionService.RunKeepingScrollPosition(this, () =>
         {
             var task = GetTaskFromButton(sender);
 
@@ -115,59 +113,73 @@ public sealed partial class TasksPage : Page
         });
     }
 
-    private void UpdateTaskStatus(object sender, string? status, string? riskLevel, string message)
+    private void UpdateTask(
+        object sender,
+        string? status,
+        string? riskLevel,
+        string message)
     {
-        var task = GetTaskFromButton(sender);
-
-        if (task is null)
+        PageInteractionService.RunKeepingScrollPosition(this, () =>
         {
-            return;
-        }
+            var task = GetTaskFromButton(sender);
 
-        if (!string.IsNullOrWhiteSpace(status))
-        {
-            task.Status = status;
-        }
+            if (task is null)
+            {
+                return;
+            }
 
-        if (!string.IsNullOrWhiteSpace(riskLevel))
-        {
-            task.RiskLevel = riskLevel;
-        }
+            var updatedTask = CopyTaskWithNewState(
+                task,
+                status,
+                riskLevel);
 
-        TaskRepository.Update(task);
+            TaskRepository.Update(updatedTask);
 
-        RefreshAll();
+            PageInteractionService.ReplaceItem(
+                _tasks,
+                task,
+                updatedTask);
 
-        TaskFormMessageText.Text = $"{message}：{task.Title}";
+            RefreshAll();
+
+            TaskFormMessageText.Text = $"{message}：{updatedTask.Title}";
+        });
     }
 
     private TaskItem? GetTaskFromButton(object sender)
     {
-        if (sender is not Button button || button.Tag is null)
-        {
-            return null;
-        }
-
-        if (!int.TryParse(button.Tag.ToString(), out var taskId))
-        {
-            return null;
-        }
-
-        return _tasks.FirstOrDefault(task => task.Id == taskId);
+        return PageInteractionService.GetItemFromButton(
+            sender,
+            _tasks,
+            task => task.Id);
     }
 
-    private void PreserveScrollPosition(Action action)
+    private static TaskItem CopyTaskWithNewState(
+        TaskItem source,
+        string? status,
+        string? riskLevel)
     {
-        var verticalOffset = RootScrollViewer.VerticalOffset;
-
-        action();
-
-        DispatcherQueue.TryEnqueue(() =>
+        return new TaskItem
         {
-            RootScrollViewer.ChangeView(null, verticalOffset, null, disableAnimation: true);
-        });
+            Id = source.Id,
+            ProjectId = source.ProjectId,
+            Title = source.Title,
+            Description = source.Description,
+            OwnerName = source.OwnerName,
+            Collaborators = source.Collaborators,
+            Status = string.IsNullOrWhiteSpace(status)
+                ? source.Status
+                : status,
+            Priority = source.Priority,
+            RiskLevel = string.IsNullOrWhiteSpace(riskLevel)
+                ? source.RiskLevel
+                : riskLevel,
+            Deadline = source.Deadline,
+            RelatedEquipment = source.RelatedEquipment,
+            OutputRequirement = source.OutputRequirement
+        };
     }
-    
+
     private void RefreshAll()
     {
         RefreshStatistics();
@@ -188,10 +200,7 @@ public sealed partial class TasksPage : Page
             .ToString();
 
         RiskTaskCountText.Text = _tasks
-            .Count(task =>
-                task.RiskLevel == "高风险" ||
-                task.Status == "延期" ||
-                task.Status == "滞后")
+            .Count(IsRiskTask)
             .ToString();
     }
 
@@ -200,13 +209,13 @@ public sealed partial class TasksPage : Page
         TodoTasksItemsControl.ItemsSource = _tasks
             .Where(task =>
                 task.Status == "待处理" &&
-                task.RiskLevel != "高风险")
+                !IsRiskTask(task))
             .ToList();
 
         DoingTasksItemsControl.ItemsSource = _tasks
             .Where(task =>
                 task.Status == "进行中" &&
-                task.RiskLevel != "高风险")
+                !IsRiskTask(task))
             .ToList();
 
         DoneTasksItemsControl.ItemsSource = _tasks
@@ -214,20 +223,13 @@ public sealed partial class TasksPage : Page
             .ToList();
 
         RiskTasksItemsControl.ItemsSource = _tasks
-            .Where(task =>
-                task.RiskLevel == "高风险" ||
-                task.Status == "延期" ||
-                task.Status == "滞后")
+            .Where(IsRiskTask)
             .ToList();
     }
 
     private void RefreshInsights()
     {
-        var riskCount = _tasks.Count(task =>
-            task.RiskLevel == "高风险" ||
-            task.Status == "延期" ||
-            task.Status == "滞后");
-
+        var riskCount = _tasks.Count(IsRiskTask);
         var doingCount = _tasks.Count(task => task.Status == "进行中");
         var todoCount = _tasks.Count(task => task.Status == "待处理");
 
@@ -277,14 +279,10 @@ public sealed partial class TasksPage : Page
         TaskDeadlineDatePicker.Date = DateTimeOffset.Now.AddDays(3);
     }
 
-    private static string GetComboBoxText(ComboBox comboBox, string fallback)
+    private static bool IsRiskTask(TaskItem task)
     {
-        if (comboBox.SelectedItem is ComboBoxItem selectedItem &&
-            selectedItem.Content is not null)
-        {
-            return selectedItem.Content.ToString() ?? fallback;
-        }
-
-        return fallback;
+        return task.RiskLevel == "高风险" ||
+               task.Status == "延期" ||
+               task.Status == "滞后";
     }
 }

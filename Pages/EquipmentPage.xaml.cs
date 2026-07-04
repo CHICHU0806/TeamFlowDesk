@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using TeamFlowDesk.Data;
 using TeamFlowDesk.Models;
+using TeamFlowDesk.Services.Ui;
 
 namespace TeamFlowDesk.Pages;
 
@@ -37,7 +37,9 @@ public sealed partial class EquipmentPage : Page
             Name = name,
             Code = EquipmentCodeTextBox.Text.Trim(),
             Category = EquipmentCategoryTextBox.Text.Trim(),
-            Status = GetComboBoxText(EquipmentStatusComboBox, "可用"),
+            Status = PageInteractionService.GetComboBoxText(
+                EquipmentStatusComboBox,
+                "可用"),
             Location = EquipmentLocationTextBox.Text.Trim(),
             CurrentHolder = EquipmentHolderTextBox.Text.Trim(),
             RelatedTask = EquipmentRelatedTaskTextBox.Text.Trim(),
@@ -86,7 +88,7 @@ public sealed partial class EquipmentPage : Page
 
     private void DeleteEquipmentButton_Click(object sender, RoutedEventArgs e)
     {
-        PreserveScrollPosition(() =>
+        PageInteractionService.RunKeepingScrollPosition(this, () =>
         {
             var equipment = GetEquipmentFromButton(sender);
 
@@ -104,9 +106,12 @@ public sealed partial class EquipmentPage : Page
         });
     }
 
-    private void UpdateEquipmentStatus(object sender, string status, string message)
+    private void UpdateEquipmentStatus(
+        object sender,
+        string status,
+        string message)
     {
-        PreserveScrollPosition(() =>
+        PageInteractionService.RunKeepingScrollPosition(this, () =>
         {
             var equipment = GetEquipmentFromButton(sender);
 
@@ -115,44 +120,47 @@ public sealed partial class EquipmentPage : Page
                 return;
             }
 
-            equipment.Status = status;
+            var updatedEquipment = CopyEquipmentWithNewStatus(
+                equipment,
+                status);
 
-            EquipmentRepository.Update(equipment);
+            EquipmentRepository.Update(updatedEquipment);
+
+            PageInteractionService.ReplaceItem(
+                _equipment,
+                equipment,
+                updatedEquipment);
+
             RefreshAll();
 
-            EquipmentFormMessageText.Text = $"{message}：{equipment.Name}";
+            EquipmentFormMessageText.Text = $"{message}：{updatedEquipment.Name}";
         });
     }
 
     private EquipmentItem? GetEquipmentFromButton(object sender)
     {
-        if (sender is not Button button || button.Tag is null)
-        {
-            return null;
-        }
-
-        if (!int.TryParse(button.Tag.ToString(), out var equipmentId))
-        {
-            return null;
-        }
-
-        return _equipment.FirstOrDefault(item => item.Id == equipmentId);
+        return PageInteractionService.GetItemFromButton(
+            sender,
+            _equipment,
+            item => item.Id);
     }
 
-    private void PreserveScrollPosition(Action action)
+    private static EquipmentItem CopyEquipmentWithNewStatus(
+        EquipmentItem source,
+        string status)
     {
-        var verticalOffset = RootScrollViewer.VerticalOffset;
-
-        action();
-
-        DispatcherQueue.TryEnqueue(() =>
+        return new EquipmentItem
         {
-            RootScrollViewer.ChangeView(
-                null,
-                verticalOffset,
-                null,
-                disableAnimation: true);
-        });
+            Id = source.Id,
+            Name = source.Name,
+            Code = source.Code,
+            Category = source.Category,
+            Status = status,
+            Location = source.Location,
+            CurrentHolder = source.CurrentHolder,
+            RelatedTask = source.RelatedTask,
+            MaintenanceRecord = source.MaintenanceRecord
+        };
     }
 
     private void RefreshAll()
@@ -225,12 +233,7 @@ public sealed partial class EquipmentPage : Page
     private void RefreshEquipmentCards()
     {
         EquipmentItemsControl.ItemsSource = _equipment
-            .OrderByDescending(item =>
-                item.Status == "损坏" ? 5 :
-                item.Status == "维修中" ? 4 :
-                item.Status == "待检查" ? 3 :
-                item.Status == "使用中" ? 2 :
-                item.Status == "可用" ? 1 : 0)
+            .OrderByDescending(GetEquipmentSortWeight)
             .ThenBy(item => item.Category)
             .ThenBy(item => item.Name)
             .ToList();
@@ -257,14 +260,16 @@ public sealed partial class EquipmentPage : Page
                item.Status == "报废";
     }
 
-    private static string GetComboBoxText(ComboBox comboBox, string fallback)
+    private static int GetEquipmentSortWeight(EquipmentItem item)
     {
-        if (comboBox.SelectedItem is ComboBoxItem selectedItem &&
-            selectedItem.Content is not null)
+        return item.Status switch
         {
-            return selectedItem.Content.ToString() ?? fallback;
-        }
-
-        return fallback;
+            "损坏" => 5,
+            "维修中" => 4,
+            "待检查" => 3,
+            "使用中" => 2,
+            "可用" => 1,
+            _ => 0
+        };
     }
 }

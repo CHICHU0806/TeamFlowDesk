@@ -29,11 +29,35 @@ public static class DatabaseService
         using var connection = new SqliteConnection(ConnectionString);
         connection.Open();
 
+        CreateProjectsTable(connection);
         CreateTasksTable(connection);
         CreateEquipmentTable(connection);
         CreateMembersTable(connection);
         CreateAiRecordsTable(connection);
         CreateWeeklyReportsTable(connection);
+    }
+
+    private static void CreateProjectsTable(SqliteConnection connection)
+    {
+        var command = connection.CreateCommand();
+
+        command.CommandText =
+        """
+        CREATE TABLE IF NOT EXISTS Projects (
+            Id INTEGER PRIMARY KEY AUTOINCREMENT,
+            Name TEXT NOT NULL,
+            Description TEXT NOT NULL,
+            OwnerName TEXT NOT NULL,
+            Status TEXT NOT NULL,
+            CurrentStage TEXT NOT NULL,
+            RiskLevel TEXT NOT NULL,
+            StartDate TEXT NOT NULL,
+            EndDate TEXT NOT NULL,
+            ProgressPercent INTEGER NOT NULL
+        );
+        """;
+
+        command.ExecuteNonQuery();
     }
 
     private static void CreateTasksTable(SqliteConnection connection)
