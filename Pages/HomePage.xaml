@@ -5,69 +5,224 @@
     RequestedTheme="Dark">
 
     <Page.Resources>
-        <SolidColorBrush x:Key="PageBackgroundBrush" Color="#0B1020" />
-        <SolidColorBrush x:Key="CardBackgroundBrush" Color="#182033" />
-        <SolidColorBrush x:Key="CardBorderBrush" Color="#334155" />
-        <SolidColorBrush x:Key="PrimaryTextBrush" Color="#F8FAFC" />
-        <SolidColorBrush x:Key="SecondaryTextBrush" Color="#CBD5E1" />
-        <SolidColorBrush x:Key="MutedTextBrush" Color="#94A3B8" />
-        <SolidColorBrush x:Key="AccentBlueBrush" Color="#60A5FA" />
-        <SolidColorBrush x:Key="AccentPurpleBrush" Color="#A78BFA" />
-        <SolidColorBrush x:Key="AccentGreenBrush" Color="#34D399" />
-        <SolidColorBrush x:Key="AccentOrangeBrush" Color="#FBBF24" />
-        <SolidColorBrush x:Key="AccentRedBrush" Color="#FB7185" />
+
+        <DataTemplate x:Key="PriorityItemTemplate">
+            <Border Style="{StaticResource ListItemCardStyle}">
+                <StackPanel Spacing="8">
+                    <Grid ColumnSpacing="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                            Grid.Column="0"
+                            Text="{Binding Title}"
+                            FontSize="17"
+                            FontWeight="SemiBold"
+                            Foreground="{StaticResource PrimaryTextBrush}"
+                            TextWrapping="Wrap" />
+
+                        <Border
+                            Grid.Column="1"
+                            Style="{StaticResource SmallTagStyle}"
+                            Background="{StaticResource PurpleTagBackgroundBrush}"
+                            VerticalAlignment="Top">
+                            <TextBlock
+                                Text="{Binding Source}"
+                                FontSize="12"
+                                Foreground="{StaticResource AccentPurpleBrush}" />
+                        </Border>
+                    </Grid>
+
+                    <TextBlock
+                        Text="{Binding Description}"
+                        Style="{StaticResource BodyTextStyle}"
+                        MaxLines="3"
+                        TextTrimming="CharacterEllipsis" />
+
+                    <TextBlock
+                        Text="{Binding Severity}"
+                        FontSize="13"
+                        Foreground="{StaticResource AccentOrangeBrush}"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ActivityItemTemplate">
+            <Border
+                Style="{StaticResource ListItemCardStyle}"
+                Padding="15"
+                CornerRadius="16"
+                Margin="0,0,0,12">
+
+                <StackPanel Spacing="6">
+                    <Grid ColumnSpacing="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                            Grid.Column="0"
+                            Text="{Binding Title}"
+                            FontSize="16"
+                            FontWeight="SemiBold"
+                            Foreground="{StaticResource PrimaryTextBrush}"
+                            TextWrapping="Wrap" />
+
+                        <Border
+                            Grid.Column="1"
+                            Style="{StaticResource SmallTagStyle}"
+                            Padding="9,4"
+                            Background="{StaticResource BlueTagBackgroundBrush}">
+                            <TextBlock
+                                Text="{Binding Tag}"
+                                FontSize="12"
+                                Foreground="{StaticResource AccentBlueBrush}" />
+                        </Border>
+                    </Grid>
+
+                    <TextBlock
+                        Text="{Binding Description}"
+                        Style="{StaticResource MutedBodyTextStyle}"
+                        MaxLines="3"
+                        TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ProjectMiniCardTemplate">
+            <Border
+                Style="{StaticResource ListItemCardStyle}"
+                Padding="16"
+                CornerRadius="18"
+                Margin="0,0,0,12">
+
+                <StackPanel Spacing="8">
+                    <Grid ColumnSpacing="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                            Grid.Column="0"
+                            Text="{Binding Name}"
+                            FontSize="17"
+                            FontWeight="SemiBold"
+                            Foreground="{StaticResource PrimaryTextBrush}"
+                            TextWrapping="Wrap" />
+
+                        <Border
+                            Grid.Column="1"
+                            Style="{StaticResource SmallTagStyle}"
+                            Padding="9,4"
+                            Background="{StaticResource BlueTagBackgroundBrush}">
+                            <TextBlock
+                                Text="{Binding Status}"
+                                FontSize="12"
+                                Foreground="{StaticResource AccentBlueBrush}" />
+                        </Border>
+
+                        <Border
+                            Grid.Column="2"
+                            Style="{StaticResource SmallTagStyle}"
+                            Padding="9,4"
+                            Background="{StaticResource PurpleTagBackgroundBrush}">
+                            <TextBlock
+                                Text="{Binding RiskLevel}"
+                                FontSize="12"
+                                Foreground="{StaticResource AccentPurpleBrush}" />
+                        </Border>
+                    </Grid>
+
+                    <TextBlock
+                        Text="{Binding CurrentStage}"
+                        Style="{StaticResource BodyTextStyle}" />
+
+                    <TextBlock
+                        Text="{Binding OwnerName}"
+                        Style="{StaticResource MutedBodyTextStyle}" />
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+
     </Page.Resources>
 
     <Grid Background="{StaticResource PageBackgroundBrush}">
-        <ScrollViewer>
-            <StackPanel Margin="32" Spacing="24">
+        <ScrollViewer
+            VerticalScrollBarVisibility="Auto"
+            HorizontalScrollBarVisibility="Disabled"
+            HorizontalScrollMode="Disabled">
+
+            <StackPanel Margin="28" Spacing="22">
 
                 <Border
-                    Padding="28"
-                    CornerRadius="24"
-                    BorderBrush="{StaticResource CardBorderBrush}"
+                    Padding="32"
+                    CornerRadius="28"
+                    BorderBrush="#5B5FE9"
                     BorderThickness="1">
 
                     <Border.Background>
                         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Color="#1E1B4B" Offset="0" />
-                            <GradientStop Color="#172554" Offset="0.45" />
+                            <GradientStop Color="#172554" Offset="0" />
+                            <GradientStop Color="#312E81" Offset="0.45" />
                             <GradientStop Color="#0F172A" Offset="1" />
                         </LinearGradientBrush>
                     </Border.Background>
 
-                    <Grid ColumnSpacing="24">
+                    <Grid ColumnSpacing="30">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="2*" />
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="2.1*" />
+                            <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
 
                         <StackPanel Grid.Column="0" Spacing="14">
                             <TextBlock
                                 Text="TeamFlowDesk"
-                                FontSize="42"
-                                FontWeight="SemiBold"
-                                Foreground="{StaticResource PrimaryTextBrush}" />
+                                Style="{StaticResource HeroTitleTextStyle}"
+                                FontSize="46" />
 
                             <TextBlock
-                                Text="团队运行工作流管理驾驶舱"
-                                FontSize="22"
-                                Foreground="{StaticResource SecondaryTextBrush}" />
+                                Text="团队运行管理驾驶舱"
+                                Style="{StaticResource HeroSubtitleTextStyle}"
+                                FontSize="25" />
 
                             <TextBlock
-                                Text="面向团队负责人、队长、项目经理和方向负责人的内部私有化管理系统，用于汇总任务进度、人员负载、器材状态、AI 协作记录和团队运行风险。"
-                                FontSize="15"
-                                Foreground="{StaticResource MutedTextBrush}"
-                                TextWrapping="Wrap"
-                                MaxWidth="760" />
+                                Text="从项目、任务、人员、器材、AI 协作和周报复盘中汇总团队运行态势，帮助负责人快速判断当前应该优先处理什么。"
+                                Style="{StaticResource HeroDescriptionTextStyle}"
+                                MaxWidth="860" />
 
-                            <StackPanel Orientation="Horizontal" Spacing="12">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
                                 <Border
                                     Padding="12,6"
                                     CornerRadius="999"
-                                    Background="#243B53">
+                                    Background="#1E3A8A">
                                     <TextBlock
-                                        Text="本地 SQLite 持久化"
+                                        Text="项目总控"
+                                        FontSize="13"
+                                        Foreground="{StaticResource SecondaryTextBrush}" />
+                                </Border>
+
+                                <Border
+                                    Padding="12,6"
+                                    CornerRadius="999"
+                                    Background="{StaticResource GreenTagBackgroundBrush}">
+                                    <TextBlock
+                                        Text="人员调度"
+                                        FontSize="13"
+                                        Foreground="{StaticResource SecondaryTextBrush}" />
+                                </Border>
+
+                                <Border
+                                    Padding="12,6"
+                                    CornerRadius="999"
+                                    Background="{StaticResource OrangeTagBackgroundBrush}">
+                                    <TextBlock
+                                        Text="资源保障"
                                         FontSize="13"
                                         Foreground="{StaticResource SecondaryTextBrush}" />
                                 </Border>
@@ -77,17 +232,7 @@
                                     CornerRadius="999"
                                     Background="#312E81">
                                     <TextBlock
-                                        Text="AI 协作可追踪"
-                                        FontSize="13"
-                                        Foreground="{StaticResource SecondaryTextBrush}" />
-                                </Border>
-
-                                <Border
-                                    Padding="12,6"
-                                    CornerRadius="999"
-                                    Background="#064E3B">
-                                    <TextBlock
-                                        Text="负责人驾驶舱"
+                                        Text="AI 协作复盘"
                                         FontSize="13"
                                         Foreground="{StaticResource SecondaryTextBrush}" />
                                 </Border>
@@ -97,164 +242,221 @@
                         <Border
                             Grid.Column="1"
                             Padding="22"
-                            CornerRadius="20"
-                            BorderBrush="#475569"
-                            BorderThickness="1"
-                            Background="#201E293B">
+                            CornerRadius="22"
+                            Background="#241B2D47"
+                            BorderBrush="{StaticResource StrongBorderBrush}"
+                            BorderThickness="1">
 
-                            <StackPanel Spacing="10">
+                            <StackPanel Spacing="12">
                                 <TextBlock
-                                    Text="当前运行态势"
-                                    FontSize="18"
+                                    Text="当前团队态势"
+                                    FontSize="19"
                                     FontWeight="SemiBold"
                                     Foreground="{StaticResource PrimaryTextBrush}" />
 
                                 <TextBlock
                                     x:Name="DashboardStatusText"
-                                    Text="系统正在读取团队运行数据..."
-                                    FontSize="14"
-                                    Foreground="{StaticResource SecondaryTextBrush}"
-                                    TextWrapping="Wrap" />
+                                    Style="{StaticResource BodyTextStyle}" />
 
-                                <TextBlock
-                                    x:Name="DashboardSuggestionText"
-                                    FontSize="14"
-                                    Foreground="{StaticResource MutedTextBrush}"
-                                    TextWrapping="Wrap" />
+                                <Border
+                                    Padding="12"
+                                    CornerRadius="14"
+                                    Background="{StaticResource PurpleTagBackgroundBrush}">
+                                    <TextBlock
+                                        x:Name="PrioritySuggestionText"
+                                        Style="{StaticResource MutedBodyTextStyle}" />
+                                </Border>
                             </StackPanel>
                         </Border>
                     </Grid>
                 </Border>
 
-                <Grid ColumnSpacing="16" RowSpacing="16">
+                <Grid ColumnSpacing="14">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0" Style="{StaticResource MetricCardStyle}">
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="项目总数" Style="{StaticResource MetricLabelTextStyle}" />
+                            <TextBlock
+                                x:Name="ProjectCountText"
+                                Style="{StaticResource MetricNumberTextStyle}"
+                                Foreground="{StaticResource AccentPurpleBrush}" />
+                            <TextBlock
+                                x:Name="RiskProjectCountText"
+                                Style="{StaticResource MutedBodyTextStyle}" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="1" Style="{StaticResource MetricCardStyle}">
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="任务总数" Style="{StaticResource MetricLabelTextStyle}" />
+                            <TextBlock
+                                x:Name="TaskCountText"
+                                Style="{StaticResource MetricNumberTextStyle}"
+                                Foreground="{StaticResource AccentBlueBrush}" />
+                            <TextBlock
+                                x:Name="RiskTaskCountText"
+                                Style="{StaticResource MutedBodyTextStyle}" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="2" Style="{StaticResource MetricCardStyle}">
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="成员总数" Style="{StaticResource MetricLabelTextStyle}" />
+                            <TextBlock
+                                x:Name="MemberCountText"
+                                Style="{StaticResource MetricNumberTextStyle}"
+                                Foreground="{StaticResource AccentGreenBrush}" />
+                            <TextBlock
+                                x:Name="AttentionMemberCountText"
+                                Style="{StaticResource MutedBodyTextStyle}" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="3" Style="{StaticResource MetricCardStyle}">
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="器材总数" Style="{StaticResource MetricLabelTextStyle}" />
+                            <TextBlock
+                                x:Name="EquipmentCountText"
+                                Style="{StaticResource MetricNumberTextStyle}"
+                                Foreground="{StaticResource AccentOrangeBrush}" />
+                            <TextBlock
+                                x:Name="AbnormalEquipmentCountText"
+                                Style="{StaticResource MutedBodyTextStyle}" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <Grid ColumnSpacing="14">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-
-                    <Border Grid.Row="0" Grid.Column="0" Padding="20" CornerRadius="20" Background="{StaticResource CardBackgroundBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1">
-                        <StackPanel Spacing="8">
-                            <TextBlock Text="项目总数" FontSize="14" Foreground="{StaticResource MutedTextBrush}" />
-                            <TextBlock x:Name="ProjectCountText" FontSize="36" FontWeight="SemiBold" Foreground="{StaticResource AccentBlueBrush}" />
-                            <TextBlock Text="当前纳入管理的项目数量" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
+                    <Border Grid.Column="0" Style="{StaticResource InsightCardStyle}">
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="AI 协作记录" Style="{StaticResource MetricLabelTextStyle}" />
+                            <TextBlock
+                                x:Name="AiRecordCountText"
+                                Style="{StaticResource MetricNumberTextStyle}"
+                                FontSize="30"
+                                Foreground="{StaticResource AccentPurpleBrush}" />
+                            <TextBlock
+                                Text="沉淀 AI 建议、人工判断和最终决策"
+                                Style="{StaticResource MutedBodyTextStyle}" />
                         </StackPanel>
                     </Border>
 
-                    <Border Grid.Row="0" Grid.Column="1" Padding="20" CornerRadius="20" Background="{StaticResource CardBackgroundBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1">
-                        <StackPanel Spacing="8">
-                            <TextBlock Text="任务总数" FontSize="14" Foreground="{StaticResource MutedTextBrush}" />
-                            <TextBlock x:Name="TaskCountText" FontSize="36" FontWeight="SemiBold" Foreground="{StaticResource AccentPurpleBrush}" />
-                            <TextBlock Text="已记录的全部任务条目" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
+                    <Border Grid.Column="1" Style="{StaticResource InsightCardStyle}">
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="周报复盘记录" Style="{StaticResource MetricLabelTextStyle}" />
+                            <TextBlock
+                                x:Name="ReportCountText"
+                                Style="{StaticResource MetricNumberTextStyle}"
+                                FontSize="30"
+                                Foreground="{StaticResource AccentBlueBrush}" />
+                            <TextBlock
+                                Text="沉淀阶段复盘、风险记录和下周计划"
+                                Style="{StaticResource MutedBodyTextStyle}" />
                         </StackPanel>
                     </Border>
 
-                    <Border Grid.Row="0" Grid.Column="2" Padding="20" CornerRadius="20" Background="{StaticResource CardBackgroundBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1">
-                        <StackPanel Spacing="8">
-                            <TextBlock Text="成员总数" FontSize="14" Foreground="{StaticResource MutedTextBrush}" />
-                            <TextBlock x:Name="MemberCountText" FontSize="36" FontWeight="SemiBold" Foreground="{StaticResource AccentGreenBrush}" />
-                            <TextBlock Text="当前团队成员画像数量" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
-                        </StackPanel>
-                    </Border>
-
-                    <Border Grid.Row="1" Grid.Column="0" Padding="20" CornerRadius="20" Background="{StaticResource CardBackgroundBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1">
-                        <StackPanel Spacing="8">
-                            <TextBlock Text="器材总数" FontSize="14" Foreground="{StaticResource MutedTextBrush}" />
-                            <TextBlock x:Name="EquipmentCountText" FontSize="36" FontWeight="SemiBold" Foreground="{StaticResource AccentOrangeBrush}" />
-                            <TextBlock Text="已纳入台账的器材资源" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
-                        </StackPanel>
-                    </Border>
-
-                    <Border Grid.Row="1" Grid.Column="1" Padding="20" CornerRadius="20" Background="{StaticResource CardBackgroundBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1">
-                        <StackPanel Spacing="8">
-                            <TextBlock Text="风险项" FontSize="14" Foreground="{StaticResource MutedTextBrush}" />
-                            <TextBlock x:Name="RiskCountText" FontSize="36" FontWeight="SemiBold" Foreground="{StaticResource AccentRedBrush}" />
-                            <TextBlock Text="任务、人员、器材中的异常项" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
-                        </StackPanel>
-                    </Border>
-
-                    <Border Grid.Row="1" Grid.Column="2" Padding="20" CornerRadius="20" Background="{StaticResource CardBackgroundBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1">
-                        <StackPanel Spacing="8">
-                            <TextBlock Text="AI 协作记录" FontSize="14" Foreground="{StaticResource MutedTextBrush}" />
-                            <TextBlock x:Name="AiRecordCountText" FontSize="36" FontWeight="SemiBold" Foreground="{StaticResource AccentBlueBrush}" />
-                            <TextBlock Text="可复盘的 AI 辅助决策过程" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
+                    <Border Grid.Column="2" Style="{StaticResource InsightCardStyle}">
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="管理闭环完整度" Style="{StaticResource MetricLabelTextStyle}" />
+                            <TextBlock
+                                x:Name="ClosureScoreText"
+                                Style="{StaticResource MetricNumberTextStyle}"
+                                FontSize="30"
+                                Foreground="{StaticResource AccentGreenBrush}" />
+                            <TextBlock
+                                x:Name="ClosureScoreDescriptionText"
+                                Style="{StaticResource MutedBodyTextStyle}" />
                         </StackPanel>
                     </Border>
                 </Grid>
 
                 <Grid ColumnSpacing="20">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1.25*" />
+                        <ColumnDefinition Width="1.1*" />
                         <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
 
-                    <Border
-                        Grid.Column="0"
-                        Padding="22"
-                        CornerRadius="22"
-                        Background="{StaticResource CardBackgroundBrush}"
-                        BorderBrush="{StaticResource CardBorderBrush}"
-                        BorderThickness="1">
-
+                    <Border Grid.Column="0" Style="{StaticResource PanelCardStyle}">
                         <StackPanel Spacing="16">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="风险与阻塞雷达" FontSize="24" FontWeight="SemiBold" Foreground="{StaticResource PrimaryTextBrush}" />
-                                <TextBlock Text="自动汇总高风险任务、异常器材和需要关注的成员。" FontSize="14" Foreground="{StaticResource MutedTextBrush}" />
-                            </StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
 
-                            <ListView
-                                x:Name="RiskListView"
-                                SelectionMode="None"
-                                Background="Transparent">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border Margin="0,0,0,8" Padding="14" CornerRadius="14" Background="#263244">
-                                            <StackPanel Spacing="4">
-                                                <TextBlock Text="{Binding Title}" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource PrimaryTextBrush}" TextWrapping="Wrap" />
-                                                <TextBlock Text="{Binding Description}" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" />
-                                            </StackPanel>
-                                        </Border>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
+                                <StackPanel Grid.Column="0" Spacing="4">
+                                    <TextBlock
+                                        Text="负责人优先处理事项"
+                                        Style="{StaticResource SectionTitleTextStyle}" />
+
+                                    <TextBlock
+                                        Text="按照项目风险、任务阻塞、成员负载和器材状态自动汇总。"
+                                        Style="{StaticResource SectionDescriptionTextStyle}" />
+                                </StackPanel>
+
+                                <Border
+                                    Grid.Column="1"
+                                    Style="{StaticResource SmallTagStyle}"
+                                    Background="{StaticResource PurpleTagBackgroundBrush}"
+                                    VerticalAlignment="Center">
+                                    <TextBlock
+                                        Text="Priority Queue"
+                                        FontSize="13"
+                                        Foreground="{StaticResource AccentPurpleBrush}" />
+                                </Border>
+                            </Grid>
+
+                            <ItemsControl
+                                x:Name="PriorityItemsControl"
+                                ItemTemplate="{StaticResource PriorityItemTemplate}" />
                         </StackPanel>
                     </Border>
 
-                    <Border
-                        Grid.Column="1"
-                        Padding="22"
-                        CornerRadius="22"
-                        Background="{StaticResource CardBackgroundBrush}"
-                        BorderBrush="{StaticResource CardBorderBrush}"
-                        BorderThickness="1">
-
+                    <Border Grid.Column="1" Style="{StaticResource PanelCardStyle}">
                         <StackPanel Spacing="16">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="AI 管理洞察" FontSize="24" FontWeight="SemiBold" Foreground="{StaticResource PrimaryTextBrush}" />
-                                <TextBlock Text="展示最近的 AI 协作记录，突出“AI 建议—人工判断—最终决策”的闭环。" FontSize="14" Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" />
-                            </StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
 
-                            <ListView
-                                x:Name="AiRecordsListView"
-                                SelectionMode="None"
-                                Background="Transparent">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border Margin="0,0,0,8" Padding="14" CornerRadius="14" Background="#241F3A">
-                                            <StackPanel Spacing="6">
-                                                <TextBlock Text="{Binding RelatedModule}" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource PrimaryTextBrush}" TextWrapping="Wrap" />
-                                                <TextBlock Text="{Binding Question}" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" />
-                                                <TextBlock Text="{Binding AdoptionStatus}" FontSize="13" Foreground="{StaticResource AccentPurpleBrush}" />
-                                            </StackPanel>
-                                        </Border>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
+                                <StackPanel Grid.Column="0" Spacing="4">
+                                    <TextBlock
+                                        Text="当前进行中项目"
+                                        Style="{StaticResource SectionTitleTextStyle}" />
+
+                                    <TextBlock
+                                        Text="优先展示风险项目和正在推进的主项目。"
+                                        Style="{StaticResource SectionDescriptionTextStyle}" />
+                                </StackPanel>
+
+                                <Border
+                                    Grid.Column="1"
+                                    Style="{StaticResource SmallTagStyle}"
+                                    Background="{StaticResource BlueTagBackgroundBrush}"
+                                    VerticalAlignment="Center">
+                                    <TextBlock
+                                        Text="Projects"
+                                        FontSize="13"
+                                        Foreground="{StaticResource AccentBlueBrush}" />
+                                </Border>
+                            </Grid>
+
+                            <ItemsControl
+                                x:Name="RunningProjectsItemsControl"
+                                ItemTemplate="{StaticResource ProjectMiniCardTemplate}" />
                         </StackPanel>
                     </Border>
                 </Grid>
@@ -263,66 +465,31 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
 
-                    <Border Grid.Column="0" Padding="22" CornerRadius="22" Background="{StaticResource CardBackgroundBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1">
+                    <Border Grid.Column="0" Style="{StaticResource PanelCardStyle}">
                         <StackPanel Spacing="16">
-                            <TextBlock Text="近期任务" FontSize="22" FontWeight="SemiBold" Foreground="{StaticResource PrimaryTextBrush}" />
+                            <TextBlock
+                                Text="最近 AI 协作"
+                                Style="{StaticResource SectionTitleTextStyle}"
+                                FontSize="24" />
 
-                            <ListView x:Name="TasksListView" SelectionMode="None" Background="Transparent">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border Margin="0,0,0,8" Padding="12" CornerRadius="12" Background="#1F2937">
-                                            <StackPanel Spacing="4">
-                                                <TextBlock Text="{Binding Title}" FontSize="15" FontWeight="SemiBold" Foreground="{StaticResource PrimaryTextBrush}" TextWrapping="Wrap" />
-                                                <TextBlock Text="{Binding OwnerName}" FontSize="13" Foreground="{StaticResource MutedTextBrush}" />
-                                                <TextBlock Text="{Binding Status}" FontSize="13" Foreground="{StaticResource AccentBlueBrush}" />
-                                            </StackPanel>
-                                        </Border>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
+                            <ItemsControl
+                                x:Name="RecentAiRecordsItemsControl"
+                                ItemTemplate="{StaticResource ActivityItemTemplate}" />
                         </StackPanel>
                     </Border>
 
-                    <Border Grid.Column="1" Padding="22" CornerRadius="22" Background="{StaticResource CardBackgroundBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1">
+                    <Border Grid.Column="1" Style="{StaticResource PanelCardStyle}">
                         <StackPanel Spacing="16">
-                            <TextBlock Text="人员负载" FontSize="22" FontWeight="SemiBold" Foreground="{StaticResource PrimaryTextBrush}" />
+                            <TextBlock
+                                Text="最近周报复盘"
+                                Style="{StaticResource SectionTitleTextStyle}"
+                                FontSize="24" />
 
-                            <ListView x:Name="MembersListView" SelectionMode="None" Background="Transparent">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border Margin="0,0,0,8" Padding="12" CornerRadius="12" Background="#1F2937">
-                                            <StackPanel Spacing="4">
-                                                <TextBlock Text="{Binding Name}" FontSize="15" FontWeight="SemiBold" Foreground="{StaticResource PrimaryTextBrush}" />
-                                                <TextBlock Text="{Binding Direction}" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" />
-                                                <TextBlock Text="{Binding WorkloadStatus}" FontSize="13" Foreground="{StaticResource AccentGreenBrush}" />
-                                            </StackPanel>
-                                        </Border>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-                        </StackPanel>
-                    </Border>
-
-                    <Border Grid.Column="2" Padding="22" CornerRadius="22" Background="{StaticResource CardBackgroundBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1">
-                        <StackPanel Spacing="16">
-                            <TextBlock Text="器材状态" FontSize="22" FontWeight="SemiBold" Foreground="{StaticResource PrimaryTextBrush}" />
-
-                            <ListView x:Name="EquipmentListView" SelectionMode="None" Background="Transparent">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border Margin="0,0,0,8" Padding="12" CornerRadius="12" Background="#1F2937">
-                                            <StackPanel Spacing="4">
-                                                <TextBlock Text="{Binding Name}" FontSize="15" FontWeight="SemiBold" Foreground="{StaticResource PrimaryTextBrush}" TextWrapping="Wrap" />
-                                                <TextBlock Text="{Binding Category}" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" />
-                                                <TextBlock Text="{Binding Status}" FontSize="13" Foreground="{StaticResource AccentOrangeBrush}" />
-                                            </StackPanel>
-                                        </Border>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
+                            <ItemsControl
+                                x:Name="RecentReportsItemsControl"
+                                ItemTemplate="{StaticResource ActivityItemTemplate}" />
                         </StackPanel>
                     </Border>
                 </Grid>

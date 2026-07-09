@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.UI.Xaml.Controls;
 using TeamFlowDesk.Data;
-using TeamFlowDesk.Services;
+using TeamFlowDesk.Models;
 
 namespace TeamFlowDesk.Pages;
 
@@ -11,157 +11,397 @@ public sealed partial class HomePage : Page
     public HomePage()
     {
         InitializeComponent();
+
         LoadDashboardData();
     }
 
     private void LoadDashboardData()
     {
-        TaskRepository.SeedIfEmpty();
-        MemberRepository.SeedIfEmpty();
-        EquipmentRepository.SeedIfEmpty();
-        AiRecordRepository.SeedIfEmpty();
+        try
+        {
+            ProjectRepository.SeedIfEmpty();
+            TaskRepository.SeedIfEmpty();
+            MemberRepository.SeedIfEmpty();
+            EquipmentRepository.SeedIfEmpty();
+            AiRecordRepository.SeedIfEmpty();
+            WeeklyReportRepository.SeedIfEmpty();
 
-        var projects = MockDataService.GetProjects();
-        var tasks = TaskRepository.GetAll();
-        var members = MemberRepository.GetAll();
-        var equipment = EquipmentRepository.GetAll();
-        var aiRecords = AiRecordRepository.GetAll();
+            var projects = ProjectRepository.GetAll();
+            var tasks = TaskRepository.GetAll();
+            var members = MemberRepository.GetAll();
+            var equipment = EquipmentRepository.GetAll();
+            var aiRecords = AiRecordRepository.GetAll();
+            var reports = WeeklyReportRepository.GetAll();
 
-        var riskTasks = tasks
-            .Where(task =>
-                task.RiskLevel == "高风险" ||
-                task.Status == "延期" ||
-                task.Status == "滞后")
-            .ToList();
+            RefreshMetrics(projects, tasks, members, equipment, aiRecords, reports);
+            RefreshDashboardStatus(projects, tasks, members, equipment, aiRecords, reports);
+            RefreshPriorityQueue(projects, tasks, members, equipment, reports);
+            RefreshRunningProjects(projects);
+            RefreshRecentAiRecords(aiRecords);
+            RefreshRecentReports(reports);
+        }
+        catch (System.Exception ex)
+        {
+            DashboardStatusText.Text = $"驾驶舱数据加载失败：{ex.Message}";
+            PrioritySuggestionText.Text = "请检查数据库初始化状态，或确认各 Repository 是否已经创建。";
+        }
+    }
 
-        var attentionMembers = members
-            .Where(member =>
-                member.WorkloadStatus == "关注" ||
-                member.WorkloadStatus == "过载")
-            .ToList();
-
-        var abnormalEquipment = equipment
-            .Where(item =>
-                item.Status == "待检查" ||
-                item.Status == "损坏" ||
-                item.Status == "维修中" ||
-                item.Status == "报废")
-            .ToList();
-
-        var riskCount = riskTasks.Count + attentionMembers.Count + abnormalEquipment.Count;
+    private void RefreshMetrics(
+        IReadOnlyCollection<ProjectItem> projects,
+        IReadOnlyCollection<TaskItem> tasks,
+        IReadOnlyCollection<MemberItem> members,
+        IReadOnlyCollection<EquipmentItem> equipment,
+        IReadOnlyCollection<AiRecordItem> aiRecords,
+        IReadOnlyCollection<WeeklyReportItem> reports)
+    {
+        var riskProjectCount = projects.Count(IsRiskProject);
+        var riskTaskCount = tasks.Count(IsRiskTask);
+        var attentionMemberCount = members.Count(IsAttentionMember);
+        var abnormalEquipmentCount = equipment.Count(IsAbnormalEquipment);
 
         ProjectCountText.Text = projects.Count.ToString();
+        RiskProjectCountText.Text = $"风险项目 {riskProjectCount} 个";
+
         TaskCountText.Text = tasks.Count.ToString();
+        RiskTaskCountText.Text = $"风险任务 {riskTaskCount} 项";
+
         MemberCountText.Text = members.Count.ToString();
+        AttentionMemberCountText.Text = $"需关注成员 {attentionMemberCount} 人";
+
         EquipmentCountText.Text = equipment.Count.ToString();
-        RiskCountText.Text = riskCount.ToString();
+        AbnormalEquipmentCountText.Text = $"异常器材 {abnormalEquipmentCount} 件";
+
         AiRecordCountText.Text = aiRecords.Count.ToString();
+        ReportCountText.Text = reports.Count.ToString();
 
-        DashboardStatusText.Text = BuildDashboardStatusText(
-            tasks.Count,
-            members.Count,
-            equipment.Count,
-            riskCount,
-            aiRecords.Count);
+        var closureScore = CalculateClosureScore(
+            projects,
+            tasks,
+            members,
+            equipment,
+            aiRecords,
+            reports);
 
-        DashboardSuggestionText.Text = BuildDashboardSuggestionText(riskCount);
+        ClosureScoreText.Text = $"{closureScore}%";
+        ClosureScoreDescriptionText.Text = closureScore >= 80
+            ? "项目、任务、人员、器材、AI 与复盘链路较完整。"
+            : "仍有模块数据不足，建议补齐项目、任务、AI 协作和周报复盘记录。";
+    }
 
-        RiskListView.ItemsSource = BuildRiskItems(riskTasks, attentionMembers, abnormalEquipment);
+    private void RefreshDashboardStatus(
+        IReadOnlyCollection<ProjectItem> projects,
+        IReadOnlyCollection<TaskItem> tasks,
+        IReadOnlyCollection<MemberItem> members,
+        IReadOnlyCollection<EquipmentItem> equipment,
+        IReadOnlyCollection<AiRecordItem> aiRecords,
+        IReadOnlyCollection<WeeklyReportItem> reports)
+    {
+        var riskProjectCount = projects.Count(IsRiskProject);
+        var riskTaskCount = tasks.Count(IsRiskTask);
+        var attentionMemberCount = members.Count(IsAttentionMember);
+        var abnormalEquipmentCount = equipment.Count(IsAbnormalEquipment);
 
-        TasksListView.ItemsSource = tasks
-            .Take(5)
-            .ToList();
+        DashboardStatusText.Text =
+            $"当前纳入管理的项目 {projects.Count} 个，任务 {tasks.Count} 项，成员 {members.Count} 人，器材 {equipment.Count} 件。已沉淀 AI 协作记录 {aiRecords.Count} 条，周报复盘记录 {reports.Count} 条。";
 
-        MembersListView.ItemsSource = members
-            .OrderByDescending(member => member.CurrentTaskCount)
-            .Take(5)
-            .ToList();
+        if (riskProjectCount > 0)
+        {
+            PrioritySuggestionText.Text = $"当前最优先处理的是 {riskProjectCount} 个风险项目。建议先确认项目阻塞点，再回到任务、人员和器材层面拆解解决。";
+            return;
+        }
 
-        EquipmentListView.ItemsSource = equipment
-            .Take(5)
-            .ToList();
+        if (riskTaskCount > 0)
+        {
+            PrioritySuggestionText.Text = $"当前最优先处理的是 {riskTaskCount} 项风险任务。建议检查负责人、截止时间、输出要求和关联器材是否明确。";
+            return;
+        }
 
-        AiRecordsListView.ItemsSource = aiRecords
+        if (attentionMemberCount > 0)
+        {
+            PrioritySuggestionText.Text = $"当前最优先处理的是 {attentionMemberCount} 名需要关注的成员。建议检查任务负载是否过高或培养任务是否合理。";
+            return;
+        }
+
+        if (abnormalEquipmentCount > 0)
+        {
+            PrioritySuggestionText.Text = $"当前最优先处理的是 {abnormalEquipmentCount} 件异常器材。建议确认是否影响正在推进的任务。";
+            return;
+        }
+
+        if (reports.Count == 0)
+        {
+            PrioritySuggestionText.Text = "当前暂无周报复盘记录。建议生成一次复盘草稿，把近期任务、人员、器材和 AI 协作情况沉淀下来。";
+            return;
+        }
+
+        PrioritySuggestionText.Text = "当前团队运行态势整体稳定。建议继续保持项目、任务、人员、器材和复盘数据的同步更新。";
+    }
+
+    private void RefreshPriorityQueue(
+        IReadOnlyCollection<ProjectItem> projects,
+        IReadOnlyCollection<TaskItem> tasks,
+        IReadOnlyCollection<MemberItem> members,
+        IReadOnlyCollection<EquipmentItem> equipment,
+        IReadOnlyCollection<WeeklyReportItem> reports)
+    {
+        var priorityItems = new List<DashboardPriorityItem>();
+
+        priorityItems.AddRange(projects
+            .Where(IsRiskProject)
             .Take(4)
+            .Select(project => new DashboardPriorityItem
+            {
+                Title = project.Name,
+                Source = "项目",
+                Severity = project.RiskLevel,
+                Description = $"项目状态：{project.Status}；当前阶段：{SafeText(project.CurrentStage)}；负责人：{SafeText(project.OwnerName)}。"
+            }));
+
+        priorityItems.AddRange(tasks
+            .Where(IsRiskTask)
+            .Take(4)
+            .Select(task => new DashboardPriorityItem
+            {
+                Title = task.Title,
+                Source = "任务",
+                Severity = task.RiskLevel,
+                Description = $"任务状态：{task.Status}；负责人：{SafeText(task.OwnerName)}；输出要求：{SafeText(task.OutputRequirement)}。"
+            }));
+
+        priorityItems.AddRange(members
+            .Where(IsAttentionMember)
+            .Take(4)
+            .Select(member => new DashboardPriorityItem
+            {
+                Title = member.Name,
+                Source = "成员",
+                Severity = member.WorkloadStatus,
+                Description = $"方向：{SafeText(member.Direction)}；当前任务数：{member.CurrentTaskCount}；培养计划：{SafeText(member.GrowthPlan)}。"
+            }));
+
+        priorityItems.AddRange(equipment
+            .Where(IsAbnormalEquipment)
+            .Take(4)
+            .Select(item => new DashboardPriorityItem
+            {
+                Title = item.Name,
+                Source = "器材",
+                Severity = item.Status,
+                Description = $"分类：{SafeText(item.Category)}；位置：{SafeText(item.Location)}；关联任务：{SafeText(item.RelatedTask)}。"
+            }));
+
+        if (reports.Count == 0)
+        {
+            priorityItems.Add(new DashboardPriorityItem
+            {
+                Title = "尚未形成周报复盘",
+                Source = "复盘",
+                Severity = "建议处理",
+                Description = "当前系统中没有周报复盘记录，建议先生成一条复盘草稿，沉淀近期团队运行过程。"
+            });
+        }
+
+        if (priorityItems.Count == 0)
+        {
+            priorityItems.Add(new DashboardPriorityItem
+            {
+                Title = "当前暂无明显阻塞项",
+                Source = "系统",
+                Severity = "稳定",
+                Description = "项目、任务、人员和器材没有明显高风险项。建议继续保持数据更新，并按周形成复盘记录。"
+            });
+        }
+
+        PriorityItemsControl.ItemsSource = priorityItems.Take(8).ToList();
+    }
+
+    private void RefreshRunningProjects(IReadOnlyCollection<ProjectItem> projects)
+    {
+        var runningProjects = projects
+            .Where(project => project.Status != "已完成")
+            .OrderByDescending(GetProjectSortWeight)
+            .ThenBy(project => project.ProgressPercent)
+            .Take(5)
             .ToList();
+
+        if (runningProjects.Count == 0 && projects.Count > 0)
+        {
+            runningProjects = projects
+                .OrderByDescending(project => project.EndDate)
+                .Take(5)
+                .ToList();
+        }
+
+        RunningProjectsItemsControl.ItemsSource = runningProjects;
     }
 
-    private static string BuildDashboardStatusText(
-        int taskCount,
-        int memberCount,
-        int equipmentCount,
-        int riskCount,
-        int aiRecordCount)
+    private void RefreshRecentAiRecords(IReadOnlyCollection<AiRecordItem> aiRecords)
     {
-        return
-            $"当前系统已记录 {taskCount} 项任务、{memberCount} 名成员、{equipmentCount} 件器材，并沉淀 {aiRecordCount} 条 AI 协作记录。当前需要关注的风险项数量为 {riskCount}。";
-    }
-
-    private static string BuildDashboardSuggestionText(int riskCount)
-    {
-        if (riskCount == 0)
-        {
-            return "当前团队运行状态较平稳，可以继续推进任务闭环、周报复盘和项目阶段总结。";
-        }
-
-        if (riskCount <= 2)
-        {
-            return "当前存在少量风险项，建议负责人优先查看风险与阻塞雷达，并及时完成任务调整或资源协调。";
-        }
-
-        return "当前风险项较多，建议优先处理高风险任务、过载成员和异常器材，避免后续影响项目整体进度。";
-    }
-
-    private static List<RiskInsightItem> BuildRiskItems(
-        IEnumerable<Models.TaskItem> riskTasks,
-        IEnumerable<Models.MemberItem> attentionMembers,
-        IEnumerable<Models.EquipmentItem> abnormalEquipment)
-    {
-        var items = new List<RiskInsightItem>();
-
-        foreach (var task in riskTasks.Take(3))
-        {
-            items.Add(new RiskInsightItem
+        var items = aiRecords
+            .OrderByDescending(record => record.CreatedAt)
+            .Take(5)
+            .Select(record => new DashboardActivityItem
             {
-                Title = $"任务风险：{task.Title}",
-                Description = $"负责人：{task.OwnerName}；状态：{task.Status}；风险等级：{task.RiskLevel}。"
-            });
-        }
-
-        foreach (var member in attentionMembers.Take(3))
-        {
-            items.Add(new RiskInsightItem
-            {
-                Title = $"人员负载：{member.Name}",
-                Description = $"方向：{member.Direction}；当前任务数：{member.CurrentTaskCount}；负载状态：{member.WorkloadStatus}。"
-            });
-        }
-
-        foreach (var item in abnormalEquipment.Take(3))
-        {
-            items.Add(new RiskInsightItem
-            {
-                Title = $"器材异常：{item.Name}",
-                Description = $"编号：{item.Code}；状态：{item.Status}；位置：{item.Location}。"
-            });
-        }
+                Title = record.RelatedModule,
+                Tag = record.AdoptionStatus,
+                Description = string.IsNullOrWhiteSpace(record.FinalDecision)
+                    ? SafeText(record.Question)
+                    : record.FinalDecision
+            })
+            .ToList();
 
         if (items.Count == 0)
         {
-            items.Add(new RiskInsightItem
+            items.Add(new DashboardActivityItem
             {
-                Title = "暂无明显风险项",
-                Description = "当前任务、人员负载和器材状态未发现明显异常，可以继续按照既定计划推进。"
+                Title = "暂无 AI 协作记录",
+                Tag = "AI",
+                Description = "建议在任务拆解、风险判断或周报复盘时记录 AI 建议、人工判断和最终决策。"
             });
         }
 
-        return items;
+        RecentAiRecordsItemsControl.ItemsSource = items;
     }
 
-    private class RiskInsightItem
+    private void RefreshRecentReports(IReadOnlyCollection<WeeklyReportItem> reports)
     {
-        public string Title { get; init; } = string.Empty;
+        var items = reports
+            .OrderByDescending(report => report.EndDate)
+            .Take(5)
+            .Select(report => new DashboardActivityItem
+            {
+                Title = report.Title,
+                Tag = report.ProgressStatus,
+                Description = string.IsNullOrWhiteSpace(report.ManagerReview)
+                    ? SafeText(report.CompletedWork)
+                    : report.ManagerReview
+            })
+            .ToList();
 
-        public string Description { get; init; } = string.Empty;
+        if (items.Count == 0)
+        {
+            items.Add(new DashboardActivityItem
+            {
+                Title = "暂无周报复盘记录",
+                Tag = "复盘",
+                Description = "建议每周至少形成一条复盘记录，用于答辩、交接和团队管理沉淀。"
+            });
+        }
+
+        RecentReportsItemsControl.ItemsSource = items;
+    }
+
+    private static int CalculateClosureScore(
+        IReadOnlyCollection<ProjectItem> projects,
+        IReadOnlyCollection<TaskItem> tasks,
+        IReadOnlyCollection<MemberItem> members,
+        IReadOnlyCollection<EquipmentItem> equipment,
+        IReadOnlyCollection<AiRecordItem> aiRecords,
+        IReadOnlyCollection<WeeklyReportItem> reports)
+    {
+        var score = 0;
+
+        if (projects.Count > 0)
+        {
+            score += 18;
+        }
+
+        if (tasks.Count > 0)
+        {
+            score += 18;
+        }
+
+        if (members.Count > 0)
+        {
+            score += 16;
+        }
+
+        if (equipment.Count > 0)
+        {
+            score += 16;
+        }
+
+        if (aiRecords.Count > 0)
+        {
+            score += 16;
+        }
+
+        if (reports.Count > 0)
+        {
+            score += 16;
+        }
+
+        return score;
+    }
+
+    private static bool IsRiskProject(ProjectItem project)
+    {
+        return project.RiskLevel == "高风险" ||
+               project.Status == "关注" ||
+               project.Status == "滞后";
+    }
+
+    private static bool IsRiskTask(TaskItem task)
+    {
+        return task.RiskLevel == "高风险" ||
+               task.Status == "延期" ||
+               task.Status == "滞后";
+    }
+
+    private static bool IsAttentionMember(MemberItem member)
+    {
+        return member.WorkloadStatus == "关注" ||
+               member.WorkloadStatus == "过载";
+    }
+
+    private static bool IsAbnormalEquipment(EquipmentItem item)
+    {
+        return item.Status == "待检查" ||
+               item.Status == "维修中" ||
+               item.Status == "损坏" ||
+               item.Status == "报废";
+    }
+
+    private static int GetProjectSortWeight(ProjectItem project)
+    {
+        if (project.RiskLevel == "高风险")
+        {
+            return 4;
+        }
+
+        return project.Status switch
+        {
+            "滞后" => 4,
+            "关注" => 3,
+            "进行中" => 2,
+            "已完成" => 1,
+            _ => 0
+        };
+    }
+
+    private static string SafeText(string text)
+    {
+        return string.IsNullOrWhiteSpace(text) ? "暂无" : text;
+    }
+
+    public class DashboardPriorityItem
+    {
+        public string Title { get; set; } = string.Empty;
+
+        public string Source { get; set; } = string.Empty;
+
+        public string Severity { get; set; } = string.Empty;
+
+        public string Description { get; set; } = string.Empty;
+    }
+
+    public class DashboardActivityItem
+    {
+        public string Title { get; set; } = string.Empty;
+
+        public string Tag { get; set; } = string.Empty;
+
+        public string Description { get; set; } = string.Empty;
     }
 }
