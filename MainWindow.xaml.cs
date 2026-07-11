@@ -1,7 +1,11 @@
 using System;
+using System.IO;
+using Microsoft.UI;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using TeamFlowDesk.Pages;
+using WinRT.Interop;
 
 namespace TeamFlowDesk;
 
@@ -10,9 +14,28 @@ public sealed partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        SetWindowIcon();
 
         RootNavigationView.SelectedItem = RootNavigationView.MenuItems[0];
         NavigateToPage("HomePage");
+    }
+
+    private void SetWindowIcon()
+    {
+        var windowHandle = WindowNative.GetWindowHandle(this);
+        var windowId = Win32Interop.GetWindowIdFromWindow(windowHandle);
+        var appWindow = AppWindow.GetFromWindowId(windowId);
+        var iconPath = Path.Combine(AppContext.BaseDirectory, "Assets", "AppIcon.ico");
+
+        if (!File.Exists(iconPath))
+        {
+            iconPath = Path.Combine(AppContext.BaseDirectory, "AppX", "Assets", "AppIcon.ico");
+        }
+
+        if (File.Exists(iconPath))
+        {
+            appWindow.SetIcon(iconPath);
+        }
     }
 
     private void RootNavigationView_SelectionChanged(

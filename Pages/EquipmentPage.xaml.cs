@@ -211,7 +211,7 @@ public sealed partial class EquipmentPage : Page
 
         if (usingCount > availableCount && _equipment.Count > 0)
         {
-            EquipmentUsageInsightText.Text = "当前使用中器材数量较多，后续安排新任务时需要提前确认资源是否冲突。";
+            EquipmentUsageInsightText.Text = "当前使用中器材数量较多，安排新任务前请确认资源是否冲突。";
         }
         else if (usingCount == 0)
         {
@@ -226,7 +226,7 @@ public sealed partial class EquipmentPage : Page
             string.IsNullOrWhiteSpace(item.MaintenanceRecord));
 
         EquipmentMaintenanceInsightText.Text = missingMaintenanceCount == 0
-            ? "当前器材均有维护记录，后续可以继续沉淀使用异常、维修过程和归还检查情况。"
+            ? "当前器材均有维护记录，可持续记录使用异常、维修过程和归还检查情况。"
             : $"当前有 {missingMaintenanceCount} 件器材缺少维护记录，建议补充检查结果、使用注意事项或历史异常。";
     }
 

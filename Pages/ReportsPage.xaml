@@ -223,6 +223,10 @@
                                         Click="AddReportButton_Click" />
 
                                     <Button
+                                        Content="导出 TXT"
+                                        Click="ExportReportDraftButton_Click" />
+
+                                    <Button
                                         Content="清空"
                                         Click="ClearReportFormButton_Click" />
                                 </StackPanel>

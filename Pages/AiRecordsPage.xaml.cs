@@ -274,7 +274,7 @@ public sealed partial class AiRecordsPage : Page
             return;
         }
 
-        AiValueText.Text = "AI 已经参与部分团队管理环节。后续可以继续沉淀人工判断和最终决策，用于周报复盘和答辩展示。";
+        AiValueText.Text = "AI 已参与团队管理环节，人工判断和最终决策已沉淀为可追踪的复盘依据。";
     }
 
     private void ClearAiRecordForm()

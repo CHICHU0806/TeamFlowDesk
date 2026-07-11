@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
+using System.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using TeamFlowDesk.Data;
@@ -130,6 +132,33 @@ public sealed partial class ReportsPage : Page
     {
         ClearReportForm();
         ReportFormMessageText.Text = "复盘编辑器已清空。";
+    }
+
+    private void ExportReportDraftButton_Click(object sender, RoutedEventArgs e)
+    {
+        var title = string.IsNullOrWhiteSpace(ReportTitleTextBox.Text)
+            ? $"TeamFlowDesk 周报复盘 {DateTimeOffset.Now:yyyyMMdd-HHmm}"
+            : ReportTitleTextBox.Text.Trim();
+
+        try
+        {
+            var exportFolder = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                "TeamFlowDeskExports");
+
+            Directory.CreateDirectory(exportFolder);
+
+            var fileName = $"{MakeSafeFileName(title)}.txt";
+            var filePath = Path.Combine(exportFolder, fileName);
+
+            File.WriteAllText(filePath, BuildReportExportText(title), Encoding.UTF8);
+
+            ReportFormMessageText.Text = $"复盘草稿已导出：{filePath}";
+        }
+        catch (Exception ex)
+        {
+            ReportFormMessageText.Text = $"导出复盘草稿失败：{ex.Message}";
+        }
     }
 
     private void SetNormalReportButton_Click(object sender, RoutedEventArgs e)
@@ -431,7 +460,7 @@ public sealed partial class ReportsPage : Page
 
         if (latestAiRecords.Count == 0)
         {
-            return "本周暂无 AI 协作记录。建议后续在任务拆解、风险判断和复盘生成中记录 AI 建议与人工判断过程。";
+            return "本周暂无 AI 协作记录。建议在任务拆解、风险判断和复盘生成中记录 AI 建议与人工判断过程。";
         }
 
         return string.Join(Environment.NewLine, latestAiRecords);
@@ -458,11 +487,52 @@ public sealed partial class ReportsPage : Page
 
         if (riskTaskCount == 0 && attentionMemberCount == 0 && abnormalEquipmentCount == 0)
         {
-            return $"整体来看，本周团队运行状态较稳定。AI 协作记录共 {aiRecordCount} 条，后续可以继续沉淀关键决策过程，并保持任务、人员和器材数据及时更新。";
+            return $"整体来看，本周团队运行状态较稳定。AI 协作记录共 {aiRecordCount} 条，关键决策过程已纳入复盘，并应保持任务、人员和器材数据及时更新。";
         }
 
         return
             $"本周需要重点关注：风险任务 {riskTaskCount} 项，成员负载异常 {attentionMemberCount} 项，器材异常 {abnormalEquipmentCount} 项。建议负责人优先处理会影响项目推进节奏的阻塞项，并在下周复盘中检查整改结果。AI 协作记录共 {aiRecordCount} 条，可作为辅助判断参考，但最终管理动作仍需负责人确认。";
+    }
+
+    private string BuildReportExportText(string title)
+    {
+        var builder = new StringBuilder();
+
+        builder.AppendLine(title);
+        builder.AppendLine($"复盘周期：{ReportStartDatePicker.Date:yyyy-MM-dd} 至 {ReportEndDatePicker.Date:yyyy-MM-dd}");
+        builder.AppendLine($"进度状态：{PageInteractionService.GetComboBoxText(ProgressStatusComboBox, "正常")}");
+        builder.AppendLine();
+
+        AppendExportSection(builder, "一、本周完成工作", CompletedWorkTextBox.Text);
+        AppendExportSection(builder, "二、问题与风险", ProblemsTextBox.Text);
+        AppendExportSection(builder, "三、下周计划", NextPlanTextBox.Text);
+        AppendExportSection(builder, "四、AI 协作摘要", AiCollaborationSummaryTextBox.Text);
+        AppendExportSection(builder, "五、负责人复盘判断", ManagerReviewTextBox.Text);
+
+        builder.AppendLine("说明：本文件由 TeamFlowDesk 周报复盘模块导出，可作为过程记录、项目复盘或交接材料。");
+
+        return builder.ToString();
+    }
+
+    private static void AppendExportSection(StringBuilder builder, string heading, string content)
+    {
+        builder.AppendLine(heading);
+        builder.AppendLine(string.IsNullOrWhiteSpace(content) ? "暂无内容。" : content.Trim());
+        builder.AppendLine();
+    }
+
+    private static string MakeSafeFileName(string text)
+    {
+        var invalidChars = Path.GetInvalidFileNameChars();
+        var safeChars = text
+            .Select(character => invalidChars.Contains(character) ? '_' : character)
+            .ToArray();
+
+        var fileName = new string(safeChars).Trim();
+
+        return string.IsNullOrWhiteSpace(fileName)
+            ? $"TeamFlowDesk-{DateTimeOffset.Now:yyyyMMdd-HHmm}"
+            : fileName;
     }
 
     private static bool IsAbnormalEquipment(EquipmentItem item)

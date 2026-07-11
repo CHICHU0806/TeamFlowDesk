@@ -323,7 +323,7 @@ public sealed partial class MembersPage : Page
             member.AbilityLevel == "熟悉");
 
         TrainingInsightText.Text = beginnerCount == 0
-            ? "当前成员能力整体较成熟，后续可以重点沉淀经验文档和交接机制。"
+            ? "当前成员能力整体较成熟，当前培养重点为经验文档沉淀和交接机制落实。"
             : $"当前有 {beginnerCount} 名成员仍处于入门或熟悉阶段，建议结合任务作战板安排低风险练习任务，形成培养闭环。";
     }
 

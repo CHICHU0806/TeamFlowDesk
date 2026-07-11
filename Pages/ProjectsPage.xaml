@@ -365,7 +365,7 @@
                             <TextBox
                                 x:Name="ProjectStageTextBox"
                                 Header="当前阶段"
-                                PlaceholderText="例如：核心页面重构 / SQLite 接入 / 答辩准备"
+                                PlaceholderText="例如：核心页面重构 / SQLite 接入 / 资料归档"
                                 Style="{StaticResource EditorBoxStyle}" />
 
                             <Grid ColumnSpacing="12">

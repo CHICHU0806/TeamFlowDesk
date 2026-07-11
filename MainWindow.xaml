@@ -13,14 +13,53 @@
             SelectionChanged="RootNavigationView_SelectionChanged">
 
             <NavigationView.MenuItems>
-                <NavigationViewItem Content="管理驾驶舱" Tag="HomePage" />
-                <NavigationViewItem Content="项目管理" Tag="ProjectsPage" />
-                <NavigationViewItem Content="任务管理" Tag="TasksPage" />
-                <NavigationViewItem Content="人员管理" Tag="MembersPage" />
-                <NavigationViewItem Content="器材管理" Tag="EquipmentPage" />
-                <NavigationViewItem Content="AI协作记录" Tag="AiRecordsPage" />
-                <NavigationViewItem Content="周报与复盘" Tag="ReportsPage" />
-                <NavigationViewItem Content="关于系统" Tag="AboutPage" />
+                <NavigationViewItem Content="管理驾驶舱" Tag="HomePage">
+                    <NavigationViewItem.Icon>
+                        <SymbolIcon Symbol="Home" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItem Content="项目管理" Tag="ProjectsPage">
+                    <NavigationViewItem.Icon>
+                        <SymbolIcon Symbol="Folder" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItem Content="任务管理" Tag="TasksPage">
+                    <NavigationViewItem.Icon>
+                        <SymbolIcon Symbol="List" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItem Content="人员管理" Tag="MembersPage">
+                    <NavigationViewItem.Icon>
+                        <SymbolIcon Symbol="People" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItem Content="器材管理" Tag="EquipmentPage">
+                    <NavigationViewItem.Icon>
+                        <SymbolIcon Symbol="Repair" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItem Content="AI协作记录" Tag="AiRecordsPage">
+                    <NavigationViewItem.Icon>
+                        <SymbolIcon Symbol="Comment" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItem Content="周报与复盘" Tag="ReportsPage">
+                    <NavigationViewItem.Icon>
+                        <SymbolIcon Symbol="Calendar" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItem Content="关于系统" Tag="AboutPage">
+                    <NavigationViewItem.Icon>
+                        <SymbolIcon Symbol="Help" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
             </NavigationView.MenuItems>
 
             <Frame x:Name="ContentFrame" />

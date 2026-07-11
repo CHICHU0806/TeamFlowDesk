@@ -10,7 +10,7 @@
                 <controls:XamlControlsResources />
 
                 <ResourceDictionary Source="Styles/AppBrushes.xaml" />
-                <ResourceDictionary Source="Styles/CardStyles.xmal" />
+                <ResourceDictionary Source="Styles/CardStyles.xaml" />
                 <ResourceDictionary Source="Styles/InputStyles.xaml" />
                 <ResourceDictionary Source="Styles/TextStyles.xaml" />
                 <ResourceDictionary Source="Styles/ButtonStyles.xaml" />

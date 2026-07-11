@@ -238,7 +238,7 @@
                                 Foreground="{StaticResource SecondaryTextBrush}" />
 
                             <TextBlock
-                                Text="从成员方向、能力标签、任务负载和培养计划出发，帮助负责人判断谁能承担任务、谁需要关注、谁适合培养为后续骨干。"
+                                Text="从成员方向、能力标签、任务负载和培养计划出发，帮助负责人判断谁能承担任务、谁需要关注、谁适合承担核心职责。"
                                 FontSize="15"
                                 Foreground="{StaticResource MutedTextBrush}"
                                 TextWrapping="Wrap"
@@ -441,7 +441,7 @@
                             <TextBox
                                 x:Name="MemberGrowthPlanTextBox"
                                 Header="培养计划 / 成长记录"
-                                PlaceholderText="例如：后续可承担底盘控制相关任务"
+                                PlaceholderText="例如：可承担底盘控制相关任务"
                                 TextWrapping="Wrap"
                                 AcceptsReturn="True"
                                 MinHeight="90"

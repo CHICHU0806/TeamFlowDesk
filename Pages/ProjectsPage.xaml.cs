@@ -268,7 +268,7 @@ public sealed partial class ProjectsPage : Page
         }
         else
         {
-            ProjectProgressInsightText.Text = "当前项目整体接近收尾，建议开始整理复盘材料、答辩材料和后续交接内容。";
+            ProjectProgressInsightText.Text = "当前项目整体处于收尾状态，建议核对输出物、复盘记录和交接资料是否完整。";
         }
 
         ProjectRiskInsightText.Text = riskCount == 0

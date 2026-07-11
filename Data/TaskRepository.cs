@@ -19,20 +19,22 @@ public static class TaskRepository
         command.CommandText =
         """
         SELECT
-            Id,
-            ProjectId,
-            Title,
-            Description,
-            OwnerName,
-            Collaborators,
-            Status,
-            Priority,
-            RiskLevel,
-            Deadline,
-            RelatedEquipment,
-            OutputRequirement
-        FROM Tasks
-        ORDER BY Id DESC;
+            t.Id,
+            t.ProjectId,
+            COALESCE(p.Name, '未关联项目') AS ProjectName,
+            t.Title,
+            t.Description,
+            t.OwnerName,
+            t.Collaborators,
+            t.Status,
+            t.Priority,
+            t.RiskLevel,
+            t.Deadline,
+            t.RelatedEquipment,
+            t.OutputRequirement
+        FROM Tasks AS t
+        LEFT JOIN Projects AS p ON p.Id = t.ProjectId
+        ORDER BY t.Id DESC;
         """;
 
         var tasks = new List<TaskItem>();
@@ -45,16 +47,17 @@ public static class TaskRepository
             {
                 Id = reader.GetInt32(0),
                 ProjectId = reader.GetInt32(1),
-                Title = reader.GetString(2),
-                Description = reader.GetString(3),
-                OwnerName = reader.GetString(4),
-                Collaborators = reader.GetString(5),
-                Status = reader.GetString(6),
-                Priority = reader.GetString(7),
-                RiskLevel = reader.GetString(8),
-                Deadline = DateTimeOffset.Parse(reader.GetString(9)),
-                RelatedEquipment = reader.GetString(10),
-                OutputRequirement = reader.GetString(11)
+                ProjectName = reader.GetString(2),
+                Title = reader.GetString(3),
+                Description = reader.GetString(4),
+                OwnerName = reader.GetString(5),
+                Collaborators = reader.GetString(6),
+                Status = reader.GetString(7),
+                Priority = reader.GetString(8),
+                RiskLevel = reader.GetString(9),
+                Deadline = DateTimeOffset.Parse(reader.GetString(10)),
+                RelatedEquipment = reader.GetString(11),
+                OutputRequirement = reader.GetString(12)
             });
         }
 

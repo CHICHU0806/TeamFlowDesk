@@ -1,40 +1,167 @@
-﻿<Page
+<Page
     x:Class="TeamFlowDesk.Pages.AboutPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    RequestedTheme="Dark">
 
-    <ScrollViewer>
-        <StackPanel Margin="32" Spacing="20">
+    <Grid Background="{StaticResource PageBackgroundBrush}">
+        <ScrollViewer
+            VerticalScrollBarVisibility="Auto"
+            HorizontalScrollBarVisibility="Disabled"
+            HorizontalScrollMode="Disabled">
 
-            <StackPanel Spacing="8">
-                <TextBlock
-                    Text="关于 TeamFlowDesk"
-                    FontSize="32"
-                    FontWeight="SemiBold" />
+            <StackPanel Margin="28" Spacing="22">
 
-                <TextBlock
-                    Text="TeamFlowDesk 是一款面向团队负责人的内部私有化工作流管理系统，主要用于项目管理、任务调度、人员能力管理、器材资源管理、数据沉淀和 AI 协作记录。"
-                    FontSize="16"
-                    TextWrapping="Wrap" />
+                <Border
+                    Padding="32"
+                    CornerRadius="28"
+                    BorderBrush="#5B5FE9"
+                    BorderThickness="1">
+
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#172554" Offset="0" />
+                            <GradientStop Color="#312E81" Offset="0.45" />
+                            <GradientStop Color="#0F172A" Offset="1" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+
+                    <StackPanel Spacing="12">
+                        <TextBlock
+                            Text="关于 TeamFlowDesk"
+                            Style="{StaticResource HeroTitleTextStyle}" />
+
+                        <TextBlock
+                            Text="面向团队负责人的内部私有化工作流管理系统"
+                            Style="{StaticResource HeroSubtitleTextStyle}" />
+
+                        <TextBlock
+                            Text="系统围绕项目、任务、人员、器材、AI 协作和周报复盘形成管理闭环，帮助负责人掌握团队状态、识别风险、沉淀过程并完成阶段复盘。"
+                            Style="{StaticResource HeroDescriptionTextStyle}"
+                            MaxWidth="920" />
+                    </StackPanel>
+                </Border>
+
+                <Grid ColumnSpacing="18">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1.1*" />
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0" Style="{StaticResource PanelCardStyle}">
+                        <StackPanel Spacing="14">
+                            <TextBlock Text="项目定位" Style="{StaticResource SectionTitleTextStyle}" />
+                            <TextBlock
+                                Text="TeamFlowDesk 不是普通个人待办工具，而是面向队长、项目经理、方向负责人的团队运行管理驾驶舱。系统采用单机私有化方案，保证管理流程完整、数据结构清晰、界面操作稳定。"
+                                Style="{StaticResource BodyTextStyle}" />
+
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Border Grid.Column="0" Style="{StaticResource InsightCardStyle}">
+                                    <StackPanel Spacing="6">
+                                        <TextBlock Text="服务对象" Style="{StaticResource MetricLabelTextStyle}" />
+                                        <TextBlock Text="团队负责人 / 项目经理 / 方向负责人" Style="{StaticResource BodyTextStyle}" />
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Grid.Column="1" Style="{StaticResource InsightCardStyle}">
+                                    <StackPanel Spacing="6">
+                                        <TextBlock Text="核心价值" Style="{StaticResource MetricLabelTextStyle}" />
+                                        <TextBlock Text="宏观管理、风险识别、资源追踪、过程复盘" Style="{StaticResource BodyTextStyle}" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="1" Style="{StaticResource PanelCardStyle}">
+                        <StackPanel Spacing="14">
+                            <TextBlock Text="技术路线" Style="{StaticResource SectionTitleTextStyle}" />
+
+                            <TextBlock Text="C# / .NET / WinUI 3 / Windows App SDK" Style="{StaticResource BodyTextStyle}" />
+                            <TextBlock Text="SQLite 本地持久化，数据保存在本机用户目录" Style="{StaticResource BodyTextStyle}" />
+                            <TextBlock Text="Repository 分层封装数据访问，页面层负责交互与展示" Style="{StaticResource BodyTextStyle}" />
+                            <TextBlock Text="AI API 由用户自行配置，不把密钥写入项目代码" Style="{StaticResource BodyTextStyle}" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <Border Style="{StaticResource PanelCardStyle}">
+                    <StackPanel Spacing="16">
+                        <TextBlock Text="业务闭环" Style="{StaticResource SectionTitleTextStyle}" />
+
+                        <Grid ColumnSpacing="12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <Border Grid.Column="0" Style="{StaticResource InsightCardStyle}">
+                                <TextBlock Text="项目目标" Style="{StaticResource BodyTextStyle}" />
+                            </Border>
+                            <Border Grid.Column="1" Style="{StaticResource InsightCardStyle}">
+                                <TextBlock Text="任务拆解" Style="{StaticResource BodyTextStyle}" />
+                            </Border>
+                            <Border Grid.Column="2" Style="{StaticResource InsightCardStyle}">
+                                <TextBlock Text="人员调度" Style="{StaticResource BodyTextStyle}" />
+                            </Border>
+                            <Border Grid.Column="3" Style="{StaticResource InsightCardStyle}">
+                                <TextBlock Text="器材保障" Style="{StaticResource BodyTextStyle}" />
+                            </Border>
+                            <Border Grid.Column="4" Style="{StaticResource InsightCardStyle}">
+                                <TextBlock Text="AI 辅助判断" Style="{StaticResource BodyTextStyle}" />
+                            </Border>
+                            <Border Grid.Column="5" Style="{StaticResource InsightCardStyle}">
+                                <TextBlock Text="周报复盘" Style="{StaticResource BodyTextStyle}" />
+                            </Border>
+                        </Grid>
+
+                        <TextBlock
+                            Text="首页驾驶舱会把各模块数据汇总为负责人优先处理事项，让系统从“录入工具”提升为“管理辅助工具”。"
+                            Style="{StaticResource MutedBodyTextStyle}" />
+                    </StackPanel>
+                </Border>
+
+                <Grid ColumnSpacing="18">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0" Style="{StaticResource PanelCardStyle}">
+                        <StackPanel Spacing="14">
+                            <TextBlock Text="AI 协作机制" Style="{StaticResource SectionTitleTextStyle}" />
+                            <TextBlock Text="1. 负责人提出管理问题。" Style="{StaticResource BodyTextStyle}" />
+                            <TextBlock Text="2. AI 生成结构化建议。" Style="{StaticResource BodyTextStyle}" />
+                            <TextBlock Text="3. 人工记录质疑、修正和取舍。" Style="{StaticResource BodyTextStyle}" />
+                            <TextBlock Text="4. 保存最终决策与采纳状态。" Style="{StaticResource BodyTextStyle}" />
+                            <TextBlock
+                                Text="系统强调“AI 辅助、人负责最终判断”，让每一次 AI 参与都能被追踪、复盘和修正。"
+                                Style="{StaticResource MutedBodyTextStyle}" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="1" Style="{StaticResource PanelCardStyle}">
+                        <StackPanel Spacing="14">
+                            <TextBlock Text="已交付能力" Style="{StaticResource SectionTitleTextStyle}" />
+                            <TextBlock Text="1. 项目、任务、人员、器材、AI 协作和周报复盘数据均可本地保存。" Style="{StaticResource BodyTextStyle}" />
+                            <TextBlock Text="2. 任务支持所属项目关联、状态推进、风险标记、时间预警与关键词筛选。" Style="{StaticResource BodyTextStyle}" />
+                            <TextBlock Text="3. 首页驾驶舱自动汇总风险项目、风险任务、成员负载和器材异常。" Style="{StaticResource BodyTextStyle}" />
+                            <TextBlock Text="4. 周报复盘支持根据当前数据生成草稿，并导出 TXT 阶段材料。" Style="{StaticResource BodyTextStyle}" />
+                            <TextBlock Text="5. 系统设置支持 AI 接口本机配置与 SQLite 数据库时间戳备份。" Style="{StaticResource BodyTextStyle}" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
             </StackPanel>
-
-            <StackPanel Spacing="12">
-                <TextBlock
-                    Text="系统定位"
-                    FontSize="22"
-                    FontWeight="SemiBold" />
-
-                <TextBlock
-                    Text="本系统不是普通成员的打卡工具，而是面向队长、项目经理和方向负责人的宏观管理软件。"
-                    FontSize="16"
-                    TextWrapping="Wrap" />
-
-                <TextBlock
-                    Text="系统目标是帮助负责人掌握团队运行状态，发现任务风险，追踪资源使用，沉淀过程数据，并记录 AI 协作与人工修正过程。"
-                    FontSize="16"
-                    TextWrapping="Wrap" />
-            </StackPanel>
-
-        </StackPanel>
-    </ScrollViewer>
+        </ScrollViewer>
+    </Grid>
 </Page>

@@ -1,5 +1,8 @@
 ﻿using Microsoft.UI.Xaml;
+using System;
+using System.IO;
 using Microsoft.UI.Xaml.Controls;
+using TeamFlowDesk.Data;
 using TeamFlowDesk.Models;
 using TeamFlowDesk.Services;
 
@@ -68,6 +71,31 @@ public sealed partial class SettingsPage : Page
 
         LoadAiSettings();
         AiSettingsMessageText.Text = "AI 配置已清空。";
+    }
+
+    private void BackupDatabaseButton_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            DatabaseService.InitializeDatabase();
+
+            var backupFolder = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                "TeamFlowDeskBackups");
+
+            Directory.CreateDirectory(backupFolder);
+
+            var backupFileName = $"teamflowdesk-{DateTimeOffset.Now:yyyyMMdd-HHmmss}.db";
+            var backupPath = Path.Combine(backupFolder, backupFileName);
+
+            File.Copy(DatabaseService.DatabasePath, backupPath, overwrite: false);
+
+            DataBackupMessageText.Text = $"备份已完成：{backupPath}";
+        }
+        catch (Exception ex)
+        {
+            DataBackupMessageText.Text = $"备份失败：{ex.Message}";
+        }
     }
 
     private void LoadAiSettings()

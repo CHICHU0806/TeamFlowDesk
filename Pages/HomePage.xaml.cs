@@ -285,7 +285,7 @@ public sealed partial class HomePage : Page
             {
                 Title = "暂无周报复盘记录",
                 Tag = "复盘",
-                Description = "建议每周至少形成一条复盘记录，用于答辩、交接和团队管理沉淀。"
+                Description = "建议每周至少形成一条复盘记录，用于交接和团队管理沉淀。"
             });
         }
 

@@ -14,12 +14,12 @@ public static class MockDataService
                 Name = "TeamFlowDesk 团队工作流管理系统",
                 Description = "面向团队负责人的内部私有化宏观管理软件。",
                 OwnerName = "杨杨文琦",
-                Status = "进行中",
-                CurrentStage = "核心功能开发",
+                Status = "已完成",
+                CurrentStage = "项目结项与资料归档",
                 RiskLevel = "正常",
                 StartDate = new DateTimeOffset(2026, 6, 27, 0, 0, 0, TimeSpan.Zero),
                 EndDate = new DateTimeOffset(2026, 7, 10, 0, 0, 0, TimeSpan.Zero),
-                ProgressPercent = 35
+                ProgressPercent = 100
             },
             new()
             {
@@ -64,7 +64,7 @@ public static class MockDataService
                 Description = "建立项目、任务、成员、器材、AI记录和周报模型。",
                 OwnerName = "杨杨文琦",
                 Collaborators = "AI 协作",
-                Status = "进行中",
+                Status = "已完成",
                 Priority = "高",
                 RiskLevel = "正常",
                 Deadline = new DateTimeOffset(2026, 7, 3, 0, 0, 0, TimeSpan.Zero),
@@ -79,7 +79,7 @@ public static class MockDataService
                 Description = "展示项目进度、任务数量、成员负载、器材异常和 AI 协作记录。",
                 OwnerName = "杨杨文琦",
                 Collaborators = "无",
-                Status = "待处理",
+                Status = "已完成",
                 Priority = "普通",
                 RiskLevel = "正常",
                 Deadline = new DateTimeOffset(2026, 7, 5, 0, 0, 0, TimeSpan.Zero),
@@ -117,7 +117,7 @@ public static class MockDataService
                 AbilityLevel = "熟悉",
                 CurrentTaskCount = 2,
                 WorkloadStatus = "正常",
-                GrowthPlan = "后续可承担底盘控制相关任务。"
+                GrowthPlan = "可承担底盘控制相关任务。"
             }
         };
     }
@@ -206,9 +206,9 @@ public static class MockDataService
                 EndDate = new DateTimeOffset(2026, 7, 3, 0, 0, 0, TimeSpan.Zero),
                 CompletedWork = "完成项目选题、系统定位、技术路线确定、WinUI 项目创建、页面骨架搭建和 Git 仓库初始化。",
                 Problems = "第一周暂未遇到重大技术问题，主要问题集中在 WinUI 模板创建和 Git 仓库权限配置方面，均已解决。",
-                NextPlan = "下一步将完成核心数据模型、模拟数据服务、管理驾驶舱统计展示和基础页面数据绑定。",
+                NextPlan = "完成核心数据模型、模拟数据服务、管理驾驶舱统计展示和基础页面数据绑定。",
                 AiCollaborationSummary = "AI 主要参与了项目定位梳理、功能范围压缩、周报内容整理和开发步骤规划。",
-                ManagerReview = "当前进度正常，系统框架已经搭建完成，后续需要重点完成数据展示和基础交互功能。",
+                ManagerReview = "当前进度正常，系统框架、数据展示和基础交互功能均已完成。",
                 ProgressStatus = "正常"
             }
         };

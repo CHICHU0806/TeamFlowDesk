@@ -60,6 +60,13 @@
                         TextWrapping="Wrap" />
 
                     <TextBlock
+                        Text="{Binding ProjectName}"
+                        FontSize="12"
+                        Foreground="{StaticResource AccentPurpleBrush}"
+                        TextWrapping="Wrap"
+                        TextTrimming="CharacterEllipsis" />
+
+                    <TextBlock
                         Text="{Binding Description}"
                         FontSize="13"
                         Foreground="{StaticResource SecondaryTextBrush}"
@@ -106,7 +113,27 @@
                             Grid.Column="1"
                             Text="{Binding RiskLevel}"
                             FontSize="13"
-                            Foreground="{StaticResource AccentRedBrush}" />
+                                Foreground="{StaticResource AccentRedBrush}" />
+                    </Grid>
+
+                    <Grid ColumnSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                            Grid.Column="0"
+                            Text="{Binding DeadlineDisplay}"
+                            FontSize="12"
+                            Foreground="{StaticResource AccentOrangeBrush}" />
+
+                        <TextBlock
+                            Grid.Column="1"
+                            Text="{Binding ScheduleHint}"
+                            FontSize="12"
+                            Foreground="{StaticResource AccentOrangeBrush}"
+                            TextAlignment="Right" />
                     </Grid>
 
                     <TextBlock
@@ -120,26 +147,30 @@
                     <StackPanel Spacing="8">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <Button
-                                Content="进行中"
+                                Content="查看详情"
                                 Tag="{Binding Id}"
-                                Click="SetDoingTaskButton_Click" />
+                                Click="ShowTaskDetailButton_Click"
+                                Style="{StaticResource SecondaryButtonStyle}" />
 
                             <Button
-                                Content="完成"
+                                Content="推进"
                                 Tag="{Binding Id}"
-                                Click="CompleteTaskButton_Click" />
+                                Click="AdvanceTaskButton_Click"
+                                Style="{StaticResource PrimaryButtonStyle}" />
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <Button
                                 Content="高风险"
                                 Tag="{Binding Id}"
-                                Click="SetHighRiskTaskButton_Click" />
+                                Click="SetHighRiskTaskButton_Click"
+                                Style="{StaticResource WarningButtonStyle}" />
 
                             <Button
                                 Content="删除"
                                 Tag="{Binding Id}"
-                                Click="DeleteTaskButton_Click" />
+                                Click="DeleteTaskButton_Click"
+                                Style="{StaticResource DangerButtonStyle}" />
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
@@ -323,6 +354,12 @@
                                 PlaceholderText="例如：完成任务作战板 UI 改造"
                                 Style="{StaticResource EditorBoxStyle}" />
 
+                            <ComboBox
+                                x:Name="TaskProjectComboBox"
+                                Header="所属项目"
+                                DisplayMemberPath="Name"
+                                PlaceholderText="选择该任务对应的项目" />
+
                             <TextBox
                                 x:Name="TaskOwnerTextBox"
                                 Header="负责人"
@@ -458,6 +495,7 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
 
                                 <Border Grid.Column="0" Padding="16" CornerRadius="18" Background="#1B2638" BorderBrush="#2F3D55" BorderThickness="1">
@@ -471,6 +509,13 @@
                                     <StackPanel Spacing="6">
                                         <TextBlock Text="负责人负载提示" FontSize="14" Foreground="{StaticResource MutedTextBrush}" />
                                         <TextBlock x:Name="TaskOwnerInsightText" FontSize="15" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Grid.Column="2" Padding="16" CornerRadius="18" Background="#1B2638" BorderBrush="#2F3D55" BorderThickness="1">
+                                    <StackPanel Spacing="6">
+                                        <TextBlock Text="时间预警" FontSize="14" Foreground="{StaticResource MutedTextBrush}" />
+                                        <TextBlock x:Name="TaskScheduleInsightText" FontSize="15" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" />
                                     </StackPanel>
                                 </Border>
                             </Grid>
@@ -512,14 +557,36 @@
                                     Foreground="{StaticResource PrimaryTextBrush}" />
 
                                 <TextBlock
-                                    Text="展示型看板跟随整个页面滚动，不使用内部固定滚动框。"
+                                    Text="按负责人、风险与截止时间聚合任务，并支持关键词和状态筛选。"
                                     FontSize="14"
                                     Foreground="{StaticResource MutedTextBrush}" />
                             </StackPanel>
 
-                            <Border Grid.Column="1" Padding="12,6" CornerRadius="999" Background="#172033" VerticalAlignment="Center">
-                                <TextBlock Text="Board View" FontSize="13" Foreground="{StaticResource AccentPurpleBrush}" />
-                            </Border>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                                <TextBox
+                                    x:Name="TaskSearchTextBox"
+                                    Width="250"
+                                    PlaceholderText="搜索任务、负责人或输出要求"
+                                    TextChanged="TaskSearchTextBox_TextChanged"
+                                    Style="{StaticResource EditorBoxStyle}" />
+
+                                <ComboBox
+                                    x:Name="TaskViewFilterComboBox"
+                                    Width="150"
+                                    SelectedIndex="0"
+                                    SelectionChanged="TaskViewFilterComboBox_SelectionChanged">
+                                    <ComboBoxItem Content="全部任务" />
+                                    <ComboBoxItem Content="未完成任务" />
+                                    <ComboBoxItem Content="只看风险" />
+                                    <ComboBoxItem Content="临期与逾期" />
+                                    <ComboBoxItem Content="已完成任务" />
+                                </ComboBox>
+
+                                <Button
+                                    Content="重置"
+                                    Click="ResetTaskFilterButton_Click"
+                                    Style="{StaticResource SecondaryButtonStyle}" />
+                            </StackPanel>
                         </Grid>
 
                         <Grid ColumnSpacing="14">
