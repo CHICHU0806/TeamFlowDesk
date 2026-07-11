@@ -10,6 +10,8 @@
             PaneTitle="TeamFlowDesk"
             IsBackButtonVisible="Collapsed"
             IsSettingsVisible="True"
+            Opacity="0"
+            IsHitTestVisible="False"
             SelectionChanged="RootNavigationView_SelectionChanged">
 
             <NavigationView.MenuItems>
@@ -64,5 +66,54 @@
 
             <Frame x:Name="ContentFrame" />
         </NavigationView>
+
+        <Grid
+            x:Name="SplashOverlay"
+            Background="#080D18"
+            Opacity="1">
+
+            <StackPanel
+                x:Name="SplashContent"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Spacing="16"
+                Opacity="0"
+                RenderTransformOrigin="0.5,0.5">
+
+                <StackPanel.RenderTransform>
+                    <ScaleTransform x:Name="SplashScaleTransform" ScaleX="0.86" ScaleY="0.86" />
+                </StackPanel.RenderTransform>
+
+                <Border
+                    Width="164"
+                    Height="164"
+                    Padding="22"
+                    Background="#F8FAFC"
+                    BorderBrush="#CBD5E1"
+                    BorderThickness="1"
+                    CornerRadius="18"
+                    HorizontalAlignment="Center">
+
+                    <Image
+                        Source="ms-appx:///Assets/TeamFlowDeskIcon.png"
+                        Stretch="Uniform" />
+                </Border>
+
+                <StackPanel HorizontalAlignment="Center" Spacing="5">
+                    <TextBlock
+                        Text="TeamFlowDesk"
+                        FontSize="30"
+                        FontWeight="SemiBold"
+                        Foreground="#F8FAFC"
+                        HorizontalAlignment="Center" />
+
+                    <TextBlock
+                        Text="团队运行管理工作流系统"
+                        FontSize="14"
+                        Foreground="#94A3B8"
+                        HorizontalAlignment="Center" />
+                </StackPanel>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>
